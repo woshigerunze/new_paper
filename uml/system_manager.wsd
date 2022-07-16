@@ -1,0 +1,40 @@
+@startuml
+state mgo{
+    [*] --> INITIALIZE : SystemManager Boot
+    INITIALIZE : 
+    READY : Monitor Status(Normal) \nSystem Status(Disengaged)
+    RUNNING : Monitor Status(Normal) \nSystem Status(Engaged)
+    RUNNING_WITH_WARNING_ERROR : Monitor Status(Severe Error) \nSystem Status(Engaged)
+    FATAL_ERROR : Monitor Status(FATAL ERROR) \n System Status(Disengaged)
+    WARNING_ERROR : Monitor Status(Severe ERROR) \nSystem Status(Disengaged)
+
+    note top of INITIALIZE : SM启动会首先进入INITIALIZE状态
+    note top of READY : Monitor Status (Normal) System Status (Disengaged): 0
+    note top of RUNNING_WITH_WARNING_ERROR : Monitor Status (Severe Error) System Status (Engaged): 2
+    note right of RUNNING : Monitor Status (Normal) System Status (Engaged): 1
+    note bottom of FATAL_ERROR : Monitor Status (Fatal Error) System Status (Disengaged): 3
+    note bottom of WARNING_ERROR : Monitor Status (Severe Error) System Status (Disengaged): 4
+
+    INITIALIZE ->READY 
+    INITIALIZE -> WARNING_ERROR
+    INITIALIZE -> FATAL_ERROR
+    READY -down-> RUNNING
+    READY -> WARNING_ERROR
+    READY -right-> FATAL_ERROR
+    RUNNING -right-> RUNNING_WITH_WARNING_ERROR
+    RUNNING -down-> FATAL_ERROR
+    RUNNING -up-> READY
+    RUNNING_WITH_WARNING_ERROR -> FATAL_ERROR
+    RUNNING_WITH_WARNING_ERROR -> WARNING_ERROR
+    RUNNING_WITH_WARNING_ERROR -> RUNNING 
+    RUNNING_WITH_WARNING_ERROR -> READY
+    WARNING_ERROR ->FATAL_ERROR
+    WARNING_ERROR -> READY
+    FATAL_ERROR -> WARNING_ERROR
+    FATAL_ERROR -up-> READY
+
+    WARNING_ERROR -> WARNING_ERROR 
+    FATAL_ERROR -> FATAL_ERROR 
+}
+
+@enduml

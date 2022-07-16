@@ -1,0 +1,55 @@
+@startuml
+class InterProcessManager{
+    - InterProcessPublisher publisher
+    - InterProcessSubscriber subscriber
+    + create_publisher()
+    + create_subscriber()
+    + publish(Message)
+    + void set_callback(DataCallback)
+    + void message_poll()
+}
+class InterProcessPublisher{
+    - ShmWriter
+    + bind(connectURL)
+    + unbind(connectURL)
+    + publish(Message)
+}
+class InterProcessSubscriber{
+    - ShmReader
+    + connect(connectURL)
+    + disconnect(connectURL)
+}
+
+class ShmWriter{
+    - socket_pub
+    + bool shm_attach(connectURL)
+    + bool shm_detach()
+    + void write_shm_message(Message)
+}
+class ShmReader{
+    - socket_sub
+    + bool shm_attach(connectURL)
+    + bool shm_detach()
+    + Message read_shm_message()
+}
+class MessageSlot{
+    - atomic_int readcount;
+    - uint8_t* addr;
+    + void release_readcount();
+    + void set_readcount();
+    + void test_readcount();
+}
+class SHMReader{
+    - pthread_mutex_t write_lock
+    - int message_slot_size
+    - atomic_int attach_count
+}
+InterProcessManager o-left-> InterProcessPublisher
+InterProcessManager o-right-> InterProcessSubscriber
+InterProcessPublisher *-down-> ShmWriter
+InterProcessSubscriber *-down-> ShmReader
+ShmWriter *--> MessageSlot
+ShmReader *--> MessageSlot
+ShmWriter *--> SHMReader
+ShmReader *--> SHMReader
+@enduml

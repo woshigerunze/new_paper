@@ -1,0 +1,28 @@
+@startuml
+class Task{
+    +{abstract}void init()
+    +{abstract}void pause()
+    +{abstract}void resume()
+    +{abstract}void running()
+    +{abstract}void destroy()
+}
+
+class PlanningTask{
+    +{abstract}void init()
+    +{abstract}void pause()
+    +{abstract}void resume()
+    +{abstract}void running()
+    +{abstract}void destroy()
+}
+
+class PerceptionTask{
+    +{abstract}void init()
+    +{abstract}void pause()
+    +{abstract}void resume()
+    +{abstract}void running()
+    +{abstract}void destroy()
+}
+PlanningTask --up-|> Task
+PerceptionTask --up-|> Task
+
+@enduml

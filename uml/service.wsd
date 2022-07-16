@@ -1,0 +1,9 @@
+@startuml
+actor actor as user
+participant Master 
+user -> Master : CommunicationManager::regist_service
+Master -> Master : check_service_unique
+Master -> Master : check_node_name
+Master -> Master : RegisterManager::add_server
+Master -> user : add_service success
+@enduml

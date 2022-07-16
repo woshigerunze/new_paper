@@ -1,0 +1,53 @@
+@startuml
+class Publisher{
+    +{abstract} void publish(Message)
+}
+
+class  InternalPublisher{
+    +{static} shared_ptr<InternalPublisher> make(PublisherConfig)
+}
+
+class CommunicationAbstract{
+    - vector<PublisherInfo>
+    + PubAbstract* create_publisher(PublisherConfig)
+    + bool delete_publisher(PublisherConfig)
+    + bool modify_publisher_domain(PublisherConfig)
+    + vector<PublisherInfo> query_pulishers_info(QueryType)
+    + vector<SubscriberInfo> query_subscribers_info(QueryType)
+    + bool publish(PubAbstract*, Message)
+}
+
+class PubAbstract{
+    - NetworkManager
+    - IntraProcessManager
+    - InterProcessManager
+    + bool publish(Message)
+    + ConnectURL make_communication_connection(SubscriberNetInfo)
+}
+
+class ServiceDiscoveryManager{
+    + bool create_publisher(DiscoveryParam)
+    + bool delete_publisher(DiscoveryParam)
+    + bool modify_publisher_domain(DiscoveryParam)
+    + vector<PublisherInfo> query_pulishers_info(QueryType)
+    + vector<SubscribersInfo> query_subscribers_info(QueryType)
+    - void rpc_query()
+}
+
+class InternalPublisherImpl{
+    - PublisherConfig
+    - PubAbstract*
+    + {abstract}void publish(Message)
+    + InternalPublisherImpl(PublisherConfig)
+    + bool create_publisher(PublisherConfig)
+    + bool delete_publisher()
+    + bool modify_publisher_domain(DomainType)
+    + vector<PublisherInfo> query_pulishers_info(QueryType)
+    + vector<SubscribersInfo> query_subscribers_info(QueryType)
+}
+Publisher <|-- InternalPublisher
+InternalPublisher <|-- InternalPublisherImpl
+InternalPublisherImpl ..-right-> CommunicationAbstract
+CommunicationAbstract o--down-> PubAbstract
+CommunicationAbstract o--up-> ServiceDiscoveryManager
+@enduml

@@ -1,0 +1,45 @@
+class ServiceServer{
+    +{static}shared_ptr<ServiceServer> make(ServiceServerConfig)
+    +{abstract}bool create_service_server()
+    +{abstract}bool delete_service_server()
+    +{abstract}bool modify_service_server_domain(DomainType)
+    +{abstract}vector<ServiceInfo> query_service_list(QueryType)
+
+}
+
+class InternalServiceServerImpl{
+    - ServiceServerConfig
+    +InternalServiceServerImpl(ServiceServerConfig)
+    +{abstract}bool create_service_server()
+    +{abstract}bool delete_service_server()
+    +{abstract}bool modify_service_server_domain(DomainType)
+    +{abstract}vector<ServiceInfo> query_service_list(QueryType)
+
+}
+
+class CommunicationAbstract{
+    +bool create_service_server(ServiceServerConfig)
+    +bool delete_service_server(ServiceServerConfig)
+    +bool modify_service_server_domain(ServiceServerConfig)
+    +vector<ServiceInfo> query_service_list(QueryType)
+}
+
+class ServiceDiscoveryManager{
+    +bool create_service_server(DiscoveryParam)
+    +bool delete_service_server(DiscoveryParam)
+    +bool modify_service_server_domain(DiscoveryParam)
+    +vector<ServiceInfo> query_service_list(QueryType)
+    - void rpc_query()
+}
+
+class ServiceAbstract{
+    - rpc_server
+    +bool bind_service(ServiceServerConfig)
+    +bool unbind_service(ServiceServerConfig)
+}
+
+ServiceServer <|-- InternalServiceServerImpl
+
+InternalServiceServerImpl ..right-> CommunicationAbstract
+CommunicationAbstract ..down->ServiceAbstract
+CommunicationAbstract .up->ServiceDiscoveryManager

@@ -1,0 +1,27 @@
+@startuml
+class IntraProcessManager{
+    - vector<IntraProcessPublisher> publishers
+    - vector<IntraProcessSubscriber> subscribers
+    - map<connectURL,DataCallback> DataCallbacks
+    + create_publisher()
+    + create_subscriber()
+    + publish(Message)
+    + void set_callback(DataCallback,connectURL)
+    + void message_poll()
+}
+class IntraProcessPublisher{
+    - MessageQueue
+    - connectURL
+    + bind(connectURL)
+    + unbind(connectURL)
+    + publish(Message)
+}
+class IntraProcessSubscriber{
+    + connect(connectURL)
+    + disconnect(connectURL)
+}
+
+IntraProcessManager o--> IntraProcessPublisher
+IntraProcessManager o--> IntraProcessSubscriber
+
+@enduml

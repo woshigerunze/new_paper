@@ -1,0 +1,26 @@
+@startuml
+
+par 接收其他客户端的服务请求
+loop rpc_server.async_run
+activate ServiceAbstract
+ServiceAbstract -> ServiceAbstract : 监听服务请求
+OtherClient -> ServiceAbstract : rpc_client.call
+activate OtherClient
+ServiceAbstract -> ServiceAbstract : 处理请求
+ServiceAbstract --> OtherClient : Result
+deactivate OtherClient
+end
+else 向服务端请求服务
+activate ServiceAbstract
+
+ServiceAbstract -> ServiceDiscoveryManager : lookup_for_service
+activate  ServiceDiscoveryManager
+return ServiceInfo
+ServiceAbstract -> TargerServer : rpc_client.call
+activate TargerServer
+TargerServer -> TargerServer :处理请求
+return Result
+
+end
+
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+
+[*] --> initialize : on_init()
+initialize : init some user config
+running : node running and communicate with other nodes
+pause : node is paused because machine schedule
+finish : node is destroyed by machine
+initialize -down-> running : on_running()
+running -> pause : on_pause()
+pause -> running : on_resume()
+pause -up-> finish : on_finish()
+@enduml
+

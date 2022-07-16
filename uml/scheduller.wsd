@@ -1,0 +1,19 @@
+@startuml
+class Scheduler{
+    -bool start
+    -vector<TaskConfig>
+    -vector<TaskEntity>
+    +void create_massage_task(TaskConfig)
+    +void create_time_task(TaskConfig, int Hz)
+    +void activate_task()
+    +void start_schedule()
+    +{static}Scheduler& instance()
+}
+
+class Buffer{
+    -mutex_t 
+    +bool push()
+    +bool pop()
+}
+Scheduler ..-right-> Buffer
+@enduml

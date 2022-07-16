@@ -1,0 +1,28 @@
+@startuml
+|通信申请方|
+start
+:申请通信;
+|通信系统|
+if (申请合法) is (合法) then
+    if (通信匹配成功) is (成功) then 
+    :建立通信信道;
+    fork 
+        |通信申请方|
+        :申请方建立通信;
+    fork again
+        |通信匹配方|
+        :匹配方建立通信;
+    |通信系统|
+    end fork
+    else (不成功)
+    |通信系统|
+    end
+    endif
+else (不合法)
+|通信系统|
+end
+endif
+
+stop
+@enduml
+

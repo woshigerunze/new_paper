@@ -1,0 +1,95 @@
+@startuml
+group create_publisher
+activate Publisher
+Publisher -> CommunicationAbstract : create_publisher
+activate CommunicationAbstract
+' CommunicationAbstract -> CommunicationAbstract : 创建PubAbstract类
+' CommunicationAbstract -> CommunicationAbstract : 生成服务发现请求参数
+CommunicationAbstract -> ServiveDiscoveryManager : create_publisher
+' deactivate CommunicationAbstract
+activate ServiveDiscoveryManager
+ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+ServiveDiscoveryManager -> PubAbstract : make_communication_connection()
+' deactivate ServiveDiscoveryManager
+activate PubAbstract
+' PubAbstract -> PubAbstract : 通信链路匹配
+PubAbstract --> ServiveDiscoveryManager : ConnectURL
+' ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+
+deactivate PubAbstract
+
+ServiveDiscoveryManager --> CommunicationAbstract : 创建成功
+deactivate ServiveDiscoveryManager
+CommunicationAbstract --> Publisher : PubAbstract*
+deactivate CommunicationAbstract
+' deactivate Publisher
+end
+group delete_publisher
+Publisher -> CommunicationAbstract : delete_publisher
+activate CommunicationAbstract
+' CommunicationAbstract -> CommunicationAbstract : 删除PubAbstract类
+' CommunicationAbstract -> CommunicationAbstract : 生成服务发现请求参数
+CommunicationAbstract -> ServiveDiscoveryManager : delete_publisher
+activate ServiveDiscoveryManager 
+ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+ServiveDiscoveryManager --> CommunicationAbstract : 删除成功
+deactivate ServiveDiscoveryManager
+CommunicationAbstract --> Publisher : 删除成功
+deactivate CommunicationAbstract
+end
+group modify_publisher_domain
+Publisher -> CommunicationAbstract : modify_publisher_domain
+activate CommunicationAbstract
+' CommunicationAbstract -> CommunicationAbstract : 删除PubAbstract类
+' CommunicationAbstract -> CommunicationAbstract : 生成服务发现请求参数
+CommunicationAbstract -> ServiveDiscoveryManager : modify_publisher_domain
+activate ServiveDiscoveryManager 
+ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+ServiveDiscoveryManager -> PubAbstract : make_communication_connection()
+' deactivate ServiveDiscoveryManager
+activate PubAbstract
+' PubAbstract -> PubAbstract : 通信链路匹配
+PubAbstract --> ServiveDiscoveryManager : ConnectURL
+' ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+
+deactivate PubAbstract
+ServiveDiscoveryManager --> CommunicationAbstract : 修改成功
+deactivate ServiveDiscoveryManager
+CommunicationAbstract --> Publisher : 修改成功
+deactivate CommunicationAbstract
+end
+group query_publishers_info
+Publisher -> CommunicationAbstract : query_publishers_info
+activate CommunicationAbstract
+CommunicationAbstract -> ServiveDiscoveryManager : query_publishers_info
+' deactivate CommunicationAbstract
+activate ServiveDiscoveryManager
+ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+ServiveDiscoveryManager --> CommunicationAbstract : publishers_info
+deactivate ServiveDiscoveryManager
+CommunicationAbstract --> Publisher : publishers_info
+deactivate CommunicationAbstract
+end
+
+group query_subscribers_info
+Publisher -> CommunicationAbstract : query_subscribers_info
+activate CommunicationAbstract
+CommunicationAbstract -> ServiveDiscoveryManager : query_subscribers_info
+' deactivate CommunicationAbstract
+activate ServiveDiscoveryManager
+ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+ServiveDiscoveryManager --> CommunicationAbstract : subscribers_info
+deactivate ServiveDiscoveryManager
+CommunicationAbstract --> Publisher : subscribers_info
+deactivate CommunicationAbstract
+end
+
+group publish
+Publisher -> CommunicationAbstract : publish
+activate CommunicationAbstract
+CommunicationAbstract -> PubAbstract : publish
+deactivate CommunicationAbstract
+activate PubAbstract
+deactivate PubAbstract
+end
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+interface Node{
+    +{abstract} void on_init()
+    +{abstract} void on_running()
+    +{abstract} void on_pause()
+    +{abstract} void on_resume()
+    +{abstract} void on_finish()
+}
+class UserNode1{
+    +void on_init()
+    +void on_running()
+    +void on_pause()
+    +void on_resume()
+    +void on_finish()
+}
+
+class UserNode2{
+    +void on_init()
+    +void on_running()
+    +void on_pause()
+    +void on_resume()
+    +void on_finish()
+}
+
+' UserNode1 --|> Node : implementation
+' UserNode2 --|> Node : implementation
+Node <|-- UserNode1 : implementation
+Node <|-- UserNode2 : implementation
+
+@enduml

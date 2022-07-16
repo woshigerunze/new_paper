@@ -1,0 +1,25 @@
+@startuml
+|InternalPublisherImpl|
+start
+:创建发布者;
+if (配置文件参数检查) is (合法) then
+:注册发布者;
+else (不合法)
+end
+endif
+
+|CommunicationAbstract|
+:创建抽象发布类;
+:设置服务发现查询参数;
+|ServiceDiscoveryManager|
+if (查询参数检查) is (合法) then
+:更新网络拓扑;
+:通知匹配订阅者更新连接;
+else (不合法)
+end
+endif
+
+|SubAbstract|
+:根据发布者信息建立通信连接;
+stop
+@enduml

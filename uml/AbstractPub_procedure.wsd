@@ -1,0 +1,20 @@
+@startuml 流程图
+digraph flowchart {
+    node[shape="box", style="rounded"]
+        开始; 结束;
+    node[shape="box", style=""]
+        输入订阅者信息;进程内通信;进程间通信;返回连接地址;网络通信;
+    node[shape="diamond", style=""]
+        IP与订阅者IP一致; 进程号与订阅者进程号一致;
+    开始 -> 输入订阅者信息;
+    输入订阅者信息 -> IP与订阅者IP一致;
+    IP与订阅者IP一致 -> 进程号与订阅者进程号一致[label="yes"];
+    进程号与订阅者进程号一致 -> 进程内通信[label="yes"]
+    进程号与订阅者进程号一致 -> 进程间通信[label="no"]
+    IP与订阅者IP一致 -> 网络通信[label=∂"no"];
+    进程间通信 -> 返回连接地址
+    进程内通信 -> 返回连接地址
+    网络通信 -> 返回连接地址
+    返回连接地址 -> 结束
+}
+@enduml

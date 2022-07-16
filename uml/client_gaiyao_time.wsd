@@ -1,0 +1,28 @@
+skinparam style strictuml
+@startuml
+actor 用户
+用户 -> 服务客户端 : 注册客户端
+activate 服务客户端
+服务客户端 -> 通信抽象模块 : 传递客户端配置文件
+activate 通信抽象模块
+通信抽象模块 -> 抽象服务类 : 创建抽象服务类
+activate 抽象服务类
+return 创建成功
+通信抽象模块 -> 服务发现模块 : 传递客户端配置文件
+activate 服务发现模块
+服务发现模块 -> 服务发现模块 : 保存客户端配置文件
+return 保存成功
+return 创建成功
+return 创建成功
+
+用户 -> 服务客户端 : 发起服务请求
+activate 服务客户端
+服务客户端 -> 抽象服务类 : 发起服务请求
+activate 抽象服务类
+抽象服务类 -> 服务发现模块 : 查询服务端地址
+activate 服务发现模块
+return 服务端地址
+抽象服务类 -> 抽象服务类 : 向服务端发起调用
+return 调用结果
+return 调用结果
+@enduml

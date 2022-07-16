@@ -1,0 +1,16 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor 服务使用者
+rectangle 查询服务端信息 {
+服务使用者 -- (查询服务端信息)
+(查询服务端信息) .-> (本机域查询) 
+(查询服务端信息) .-> (全域查询) 
+(本机域查询) <|- (全量查询) 
+(全域查询) <|-- (全量查询) 
+(本机域查询) <|-- (按服务名称查询) 
+(全域查询) <|- (按服务名称查询)  
+}
+@enduml
+
+

@@ -1,0 +1,10 @@
+@startuml
+PublisherNode : 
+SubscriberNode :
+
+
+PublisherNode -> SubscriberNode : Thread0
+PublisherNode -> SubscriberNode : Thread1
+PublisherNode -> SubscriberNode : Thread2
+
+@enduml

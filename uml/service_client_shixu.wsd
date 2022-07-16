@@ -1,0 +1,50 @@
+@startuml
+group create_service_client
+activate ServiceClient
+ServiceClient -> CommunicationAbstract : create_service_client
+activate CommunicationAbstract
+CommunicationAbstract -> CommunicationAbstract : 保存配置文件
+CommunicationAbstract --> ServiceClient : 创建成功
+deactivate CommunicationAbstract
+end
+
+group delete_service_client
+activate ServiceClient
+ServiceClient -> CommunicationAbstract : delete_service_client
+activate CommunicationAbstract
+CommunicationAbstract -> CommunicationAbstract : 删除配置文件
+CommunicationAbstract --> ServiceClient : 删除成功
+deactivate CommunicationAbstract
+end
+
+group call_service
+activate ServiceClient
+ServiceClient -> CommunicationAbstract : call_service
+activate CommunicationAbstract
+CommunicationAbstract -> ServiceAbstract : call_service
+activate ServiceAbstract
+ServiceAbstract -> ServiceDiscoveryManager : lookup_for_service
+activate ServiceDiscoveryManager
+ServiceDiscoveryManager -> ServiceDiscoveryManager : rpc_query
+ServiceDiscoveryManager --> ServiceAbstract : ServiceInfo
+deactivate ServiceDiscoveryManager
+ServiceAbstract -> ServiceAbstract : RpcCall
+ServiceAbstract --> CommunicationAbstract : Result
+deactivate ServiceAbstract
+CommunicationAbstract --> ServiceClient : Result
+deactivate CommunicationAbstract
+end
+
+group is_service_available
+activate ServiceClient
+ServiceClient -> CommunicationAbstract : is_service_available
+activate CommunicationAbstract
+CommunicationAbstract -> ServiceDiscoveryManager : is_service_available
+activate ServiceDiscoveryManager
+ServiceDiscoveryManager -> ServiceDiscoveryManager : rpc_query
+ServiceDiscoveryManager --> CommunicationAbstract : 查询结果
+deactivate ServiceDiscoveryManager
+CommunicationAbstract --> ServiceClient : 查询结果
+deactivate CommunicationAbstract
+end
+@enduml

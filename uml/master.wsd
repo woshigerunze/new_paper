@@ -1,0 +1,42 @@
+@startuml
+interface Master {
+    +Config config
+
+    +{static} SharedPtr<Master>& instance()
+    +{abstract} ~Master()
+    +{abstract} void initialize(const Config& config)
+    +{abstract} Config get_running_config()
+    +{abstract} void start()
+    +{abstract} void stop()
+    +{abstract} set_service_uri(const string service_uri)
+}
+
+class MasterImpl{
+  +Config config
+  +bool is_running
+  +string service_uri
+  +RegisterManager registerManager;
+
+  +void initialize(const Config& config)
+  +Config get_running_config()
+  +void start()
+  +void stop()
+  +void set_service_uri()
+  +void register_rpc_methods(）
+  +void notify_subscribers_to_update()
+  +void notify_clients_to_update()
+}
+
+class RegisterManager{
+  +bool check_service_unique()
+  +bool check_node_name()
+  +bool checkout_message_type()
+  +void add_publisher()
+  +void add_subscribe()
+  +void add_server()
+  +void add_client()
+}
+
+Master <|.. MasterImpl 
+RegisterManager <-- MasterImpl
+@enduml

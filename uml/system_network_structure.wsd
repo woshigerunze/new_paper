@@ -1,0 +1,29 @@
+@startuml
+
+cloud 全局域{
+database 中心节点 as z
+cloud 本地域(物理机1){
+node 服务发现模块1 as s1
+}
+cloud 本地域(物理机2){
+node 服务发现模块2 as s2
+}
+cloud 本地域(物理机3){
+node 服务发现模块3 as s3
+}
+cloud 本地域(物理机4){
+node 服务发现模块4 as s4
+}
+}
+s1 --> z
+z --> s1
+
+s2 ---> z
+z ---> s2
+
+s3 ---> z
+z ---> s3
+
+s4 --> z
+z --> s4
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+class ServiceDiscovery{
+    +void start()
+    +void stop()
+    +void init_service()
+    +bool create_publisher(DisvoveryParam)
+    +bool create_subscriber(DisvoveryParam)
+    +bool create_service_server(DisvoveryParam)
+    +bool create_service_client(DisvoveryParam)
+    +bool delete_publisher(DisvoveryParam)
+    +bool delete_subscriber(DisvoveryParam)
+    +bool delete_service_server(DisvoveryParam)
+    +bool delete_service_client(DisvoveryParam)
+    +bool modify_publisher_domain(DisvoveryParam)
+    +bool modify_subscriber_domain(DisvoveryParam)
+    +bool modify_service_server_domain(DisvoveryParam)
+    +bool modify_service_client_domain(DisvoveryParam)
+    +bool change_communication_mode(DisvoveryParam)
+    +vector<PublisherInfo> query_publishers_info(QueryType)
+    +vector<SubscriberInfo> query_subscribers_info(QueryType)
+    +vector<ServerInfo>query_service_info(QueryType)
+    +ServiceInfo lookup_for_service(ServiceName)
+    +bool is_service_available(ServiceName)
+    - rpc_server
+    - rpc_client
+    - vector<PublisherInfo> pub_info
+    - vector<SubscriberInfo> sub_info
+    - vector<ServiceServerInfo> 
+}
+
+class rpc_server{
+    + register_handler(ServiceName,Callback)
+}
+
+class rpc_client{
+    + call(ServiceName,Args)
+}
+
+ServiceDiscovery --> rpc_client
+ServiceDiscovery --> rpc_server
+@enduml

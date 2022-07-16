@@ -1,0 +1,17 @@
+@startuml
+localization : 定位服务
+planning : 规划决策服务
+vision_perception : 视觉感知
+lidar_perception : lidar感知
+fusion : 融合服务
+hdmap : 高精度地图服务
+controll : 控制服务
+
+localization -> hdmap : 高精度依靠定位结果生成结构化道路信息
+vision_perception -down-> fusion : 视觉感知输出给融合
+lidar_perception -down-> fusion : lidar感知输出给融合
+lidar_perception -left-> localization : lidar结合点云辅助定位
+hdmap -> planning :结构化道路信息输入给决策
+fusion -down-> planning : 融合结果输入给决策
+planning -> controll :规划决策结果输入给控制模块
+@enduml

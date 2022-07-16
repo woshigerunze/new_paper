@@ -1,0 +1,91 @@
+@startuml
+package CPPUserInterface
+package FunctionModule{
+component TaskLayer{
+    [TaskWrapper]
+    component ScheduleLayer{
+        [TaskScheduler]
+    }
+    component CommunicationLayer{
+        [SubScriber]
+        [PubLisher]
+        [ServiceServer]
+        [ServiceClient]
+        component CommunicationAbstractLayer{
+            [CommunicationAbstract]
+            [PubAbstract]
+            [SubAbstract]
+            [ServiceAbstract]
+        component CommunicationTransportLayer{
+            component NetworkCommunication{
+                [NetworkManager]
+                [NetworkPublisher]
+                [NetworkSubscriber]
+            }
+            component IntraProcessCommunication{
+                [IntraProcessManager]
+                [IntraProcessPublisher]
+                [IntraProcessSubscriber]
+            }
+            component InterProcessCommunication{
+                [InterProcessManager]
+                [InterProcesPublisher]
+                [InterProcessSubscriber]
+            }
+            component MessageEngine{
+                [MessageManager]
+                [E2E]
+                [Serialize]
+                [Deserialize]
+            }
+            component ServiceDiscovery{
+                [ServiceDiscoveryManager]
+            }
+        }
+        }
+    }
+}
+[TaskWrapper] ..> [TaskScheduler] : use
+[TaskWrapper] ..> [SubScriber] : use
+[TaskWrapper] ..> [PubLisher] : use
+[TaskWrapper] ..> [ServiceServer] : use
+[TaskWrapper] ..> [ServiceClient] : use
+
+[SubScriber] ..> [CommunicationAbstract] : use
+[PubLisher] ..> [CommunicationAbstract] : use
+[ServiceServer] ..> [CommunicationAbstract] : use
+[ServiceClient] ..> [CommunicationAbstract] : use
+
+[CommunicationAbstract] ..> [PubAbstract] : create
+[CommunicationAbstract] ..> [SubAbstract] : create
+[CommunicationAbstract] ..> [ServiceAbstract] : create
+[CommunicationAbstract] ..> [ServiceDiscoveryManager] : create
+
+[PubAbstract] ..> [NetworkManager] : create
+[PubAbstract] ..> [IntraProcessManager] : create
+[PubAbstract] ..> [InterProcessManager] : create
+
+[SubAbstract] ..> [NetworkManager] : create
+[SubAbstract] ..> [IntraProcessManager] : create
+[SubAbstract] ..> [InterProcessManager] : create
+
+[NetworkManager] ..> [NetworkPublisher] : create
+[NetworkManager] ..> [NetworkSubscriber] : create
+[IntraProcessManager] ..> [IntraProcessPublisher] : create
+[IntraProcessManager] ..> [IntraProcessSubscriber] : create
+[InterProcessManager] ..> [InterProcesPublisher] : create
+[InterProcessManager] ..> [InterProcessSubscriber] : create
+
+[NetworkPublisher] ..down-> [MessageManager] : use
+[NetworkSubscriber] ..down-> [MessageManager] : use
+[IntraProcessPublisher] ..down-> [MessageManager] : use
+[IntraProcessSubscriber] ..down-> [MessageManager] : use
+[InterProcesPublisher] ..down-> [MessageManager] : use
+[InterProcessSubscriber] ..down-> [MessageManager] : use
+[MessageManager] ..> [E2E] : use
+[MessageManager] ..> [Deserialize] : use
+[MessageManager] ..> [Serialize] : use
+}
+FunctionModule -up-  () "CPP API"
+CPPUserInterface ..> () "CPP API" : use
+@enduml

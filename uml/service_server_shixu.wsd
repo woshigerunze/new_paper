@@ -1,0 +1,35 @@
+@startuml
+group create_service_server
+activate ServiceServer
+ServiceServer -> CommunicationAbstract : create_service_server
+activate CommunicationAbstract
+CommunicationAbstract -> ServiceAbstract : bind_service
+activate ServiceAbstract
+ServiceAbstract --> CommunicationAbstract : 绑定成功
+loop 监听服务请求
+ServiceAbstract -> ServiceAbstract : 处理请求
+end
+CommunicationAbstract -> ServiceDiscoveryManager : create_service_server
+activate ServiceDiscoveryManager
+ServiceDiscoveryManager -> ServiceDiscoveryManager : rpc_query
+ServiceDiscoveryManager --> CommunicationAbstract : 创建成功
+deactivate ServiceDiscoveryManager
+CommunicationAbstract --> ServiceServer : 创建成功
+deactivate CommunicationAbstract
+end
+
+group delete_service_server
+ServiceServer -> CommunicationAbstract : delete_service_server
+activate CommunicationAbstract
+CommunicationAbstract -> ServiceAbstract : delete_service_server
+activate ServiceDiscoveryManager
+ServiceDiscoveryManager -> ServiceDiscoveryManager : rpc_query
+ServiceDiscoveryManager --> CommunicationAbstract : 删除成功
+deactivate ServiceDiscoveryManager
+CommunicationAbstract -> ServiceAbstract : unbind_service
+ServiceAbstract --> CommunicationAbstract : 解除绑定成功
+deactivate ServiceAbstract
+CommunicationAbstract --> ServiceServer : 删除成功
+deactivate CommunicationAbstract
+end
+@enduml

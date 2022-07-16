@@ -1,0 +1,20 @@
+@startuml 流程图
+digraph flowchart {
+    node[shape="box", style="rounded"]
+        开始; 结束;
+    node[shape="box", style=""]
+        输入连接地址;进程内通信;进程间通信;网络通信;
+    node[shape="diamond", style=""]
+        网络通信前缀; 进程间通信前缀;
+    开始 -> 输入连接地址;
+    输入连接地址 -> 网络通信前缀;
+    网络通信前缀 -> 网络通信[label="yes"];
+    网络通信前缀 -> 进程间通信前缀[label="no"]
+    进程间通信前缀 -> 进程间通信[label="yes"]
+    进程间通信前缀 -> 进程内通信[label="no"]
+    进程间通信 -> 连接
+    进程内通信 -> 连接
+    网络通信 -> 连接
+    连接 -> 结束
+}
+@enduml

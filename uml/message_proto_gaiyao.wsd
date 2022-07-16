@@ -1,0 +1,57 @@
+@startuml
+folder example.proto[
+    example.proto
+    ---
+    message example{
+        required int32 day = 1;
+        required int32 month = 2;
+        required int32 year = 3;
+    }
+]
+folder example.pb.h[
+    example.pb.h
+    ---
+    example object;
+    set_day();
+    set_month();
+    set_year();
+    SerializePartialToArray();
+    ParsePartialFromArray();
+]
+
+folder example.pb.cc[
+    example.pb.cc
+]
+
+folder example.h[
+    example.h
+    ---
+    convert();
+    Serialize();
+    Deserialize();
+
+]
+
+folder example.cpp[
+    example.cpp
+]
+
+folder example.cppstruct[
+    example.cppstruct
+    ---
+    struct example{
+        int day;
+        int month;
+        int day;
+    }
+]
+example.cpp ..> example.h : 实现
+example.proto --> example.pb.h : protoc生成
+example.proto -> example.pb.cc : protoc生成
+
+example.pb.cc ..> example.pb.h : 实现
+
+example.h --left-> example.pb.h : 使用
+example.cppstruct -up-> example.proto : 转换
+example.proto -down-> example.cppstruct : 转换
+@enduml

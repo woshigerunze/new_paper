@@ -1,0 +1,78 @@
+@startuml
+class Subscriber{
+    +{abstract}bool empty()
+    +{abstract}int size()
+    +{abstract}Message pop()
+    +{abstract}Message pop_newest()
+    +{abstract}Message pop_newest_and_clear()
+}
+
+class  InternalSubscriber{
+    +{static} shared_ptr<InternalSubscriber> make(SubscriberConfig)
+}
+
+class CommunicationAbstract{
+    - vector<SubscriberInfo>
+    + bool create_subscriber(SubscriberConfig)
+    + bool delete_subscriber(SubscriberConfig)
+    + bool modify_subscriber_domain(SubscriberConfig)
+    + vector<SubscriberInfo> query_pulishers_info(QueryType)
+    + vector<SubscriberInfo> query_subscribers_info(QueryType)
+    + bool change_communication_mode(SubscriberConfig)
+
+}
+
+class SubAbstract{
+    - NetworkManager
+    - IntraProcessManager
+    - InterProcessManager
+    + void make_communication_connection(ConnectURL)
+}
+
+class ServiceDiscoveryManager{
+    + bool create_subscriber(DiscoveryParam)
+    + bool delete_subscriber(DiscoveryParam)
+    + bool modify_subscriber_domain(DiscoveryParam)
+    + vector<PublisherInfo> query_pulishers_info(DiscoveryParam)
+    + vector<SubscribersInfo> query_subscribers_info(DiscoveryParam)
+    - void rpc_query()
+}
+
+class InternalSubscriberImpl{
+    - SubscriberConfig
+    - TaskScheduleConfig
+    + InternalsubscriberImpl(SubscriberConfig)
+    + bool create_subscriber(SubscriberConfig)
+    + bool delete_subscriber(DeleteType)
+    + bool modify_subscriber_domain(DomainType)
+    + vector<subscriberInfo> query_pulishers_info(QueryType)
+    + vector<SubscribersInfo> query_subscribers_info(QueryType)
+    + bool change_communication_mode(SubscriberConfig)
+    +{abstract}bool empty()
+    +{abstract}int size()
+    +{abstract}Message pop()
+    +{abstract}Message pop_newest()
+    +{abstract}pop_newest_and_clear()
+}
+
+class Dequeue{
+    - mutex_t
+    +bool push()
+    +bool empty()
+    +int size()
+    +Message pop()
+    +Message pop_newest()
+    +pop_newest_and_clear()
+}
+class TaskScheduler{
+    + void create_message_task()
+    + void activite_task()
+}
+Subscriber <|-- InternalSubscriber
+InternalSubscriber <|-- InternalSubscriberImpl
+InternalSubscriberImpl ..-right-> CommunicationAbstract
+InternalSubscriberImpl o--> Dequeue
+InternalSubscriberImpl ..> TaskScheduler
+CommunicationAbstract o-down-> SubAbstract
+CommunicationAbstract o--up-> ServiceDiscoveryManager
+@enduml

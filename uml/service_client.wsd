@@ -1,0 +1,54 @@
+class ServiceClient{
+    +{static}shared_ptr<ServiceClient> make(ServiceClientConfig)
+    +{abstract} bool is_service_available()
+    +{abstract} Result call_service()
+    +{abstract}void create_service_client(ServiceClientConfig)
+    +{abstract}void delete_service_client(ServiceClientConfig)
+    +{abstract}void modify_service_client_domain(ServiceClientConfig)
+    +{abstract}vector<ServerInfo> query_service_list(QueryType)
+}
+
+
+class InternalServiceClientImpl{
+    - ServiceClientConfig
+    +InternalServiceClientImpl(ServiceClientConfig)
+    +{abstract} is_service_available()
+    +{abstract} call_service()
+    +{abstract}void create_service_client(ServiceClientConfig)
+    +{abstract}void delete_service_client(ServiceClientConfig)
+    +{abstract}void modify_service_client_domain(ServiceClientConfig)
+    +{abstract}vector<ServerInfo> query_service_list(QueryType)
+
+}
+
+class CommunicationAbstract{
+    +bool create_service_client(ServiceClientConfig)
+    +bool delete_service_client(ServiceClientConfig)
+    +bool modify_service_client_domain(ServiceClientConfig)
+    +bool is_service_available(ServiceClientConfig)
+    +Result call_service(ServiceClientConfig)
+    +vector<ServerInfo> query_service_list(QueryType)
+}
+
+class ServiceDiscoveryManager{
+    +bool create_service_client(DiscoveryParam)
+    +bool delete_service_client(DiscoveryParam)
+    +bool modify_service_client_domain(DiscoveryParam)
+    +vector<ServerInfo> query_service_list(QueryType)
+    +ServiceInfo lookup_for_service(ServiceClientConfig)
+    +bool is_service_available(ServiceClientConfig)
+
+    - rpc_query
+}
+
+class ServiceAbstract{
+    - rpc_server
+    +Result call_service(ServiceClientConfig)
+    -bool lookup_for_service(ServiceClientConfig)
+}
+
+ServiceClient <|-- InternalServiceClientImpl
+
+InternalServiceClientImpl ..right-> CommunicationAbstract
+CommunicationAbstract ..down->ServiceAbstract
+CommunicationAbstract .up->ServiceDiscoveryManager

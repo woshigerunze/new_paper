@@ -1,0 +1,39 @@
+@startuml
+|InternalServiceServerImpl|
+start
+:创建服务服务端;
+if (配置文件参数检查) is (合法) then
+:注册服务服务端;
+else (不合法)
+end
+endif
+
+|CommunicationAbstract|
+:创建抽象服务类;
+:设置服务发现更新参数;
+|ServiceDiscoveryManager|
+if (查询参数检查) is (合法) then
+:更新网络拓扑;
+else (不合法)
+end
+endif
+
+|CommunicationAbstract|
+:绑定服务;
+|ServiceAbstract|
+:设置服务监听请求任务;
+fork
+|InternalServiceServerImpl|
+:注册成功;
+detach
+fork again
+|ServiceAbstract|
+:开启服务请求监听;
+end fork
+|ServiceAbstract|
+while (是否存在服务请求)
+    :处理请求;
+endwhile
+stop
+@enduml
+

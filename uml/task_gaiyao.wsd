@@ -1,0 +1,14 @@
+@startuml
+hide empty description
+
+[*] --> 初始化 : init
+
+初始化 -> 运行 : running
+运行 -down-> 暂停 : pause
+暂停 -> 运行 : resume
+
+暂停 -> 销毁 : destroy
+销毁 -down-> [*]
+
+@enduml
+

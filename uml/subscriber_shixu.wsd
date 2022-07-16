@@ -1,0 +1,68 @@
+@startuml
+group create_sublisher
+activate Subscriber
+Subscriber -> TaskScheduler : create_message_task
+activate TaskScheduler
+TaskScheduler --> Subscriber : 调度任务创建成功
+deactivate TaskScheduler
+Subscriber -> CommunicationAbstract : create_publisher
+activate CommunicationAbstract
+' CommunicationAbstract -> CommunicationAbstract : 创建PubAbstract类
+' CommunicationAbstract -> CommunicationAbstract : 生成服务发现请求参数
+CommunicationAbstract -> ServiveDiscoveryManager : create_publisher
+' deactivate CommunicationAbstract
+activate ServiveDiscoveryManager
+ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+ServiveDiscoveryManager -> SubAbstract : make_communication_connection\nConnectURL
+' deactivate ServiveDiscoveryManager
+activate SubAbstract
+' PubAbstract -> PubAbstract : 通信链路匹配
+' ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+SubAbstract --> ServiveDiscoveryManager : 连接成功
+deactivate SubAbstract
+
+ServiveDiscoveryManager --> CommunicationAbstract : 创建成功
+deactivate ServiveDiscoveryManager
+CommunicationAbstract --> Subscriber : 创建成功
+deactivate CommunicationAbstract
+' deactivate Publisher
+loop 
+activate SubAbstract
+SubAbstract -> SubAbstract : message_poll
+SubAbstract --> Subscriber : new_message
+Subscriber -> Subscriber : push
+Subscriber -> TaskScheduler : acticate_task
+activate TaskScheduler
+TaskScheduler -> TaskScheduler : scheduler_task
+TaskScheduler -> Subscriber : 调度成功
+deactivate TaskScheduler
+deactivate SubAbstract
+end
+end
+
+group change_communication_mode
+Subscriber -> CommunicationAbstract : change_communication_mode
+activate CommunicationAbstract
+CommunicationAbstract -> ServiveDiscoveryManager : change_communication_mode
+activate ServiveDiscoveryManager
+ServiveDiscoveryManager -> ServiveDiscoveryManager : rpc_query
+ServiveDiscoveryManager -> SubAbstract : make_communication_connection\nConnectURL
+activate SubAbstract
+SubAbstract --> ServiveDiscoveryManager : 连接成功
+deactivate SubAbstract
+ServiveDiscoveryManager --> CommunicationAbstract : 修改成功
+deactivate ServiveDiscoveryManager
+CommunicationAbstract --> Subscriber : 修改成功
+deactivate CommunicationAbstract
+end
+
+' activate SubAbstract
+
+' loop 
+' activate SubAbstract
+' SubAbstract -> SubAbstract : message_poll
+' SubAbstract --> Subscriber : new_message
+' Subscriber -> Subscriber : push
+
+' end
+@enduml

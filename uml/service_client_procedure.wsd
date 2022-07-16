@@ -1,0 +1,37 @@
+@startuml
+|InternalServiceClientImpl|
+start
+:创建服务客户端;
+if (配置文件参数检查) is (合法) then
+:注册服务客户端;
+else (不合法)
+end
+endif
+
+|CommunicationAbstract|
+:创建抽象服务类;
+:设置服务发现更新参数;
+|ServiceDiscoveryManager|
+if (查询参数检查) is (合法) then
+:更新网络拓扑;
+else (不合法)
+end
+endif
+|InternalServiceClientImpl|
+:注册成功;
+while (是否请求服务)
+    :发出请求;
+    |CommunicationAbstract|
+    :调用ServiceAbstract;
+    |ServiceAbstract|
+    if(服务可用) is (可用) then
+        :发出请求;
+        :返回结果;
+    else (不合法)
+    :请求失败;
+    endif
+endwhile
+|InternalServiceClientImpl|
+stop
+@enduml
+
