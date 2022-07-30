@@ -144,7 +144,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 
 订阅者模块中的管理接口由用户直接调用，接口设计如表4.2所示。管理接口中，create\_subscriber接口需要配置文件作为
 参数并根据话题名称与通信域供服务发现模块进行服务发现并与匹配的发布者进行点对点的连接；delete\_subscriber接口
-不需要接收任何参数，由接口内部向服务发现模块发出删除请求；modify\_subscriber\_domain接口需要由用户指定修改
+需要由用户指定删除类型，接口内部根据删除类型判断是否需要保存未接受的消息并向服务发现模块发出删除请求；modify\_subscriber\_domain接口需要由用户指定修改
 后的通信域作为参数；query\_publishers\_info与query\_subscribers\_info接口根据查询范围与查询条件查询系统内的发布者信息或订阅者信息，
 查询范围可以选择本地域或全域，查询条件可以选择按话题查询或全量查询。
 \begin{table}[htb]
@@ -591,18 +591,23 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 消息压入订阅者模块中的消息队列中供用户使用。
 
 \subsection{消息模块概要设计}
-消息模块向网络通信模块和进程间通信模块提供消息的序列化、反序列化以及端到端通信保护功能。
-\subsubsection{序列化与反序列化概要设计}
+消息模块向网络通信模块和进程间通信模块提供消息的序列化和反序列化功能。
 本系统使用protobuf作为消息的序列化与反序列化的工具。protobuf需要由用户根据业务需要的数据结构
 编写后缀名为.proto的IDL文件并使用protobuf提供的protoc工具生成与.proto文件对应的.pb.h文件和.pb.cc文件，
 用户通过引用.pb.h文件中的C++接口实现对消息的序列化与反序列化，但.pb.h中的接口与C++原生数据结构（int，vector等）
-在赋值等场景下的使用方法并不相同，本系统基于protobuf生成的.pb.h与.pb.cc文件二次生成一套C++代码。二次生成的代码
-向用户提供与.proto文件对应的原生C++数据结构，用户在发布者类与订阅者类使用原生C++数据结构进行对消息的处理。但在
+在赋值等场景下的使用方法并不相同，本系统基于protobuf生成的.pb.h与.pb.cc文件二次生成一套C++代码。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{message_proto_struct_convert.png}
+  \caption{二次生成代码文件关系}
+  \label{proto-struct-convert}
+\end{figure}
+
+如图\ref{proto-struct-convert}所示，二次生成的代码向用户提供与.proto文件对应的原生C++数据结构，用户在发布者类和订阅者类中使用原生C++数据结构进行对消息的处理。但在
 网络通信模块和进程间通信模块发布消息时，二次生成代码通过protobuf接口将原生的C++数据结构转换为protobuf接口并调用
 protobuf提供的序列化接口将转换后的结构序列化后发布消息；在网络通信模块和进程间通信模块接收消息时，二次生成代码通过protobuf提供的
 反序列化接口先将消息反序列化为protobuf结构，再将protobuf结构转换为原生C++结构。
 
-\subsubsection{端到端通信保护概要设计}
 
 
 \section{服务发现模块概要设计}
@@ -678,7 +683,7 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 一个任务共存在四种状态：初始化、运行、暂停和销毁，任务的状态管理由状态机管理，任务模块的状态机设计如图4.13所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.55\textwidth]{4.16.png}
+  \includegraphics[width=0.45\textwidth]{4.16.png}
   \caption{任务模块状态机}
   \label{fig:19}
 \end{figure}
@@ -688,7 +693,7 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 配置文件创建调度任务并执行调度任务，调度配置文件如表4.13所示。taks\_name是不同调度任务的名称，不同的调度任务
 以任务名称区分；task\_callback是调度任务对应的回调函数，当任务被调度时将执行该函数。配置文件中的字段全部由
 用户指定。
-\begin{table}[htb]
+\begin{table}[H]
   \centering\small
   \caption{调度配置文件}
   \label{tab:exampletable}
@@ -704,7 +709,7 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 
 调度模块的接口设计如表4.14所示。create\_message\_task接口用于创建基于消息触发的调度任务，create\_time\_task
 接口用于创建基于时间触发的调度任务，avtivate\_task接口用于激活指定的调度任务。
-\begin{table}[htb]
+\begin{table}[H]
   \centering\small
   \caption{调度模块接口设计}
   \label{tab:exampletable}

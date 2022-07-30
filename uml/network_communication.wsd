@@ -1,0 +1,25 @@
+@startuml
+class NetWorkManager{
+    - NetworkdPublisher publisher
+    - NetworkdSubscriber subscriber
+    + create_publisher()
+    + create_subscriber()
+    + publish(Message)
+    + void set_callback(DataCallback)
+    + void message_poll()
+}
+class NetworkdPublisher{
+    - zmq_socket publisher
+    + bind(connectURL)
+    + unbind(connectURL)
+    + publish(Message)
+}
+class NetworkdSubscriber{
+    - zmq_socket subscriber
+    + connect(connectURL)
+    + disconnect(connectURL)
+}
+
+NetWorkManager o--> NetworkdPublisher
+NetWorkManager o--> NetworkdSubscriber
+@enduml

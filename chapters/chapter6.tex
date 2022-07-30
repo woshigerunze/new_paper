@@ -1,1 +1,43 @@
 \chapter{自动驾驶运行时通信系统测试与分析}
+本章在上一章实现了自动驾驶运行时通信系统的各功能模块的基础上，以验证本系统设计的可行性与准确性为目标，展开
+对整个自动驾驶运行时通信系统进行功能性测试和非功能性测试。本章从测试环境、测试方法以及测试结果展开论述，并给出测试结果。
+
+\section{测试环境}
+本节是对测试环境的介绍，即自动驾驶运行时通信系统的运行环境。本系统支持在兼容Linux的操作系统上运行，并且支持在x86或ARM架构
+的CPU上运行。本文测试选用个人笔记本对系统进行测试，具体配置如表6.1所示。
+\begin{table}[htb]
+  \centering\small
+  \caption{测试环境配置}
+  \label{tab:exampletable}
+  \begin{tabular}{cc}
+    \toprule
+    硬件 & 配置信息 \\
+    \midrule
+    操作系统 & Ubuntu16.04.12\\
+    处理器 & Intel Core i7-8550U, 1.80GHz $\times$ 8\\
+    内存 & 16GB, DDR4 2400MHz\\
+    硬盘 & 512GB\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+    
+\section{功能性测试}
+\section{非功能性测试}
+\begin{table}[htb]
+  \centering\small
+  \caption{常见消息队列每秒收发消息数量对比}
+  \label{tab:exampletable}
+  \begin{tabular}{ccccc}
+    \toprule
+    \multirow{2}{*}{通信方式} & \multirow{2}{*}{消息大小} & \multicolumn{3}{c}{延迟统计}\\
+    % \cline{3-5}
+     & & 平均延迟 & 最小延迟 & 最大延迟\\
+    \midrule
+    \multirow{4}{*}{进程间通信通信} & 1KB& 0.0513ms& 0.0513ms& 0.0513ms\\ & 1 & 1 & 1 & 1 \\ & 1 & 1 & 1 & 1 \\ & 1 & 1 & 1 & 1\\
+    \hline
+    \multirow{4}{*}{进程内通信} & 1KB& 0.0513ms& 0.0513ms& 0.0513ms\\ & 1 & 1 & 1 & 1 \\ & 1 & 1 & 1 & 1 \\ & 1 & 1 & 1 & 1\\
+    \hline
+    \multirow{4}{*}{网络通信} & 1KB& 0.0513ms& 0.0513ms& 0.0513ms\\ & 1 & 1 & 1 & 1 \\ & 1 & 1 & 1 & 1 \\ & 1 & 1 & 1 & 1\\
+    \bottomrule
+  \end{tabular}
+\end{table}

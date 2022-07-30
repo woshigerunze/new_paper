@@ -298,14 +298,8 @@ ServiceAbstract类时序图如图5.11所示。
 本节将进程内通信模块、进程间通信模块、网络通信模块和消息模块进行详细设计与实现。
 \subsection{进程内通信模块详细设计与实现}
 根据概要设计中对本模块提出的设计方案，本模块相关类设计如图5.12所示。本模块包含进程内通信管理类IntraProcessManager、
-进程内通信发布者类IntraProcessPublisher和进程内通信订阅者类IntraProcessSubscriber类。IntraProcessManager类控制
+进程内通信发布者类IntraProcessPublisher和进程内通信订阅者类IntraProcessSubscriber。IntraProcessManager类控制
 IntraProcessPublisher类和IntraProcessSubscriber类的生命周期。
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.65\textwidth]{5.12.png}
-  \caption{进程内通信模块类图}
-  \label{fig:11}
-\end{figure}
 
 考虑到进程内通信并不需要严格将不同话题的发布者和订阅者区分，
 IntraProcessManager类采用单例设计，每个进程中只存在一个实例，所有的进程内通信发布者和进程内通信订阅者全部保存在
@@ -317,16 +311,22 @@ set\_callback函数被对应的SubAbstract类调用，IntraProcessManger
 类将Subscriber类DataCallback与connectURL保存至哈希表DataCallbacks中。
 message\_poll函数对每个IntraProcessPublisher类中的消息队列进行轮询，若有新消息则根据connectURL找到对应Subscriber类
 的DataCallback执行回调函数，IntraProcessManager类中开辟新线程执行此函数。
-
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.65\textwidth]{5.12.png}
+  \caption{进程内通信模块类图}
+  \label{fig:11}
+\end{figure}
 IntraProcessPublisher类中的bind函数将IntraProcessPublisher类中的connectURL更新为PubAbstract类返回的
 连接地址connectURL；unbind函数将类中的connectURL清空；publish函数将待发布消息压入类中的消息队列MessageQueue。
 IntraProcessSubscriber类中的connect和disconnect函数不实现任何功能，设计这两个接口的目的是与IntraProcessPublisher类中
 的bind和unbind函数相呼应。
 
 IntraProcessManager类中message\_poll函数对消息轮询的实现如算法\ref{messagepoll}所示。如上文所述，该函数运行在
-新的线程中并以死循环的方式对消息进行轮询。循环首先获取各publisher的connectURL（第3行），随后将publisher中消息队列MessageQueue
-中的消息存入临时队列message（第5行），随后将该publisher的MessageQueue清空（第7行），接着在哈希表DataCallbacks中查询以connectURL键的
-值是否存在（第8行），若存在根据键获取DataCallback并将临时队列所有消息作为参数调用DataCallback（第9-12行）。
+新的线程中并以死循环的方式对消息进行轮询。循环首先获取各publisher的connectURL（第3行）；随后将publisher中消息队列MessageQueue
+中的消息存入临时队列message（第5行）；随后将该publisher的MessageQueue清空（第7行）；接着在哈希表DataCallbacks中查询以connectURL键的
+值是否存在（第8行）；若存在根据键获取DataCallback并将临时队列所有消息作为参数调用DataCallback，将消息压入对应订阅者类Subscriber
+的消息队列中并执行调度任务（第9-12行）。
 \begin{algorithm}
   \small
   \SetAlgoLined
@@ -459,8 +459,9 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
 创建过程中SHMWriter使用pthread\_mutexattr\_setpshared函数将互斥锁write\_lock的进程共享属性设置为PTHREAD\_PROCESS\_SHARED，
 使用pthread\_mutexattr\_setrobust函数将互斥锁write\_lock的健壮属性设置为PTHREAD\_MUTEX\_ROBUST。设置后，互斥锁write\_lock
 可以被跨进程使用并且可以保证健壮性。
-创建完成后，共享内存中的各部分地址排列如图5.15所示。
-\begin{algorithm}
+创建完成后，共享内存中的各部分地址排列如上图5.15所示。
+
+\begin{algorithm}[H]
   \small
   \SetAlgoLined
   shm\_file = shm\_ipc+topic\_name\;
@@ -551,7 +552,39 @@ pthread\_mutexattr\_setrobust函数将互斥锁write\_lock设置为PTHREAD\_MUTE
 \end{algorithm}
 
 \subsection{网络通信模块详细设计与实现}
+根据概要设计中对本模块提出的设计方案，本模块相关类设计如图\ref{network_communication}所示。本模块包含网络通信
+管理类NetworkManager、网络通信发布者类NetworkPublisher和网络通信订阅者类NetworkSubscriber。NetworkManager类
+控制NetworkPublisher类和NetworkSubscriber类的生命周期。
 
+NetworkPublisher类中包含一个未初始化的ZeroMQ套接字zmq\_socket，在算法\ref{create}抽象发布类PubAbstract创建NetworkPublisher类实例后会调用
+该类内部的bind函数，函数中将zmq\_socket套接字初始化为ZMQ\_PUB属性并绑定至connectURL。
+
+NetworkSubscriber类中同样包含一个未初始化的ZeroMQ套接字zmq\_socket，在算法\ref{connect}抽象订阅类SubAbstract
+创建NetworkSubscriber类实例后调用该类内部connect函数，函数中将zmq\_socket套接字初始化为ZMQ\_SUB属性并连接至connectURL。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.65\textwidth]{network_communication.png}
+  \caption{网络通信模块类图}
+  \label{network_communication}
+\end{figure}
+NetworkManager类开辟新线程执行message\_poll，函数内部以死循环的方式对消息进行轮询，具体实现如算法\ref{network_messagepoll}所示。
+首先定义ZeroMQ的消息变量message（第2行）；随后使用subscriber类中的zmq\_socket接收消息并进入阻塞状态，直至接收到publisher发布的
+ZeroMQ消息（第3行）；接收到消息后，对消息进行反序列化（第4行）；最后将消息作为参数调用DataCallback，将消息压入对应订阅者类Subscriber
+的消息队列中并执行调度任务（第5行）。
+\begin{algorithm}
+  \small
+  \SetAlgoLined
+  \KwData{ZeroMQ message}
+  \While{true}{
+    zmq\_message message\;
+    subscriber.zmq\_socket.recv(message)\;
+    Message = DeSerialize(message)\;
+    DataCallback(Message)\;
+  }
+  return 
+  \caption{进程内通信消息轮询算法}
+  \label{network_messagepoll}
+\end{algorithm}
 
 \subsection{消息模块详细设计与实现}
 
