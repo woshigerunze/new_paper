@@ -2,33 +2,56 @@
 
 \ustcsetup{
   keywords = {
-    中国科学技术大学, 学位论文, \LaTeX{} 模板, 学士, 硕士, 博士
+    自动驾驶, 通信系统, 自适应通信方式
   },
   keywords* = {
-    University of Science and Technology of China (USTC), Thesis,
-    \LaTeX{} Template, Bachelor, Master, PhD
+    Autonomous-driving, Communication system,Adaptive communication
   },
 }
 
 \begin{abstract}
-  草泥马摘要是论文内容的总结概括，应简要说明论文的研究目的、基本研究内容、 研究方法或
-  过程、结果和结论，突出论文的创新之处。摘要中不宜使用公式、图表，不引用文献。
-  博士论文中文摘要一般800～1000个汉字，硕士论文中文摘要一般600个汉字。英文摘要的
-  篇幅参照中文摘要。
+  随着近几年自动驾驶行业的迅速发展，国内外越来越多的厂商开始从事自动驾驶行业并进行商业应用探索。目前各大传统车企、
+  互联网企业以及新兴自动驾驶企业在自动驾驶量产领域以相互合作、相互竞争，自动驾驶量产项目取得了显著的成果。虽然
+  自动驾驶行业发展迅速，但行业内已经普遍认识ROS（Robot Operating System，机器人操作系统）作为自动驾驶系统通信中间件
+  的弊端。在自动驾驶系统日益复杂的情况下，ROS通信手段单一、通信延迟高、扩展性弱的缺点开始逐渐暴露。
 
-  关键词另起一行并隔写在摘要下方，一般3～8个词，中文关键词间空一字或用分号“；”隔
-  开。英文摘要的关键词与中文摘要的关键词应完全一致，中间用逗号“,”或分号“;”隔开。
+  本文对自动驾驶系统算法模块通信与自动驾驶传感器数据进行分析，根据两者特点设计并实现了一种专注于自动驾驶系统内部算法模块
+  间通信的自动驾驶运行时通信系统。本系统支持基于话题的发布-订阅通信模式和基于服务的请求-应答通信模式。本系统
+  在发布-订阅通信模式下实现了通信方式自适应选择功能，支持以进程间通信、进程内通信和网络通信的通信方式。本系统在实现
+  最基本的通信功能外，还实现了服务发现、任务调度以及简单易用的应用程序接口给用户使用。本系统采用C++语言开发，
+  在系统内部使用ZeroMQ作为网络通信基础库，使用rest\_rpc作为RPC框架实现服务发现以及服务调用功能，使用Google Protobuf作为
+  序列化工具。
+
+  在自动驾驶运行时通信系统开发完成后，本文根据自动驾驶系统通信特点设计了测试方案，对本系统的功能性需求和非功能性需求
+  进行详细测试。测试结果表明了本系统在端到端通信延迟以及系统鲁棒性方面与同类产品的性能保持在同一水平线上。总的来说，
+  本系统具有一定的可行性，对自动驾驶行业中算法模块间通信方面的研究有一定的参考价值。
+
 
 \end{abstract}
 
 \begin{abstract*}
-  This is a sample document of USTC thesis \LaTeX{} template for bachelor,
-  master and doctor. The template is created by zepinglee and seisman, which
-  orignate from the template created by ywg. The template meets the
-  equirements of USTC theiss writing standards.
+  In recent years, with the rapid development of the autonomous driving industry,
+  more and more domestic and foreign manufacturers have begun to set foot in the autonomous driving industry and explore commercial applications.
+  At present, major traditional car companies, Internet companies and emerging autonomous driving companies are cooperating and competing in the field of autonomous driving mass production,
+  and the autonomous driving mass production project has achieved remarkable results.
+  Although the autonomous driving industry is developing rapidly,
+  the industry generally recognizes the drawbacks of ROS(Robot Operating System) as a communication middleware for autonomous driving systems.
+  With the increasing complexity of autonomous driving systems,
+  the shortcomings of ROS such as single communication method,
+  large communication delay,and weak scalability are gradually exposed.
 
-  This document will show the usage of basic commands provided by \LaTeX{} and
-  some features provided by the template. For more information, please refer to
-  the template document ustcthesis.pdf.
+  This paper analyzes the communication between the algorithm modules of the automatic driving system and the sensor data of the automatic driving,
+  and designs and implements an automatic driving runtime communication system that focuses on the communication between the internal algorithm modules of the automatic driving system according to the characteristics of the two.
+  The system supports topic-based publish-subscribe communication mode and service-based request-reply communication mode.The system realizes the function of self-adaptive selection of communication modes in the publish-subscribe communication mode,
+  and supports the communication modes of inter-process communication,intra-process communication and network communication.
+  In addition to the most basic communication functions,the system also implements service discovery,
+  task scheduling and easy-to-use application program interfaces for users to use.This system is developed in C++ language,
+  uses ZeroMQ as the basic library for network communication,rest\_rpc as the RPC framework to realize service discovery and service invocation functions,
+  and uses Google Protobuf as the serialization tool.
 
+  After the development of the automatic driving runtime communication system is completed,
+  this paper designs a test scheme according to the communication characteristics of the automatic driving system,
+  and tests the functional and non-functional requirements of the system in detail.
+  The test results show that the system maintains the same level of performance as similar products in terms of end-to-end communication delay and system robustness.
+  In general,this system has certain feasibility and has certain reference value for the research on communication between algorithm modules in the autonomous driving industry.
 \end{abstract*}

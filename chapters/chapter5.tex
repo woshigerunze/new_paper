@@ -738,6 +738,43 @@ create\_message\_task与create\_time\_task函数
 
 
 \section{中心节点详细设计与实现}
+本系统将中心节点从整个自动驾驶运行时通信系统独立出来单独实现，作为一个独立的模块开发。
+中心节点提供的服务名称及其功能如表\ref{master}所示，中心节点提供的所有RPC服务全部由服务发现模块进行请求。
+\begin{table}[H]
+  \centering\small
+  \caption{中心节点服务}
+  \label{master}
+  \begin{tabular}{lll}
+    \toprule
+    服务名称 & 服务功能 & 请求参数\\
+    \midrule
+    start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
+    stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
+    create\_publisher & 创建发布者 & IP地址，发布者信息\\
+    create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
+    create\_service\_server & 创建服务端 & IP地址，服务端信息\\
+    delete\_publisher & 删除发布者 & IP地址，发布者信息\\
+    delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
+    modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
+    modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
+    modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
+    query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
+    query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
+    query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
+    lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
+中心节点除了将表\ref{master}的服务绑定至自身的RPC服务器之外，自身还实现两个重要功能：保存网络拓扑信息至本地和从本地读取网络拓扑信息。
+中心节点每处理一个来自服务发现模块的RPC请求后，会将当前网络拓扑信息按照存储模型转换为json文件并保存在本地。中心节点在异常退出并被
+重新运行后首先读取本地的json文件将此前的网络拓扑信息恢复。
 
+中心节点是整个通信系统建立通信链路的关键，为了获取中心节点的运行状态本系统为中心节点开发了一个用于监控中心节点运行状态的
+脚本。该脚本每隔5秒钟使用linux中的pgref -f命令查询中心节点的进程号，若查询结果为空则认为中心节点异常退出并在脚本
+内重新启动中心节点程序。
+
+\section{本章小节}
+本章在第四章概要设计的基础之上，结合类图和时序图阐述了自动驾驶运行时通信系统各模块的具体实现。本章重点从通信方式自适应选择算法和
+基于共享内存的进程间通信机制算法展开对本系统核心功能的描述。
 
