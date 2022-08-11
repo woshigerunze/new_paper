@@ -5,7 +5,7 @@
     自动驾驶, 通信系统, 自适应通信方式
   },
   keywords* = {
-    Autonomous-driving, Communication system,Adaptive communication
+    Autonomous-driving, Communication system, Adaptive communication
   },
 }
 
@@ -38,20 +38,20 @@
   the industry generally recognizes the drawbacks of ROS(Robot Operating System) as a communication middleware for autonomous driving systems.
   With the increasing complexity of autonomous driving systems,
   the shortcomings of ROS such as single communication method,
-  large communication delay,and weak scalability are gradually exposed.
+  large communication delay, and weak scalability are gradually exposed.
 
   This paper analyzes the communication between the algorithm modules of the automatic driving system and the sensor data of the automatic driving,
   and designs and implements an automatic driving runtime communication system that focuses on the communication between the internal algorithm modules of the automatic driving system according to the characteristics of the two.
-  The system supports topic-based publish-subscribe communication mode and service-based request-reply communication mode.The system realizes the function of self-adaptive selection of communication modes in the publish-subscribe communication mode,
+  The system supports topic-based publish-subscribe communication mode and service-based request-reply communication mode. The system realizes the function of self-adaptive selection of communication modes in the publish-subscribe communication mode,
   and supports the communication modes of inter-process communication,intra-process communication and network communication.
   In addition to the most basic communication functions,the system also implements service discovery,
-  task scheduling and easy-to-use application program interfaces for users to use.This system is developed in C++ language,
-  uses ZeroMQ as the basic library for network communication,rest\_rpc as the RPC framework to realize service discovery and service invocation functions,
+  task scheduling and easy-to-use application program interfaces for users to use. This system is developed in C++ language,
+  uses ZeroMQ as the basic library for network communication, rest\_rpc as the RPC framework to realize service discovery and service invocation functions,
   and uses Google Protobuf as the serialization tool.
 
   After the development of the automatic driving runtime communication system is completed,
   this paper designs a test scheme according to the communication characteristics of the automatic driving system,
   and tests the functional and non-functional requirements of the system in detail.
   The test results show that the system maintains the same level of performance as similar products in terms of end-to-end communication delay and system robustness.
-  In general,this system has certain feasibility and has certain reference value for the research on communication between algorithm modules in the autonomous driving industry.
+  In general, this system has certain feasibility and has certain reference value for the research on communication between algorithm modules in the autonomous driving industry.
 \end{abstract*}
