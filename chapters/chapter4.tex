@@ -214,12 +214,12 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   pop\_newest\_and\_clear & 从队列取出最新消息并清空队列中所有消息\\
   \end{longtable}  
 
-订阅者模块的时序设计如图4.4所示。
+订阅者模块的时序设计如图\ref{subscriber_gaiyao_timesequence}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.75\textwidth]{4.4.png}
+  \includegraphics[width=0.75\textwidth]{subscriber_gaiyao_timesequence.png}
   \caption{创建订阅者时序图}
-  \label{fig:24}
+  \label{subscriber_gaiyao_timesequence}
 \end{figure}
 用户调用创建订阅者接口后，订阅者模块首先校验配置文件中的必填字段是按要求填写，若配置文件校验失败则本次创建失败；
 配置文件校验成功后，将其中的回调函数作为任务调度模块的调度任务；调度任务设置完成后，将配置文件传至通信抽象模块，
@@ -276,13 +276,13 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 \end{table}
 
 发布者模块的创建、删除与修改流程与订阅者模块大致相似，二者唯一的不同是通信抽象模块会返回与该发布者对应的抽象发布类。
-发布者模块保存该类并通过该类中保存的发布管理类进行发布消息，发布者创建及发布消息时序设计如图4.6所示。
+发布者模块保存该类并通过该类中保存的发布管理类进行发布消息，发布者创建及发布消息时序设计如图\ref{publisher_gaiyao_timesequence}所示。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{4.6.png}
+  \includegraphics[width=0.8\textwidth]{publisher_gaiyao_timesequence.png}
   \caption{创建发布者时序图}
-  \label{fig:26}
+  \label{publisher_gaiyao_timesequence}
 \end{figure}
 
 \section{服务模块概要设计}
@@ -338,13 +338,13 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 服务发现模块将配置文件保存即结束创建工作，服务客户端保存抽象服务类实例后向用户返回创建成功信息。
 
 用户调用发起服务请求接口后，服务客户端通过调用保存的抽象服务类发起实际的RPC调用，调用完成后向用户返回结果。
-服务客户端的时序设计如图4.7所示。
+服务客户端的时序设计如图\ref{client_gaiyao_timesequence}所示。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{4.7.png}
+  \includegraphics[width=0.85\textwidth]{client_gaiyao_timesequence.png}
   \caption{服务客户端时序图}
-  \label{fig:27}
+  \label{client_gaiyao_timesequence}
 \end{figure}
 
 \subsection{服务服务端设计}
@@ -389,12 +389,12 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{4.8.png}
+  \includegraphics[width=0.8\textwidth]{server_gaiyao_timesequence.png}
   \caption{服务服务端时序图}
-  \label{fig:28}
+  \label{server_gaiyao_timesequence}
 \end{figure}
 
-服务服务端时序设计如图4.8所示。用户调用创建创建服务端接口后，服务端保存配置文件并将配置文件作为参数传至通信抽象模块；通信抽象模块
+服务服务端时序设计如图\ref{server_gaiyao_timesequence}所示。用户调用创建创建服务端接口后，服务端保存配置文件并将配置文件作为参数传至通信抽象模块；通信抽象模块
 将配置文件作为参数传至抽象服务类，抽象服务类根据配置文件绑定服务至本地RPC服务器中；通信抽象模块
 在配置文件基础上添加IP地址和端口号并作为服务发现请求参数传至服务发现模块；服务发现模块根据请求参数更新网络拓扑，
 随后向用户返回创建成功信息；服务端创建成功后，由服务抽象类负责监听服务请求并根据用户提供的回调函数对

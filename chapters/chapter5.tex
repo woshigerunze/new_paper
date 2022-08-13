@@ -5,12 +5,12 @@
 \section{系统软件架构设计}
 在概要设计中为了方便本系统向用户提供高抽象能力的接口对本系统进行了层次划分，同时为了便于开发对模块也进行了划分。
 本节从代码开发的角度对本系统软件架构的各层次、各模块关系进行明确定义。
-本系统的组件图如图5.1所示。
+本系统的组件图如图\ref{system_component}所示。
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{5.1.png}
     \caption{自动驾驶运行时通信系统组件图}
-    \label{fig:1}
+    \label{system_component}
   \end{figure}
 从图5.1可以看出，本系统在开发阶段严格遵守概要设计阶段对本系统的层次划分以及模块划分规则。
 
@@ -20,12 +20,12 @@
 
 \subsection{发布者模块详细设计与实现}
 本模块使用C++语言开发并融合其面向对象的编程思想，向用户提供高度抽象的应用程序接口。根据概要设计中的接口设计方案，
-发布者模块相关类设计如图5.2所示。
+发布者模块相关类设计如图\ref{publisher_class}所示。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{5.2.png}
   \caption{发布者模块类图}
-  \label{fig:2}
+  \label{publisher_class}
 \end{figure}
 如图5.2所示，发布者模块主要由Publisher、InternalPublisher和InteralPublisher三个类构成。InternalPublisher
 类根据用户传入的发布者配置文件PublisherConfig使用工厂函数make()创建InternalPublisherImpl类，并
@@ -38,10 +38,10 @@ CommunicationAbstract(通信抽象类)、PubAbstract(抽象发布类)和ServiceD
   \centering
   \includegraphics[width=0.81\textwidth]{5.3.png}
   \caption{发布者模块时序图}
-  \label{fig:3}
+  \label{publisher_timesequence}
 \end{figure}
 
-发布者模块的时序图如图5.3所示。
+发布者模块的时序图如图\ref{publisher_timesequence}所示。
 用户创建发布者时，首先调用InternalPublisherImpl类中的create\_publisher函数，函数体内
 继续调用CommunicationAbstract类的create\_publisher函数，CommunicationAbstract类创建PubAbstract类
 并在PublisherConfig基础上加入IP和进程号生成服务发现参数继续DiscoveryParam调用ServiceDiscoveryManager类中的create\_publisher函数，
@@ -68,7 +68,7 @@ QueryType向中心节点查询订阅者或发布者的信息，返回结果。
 
 \subsection{订阅者模块详细设计与实现}
 本模块与发布者模块设计思想一致，向用户提供高度抽象的应用程序接口。根据概要设计中的接口设计方案，
-订阅者模块相关类设计如图5.4所示。
+订阅者模块相关类设计如图\ref{subscriber_class}所示。
 
 如图5.4所示，订阅者模块类图设计同发布者模块基本一致，主要由Subscriber、InternalSubscriber和InternalSubscriberImpl
 三个类构成。InternalSubscriberImpl内部保存订阅者配置文件和调度配置文件，除了创建、删除和修改通信域三个
@@ -83,17 +83,17 @@ Dequeue类内部存放了互斥锁保证用户从队列中取出消息和底层�
   \centering
   \includegraphics[width=0.85\textwidth]{5.4.png}
   \caption{订阅者模块类图}
-  \label{fig:4}
+  \label{subscriber_class}
 \end{figure}
 
-订阅者模块时序图如图5.5所示。
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.85\textwidth]{5.5.png}
   \caption{订阅者模块时序图}
-  \label{fig:5}
+  \label{subscriber_timesequence}
 \end{figure}
 
+订阅者模块时序图如图\ref{subscriber_timesequence}所示。
 用户创建订阅者时，首先调用InternalSubscriberImpl类的create\_subscriber函数，函数体内设置调度配置文件
 ScheduleConfig并调用TaskScheduler类的create\_message\_task()函数创建调度任务并生成相应的回调函数供
 SubAbstract类进行回调，回调函数的功能是将新消息压入消息队列并唤醒调度任务，随后继续调用CommunicationAbstract类
@@ -116,12 +116,12 @@ SubAbstract类在完成通信链路的建立后开辟轮询新消息的新线程
 子模块共同实现功能。服务端实现管理服务端以及向客户端提供服务的功能，客户端实现管理客户端以及向服务端请求服务的功能。
 服务模块设计思想同通信单元模块一致，都采用了面向对象的编程方法，向用户提供高度抽象的应用程序接口。
 \subsection{服务端详细设计与实现}
-根据概要设计中的接口设计方案，服务端相关类设计如图5.6所示。
+根据概要设计中的接口设计方案，服务端相关类设计如图\ref{server_class}所示。
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.85\textwidth]{5.6.png}
   \caption{服务端类图}
-  \label{fig:6}
+  \label{server_class}
 \end{figure}
 
 如图5.6所示，ServiceServer类通过make()函数根据传入的服务端配置文件构造实际工作类InternalServiceServerImpl类。
@@ -129,7 +129,7 @@ InternalServiceServerImpl类实现了ServiceServer类的所有虚函数，用户
 InternalServiceServerImpl的所有函数。CommunicationAbstract、ServiceDiscoveryManager和SubAbstract三个类
 共同完成服务于ServiceServer类的提供服务功能。
 
-服务端时序图如图5.7所示。用户通过ServiceServer类中的create\_service\_server函数创建服务端，函数体内继续调用
+服务端时序图如图\ref{server_timesequence}所示。用户通过ServiceServer类中的create\_service\_server函数创建服务端，函数体内继续调用
 CommunicationAbstract类中的create\_service\_server函数，CommunicationAbstract类根据用户传入的
 服务端配置文件ServiceServerConfig调用ServiceAbstract类中的bind\_service函数，ServiceAbstract类根据
 配置文件中的服务名、回调函数绑定服务至rpc服务器，随后CommunicationAbstract类生成服务发现请求参数DiscoveryParam
@@ -145,11 +145,11 @@ delete\_service\_server函数，CommunicationAbstract类首先调用ServiceDisco
   \centering
   \includegraphics[width=0.85\textwidth]{5.7.png}
   \caption{服务端时序图}
-  \label{fig:7}
+  \label{server_timesequence}
 \end{figure}
 
 \subsection{客户端详细设计与实现}
-根据概要设计中的接口方案，客户端相关类设计如图5.8所示。客户端的设计思想同服务端一致，ServiceClient类通过make()函数根据
+根据概要设计中的接口方案，客户端相关类设计如图\ref{client_class}所示。客户端的设计思想同服务端一致，ServiceClient类通过make()函数根据
 传入的客户端配置文件构造实际工作类InternalServiceClientImpl类。InternalServiceClientImpl类实现了ServiceClient类
 所有的虚函数。与服务端不同，客户端的注册、删除和修改通信域并不需要ServiceDiscoveryManager类向中心节点发起请求，ServiceDiscoveryManager类
 只将客户端配置文件保存至本地。只有在客户端发起实际服务请求时ServiceDiscoveryManager类才向中心节点发起请求。
@@ -159,9 +159,9 @@ ServiceAbstract采用单例设计模式，同一个进程中只存在唯一的Se
   \centering
   \includegraphics[width=0.85\textwidth]{5.8.png}
   \caption{客户端类图}
-  \label{fig:8}
+  \label{client_class}
 \end{figure}
-客户端时序图如图5.9所示。用户通过ServiceClient类中的create\_service\_client函数创建客户端，函数体内继续调用
+客户端时序图如图\ref{client_timesequence}所示。用户通过ServiceClient类中的create\_service\_client函数创建客户端，函数体内继续调用
 CommunicationAbstract类中的create\_service\_client，CommunicationAbstract类将客户端配置文件
 ServiceClientConfig保存，随后返回创建成功，创建过程并不需要ServiceDiscoveryManager类参与。此外，用户调用ServiceClient类中的
 delete\_service\_client函数和modify\_service\_client\_domain函数同样不需要ServiceDiscoveryManager类参与。
@@ -177,7 +177,7 @@ lookup\_for\_service函数得到服务的IP地址，随后使用本地的rpc服�
   \centering
   \includegraphics[width=0.85\textwidth]{5.9.png}
   \caption{客户端时序图}
-  \label{fig:9}
+  \label{client_timesequence}
 \end{figure}
 
 \section{通信抽象模块详细设计与实现}
@@ -185,7 +185,7 @@ lookup\_for\_service函数得到服务的IP地址，随后使用本地的rpc服�
 另一方面本模块需要将用户所使用的高度抽象的应用程序接口进行处理，根据配置文件创建抽象订阅类、抽象发布类和抽象服务类并且生成服务发现请求参数通过服务发现模块
 将本进程内发布者、订阅者、服务端信息更新至网络拓扑中。本模块将用户层高度抽象的接口与底层复杂的接口进行了转换。
 
-通信抽象模块相关类设计如图5.10所示。通信抽象模块包含CommunicationAbstract、ServiceDiscoveryManager、PubAbstract、SubAbstract、ServiceAbstract
+通信抽象模块相关类设计如图\ref{communication_abstract_class}所示。通信抽象模块包含CommunicationAbstract、ServiceDiscoveryManager、PubAbstract、SubAbstract、ServiceAbstract
 和Util六个类。Util类作为工具类供CommunicationAbstract类获取本机的IP地址和本进程的进程号。ServiceDiscoveryManager类提供服务发现功能。
 PubAbstract、SubAbstract和ServiceAbsract三个类是本模块的核心类，三个类的生命周期CommunicationAbstract类负责。
 NetworkManager（网络通信管理类）、IntraProcessManager（进程内通信管理类）和InterProcessManager（进程间通信管理类）
@@ -196,7 +196,7 @@ ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现�
   \centering
   \includegraphics[width=0.95\textwidth]{5.10.png}
   \caption{通信抽象模块类图}
-  \label{fig:10}
+  \label{communication_abstract_class}
 \end{figure}
 
 本节从通信方式自适应选择算法的实现和抽象服务类的设计与实现两方面进行阐述。
@@ -285,19 +285,19 @@ rpc\_server和rpc\_client在ServiceAbstract类中唯一存在。
 本系统在设计时将同一个进程内的ServiceAbstract类和ServiceDiscoverManager类需要提供的RPC服务绑定至同一个端口。
 ServiceAbstract类内部分为两个线程，彼此之间异步地运行。一个线程用户rpc\_server接受其他客户端的服务请求，
 另一个线程用于rpc\_client发起服务请求和执行bind\_service、unbind\_service、call\_service和lookup\_for\_service四个函数。
-ServiceAbstract类时序图如图5.11所示。
+ServiceAbstract类时序图如图\ref{service_abstract_timesequence}所示。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{5.11.png}
   \caption{抽象服务类时序图}
-  \label{fig:11}
+  \label{service_abstract_timesequence}
 \end{figure}
 
 \section{通信传输模块详细设计与实现}
 通信传输模块是本系统的核心模块，基于发布-订阅的异步通信的实际消息传输全部由本模块实现。根据概要设计的设计方案，
 本节将进程内通信模块、进程间通信模块、网络通信模块和消息模块进行详细设计与实现。
 \subsection{进程内通信模块详细设计与实现}
-根据概要设计中对本模块提出的设计方案，本模块相关类设计如图5.12所示。本模块包含进程内通信管理类IntraProcessManager、
+根据概要设计中对本模块提出的设计方案，本模块相关类设计如图\ref{intraprocess_communication_class}所示。本模块包含进程内通信管理类IntraProcessManager、
 进程内通信发布者类IntraProcessPublisher和进程内通信订阅者类IntraProcessSubscriber。IntraProcessManager类控制
 IntraProcessPublisher类和IntraProcessSubscriber类的生命周期。
 
@@ -315,7 +315,7 @@ message\_poll函数对每个IntraProcessPublisher类中的消息队列进行轮�
   \centering
   \includegraphics[width=0.65\textwidth]{5.12.png}
   \caption{进程内通信模块类图}
-  \label{fig:11}
+  \label{intraprocess_communication_class}
 \end{figure}
 IntraProcessPublisher类中的bind函数将IntraProcessPublisher类中的connectURL更新为PubAbstract类返回的
 连接地址connectURL；unbind函数将类中的connectURL清空；publish函数将待发布消息压入类中的消息队列MessageQueue。
@@ -358,13 +358,13 @@ IntraProcessManager类中message\_poll函数对消息轮询的实现如算法\re
 本小节依次从共享内存区数据结构设计、进程间通信模块类设计以及共享内存通信机制展开论述。
 
 \subsubsection{共享内存区数据结构设计}
-本系统对共享内存区数据结构设计如图5.13所示，共享内存区由控制和数据两部分组成。控制部分保存了该共享
+本系统对共享内存区数据结构设计如图\ref{shm_data_structure}所示，共享内存区由控制和数据两部分组成。控制部分保存了该共享
 内存区相关信息，而数据部分存储实际的通信消息。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{5.13.pdf}
   \caption{共享内存区数据结构}
-  \label{fig:11}
+  \label{shm_data_structure}
 \end{figure}
 
 在共享内存区的控制部分SHM Header中，由write lock、message slot size、attach count三个字段对共享内存区进行实际的控制。表
@@ -401,7 +401,7 @@ IntraProcessManager类中message\_poll函数对消息轮询的实现如算法\re
 \end{table}
 
 \subsubsection{进程间通信模块类设计}
-根据概要设计中对本模块提出的设计方案，本模块相关类设计如图5.14所示。本模块包含进程间通信管理类InterProcessManager、
+根据概要设计中对本模块提出的设计方案，本模块相关类设计如图\ref{interprocess_communication_class}所示。本模块包含进程间通信管理类InterProcessManager、
 进程间通信发布者类InterProcessPublisher、进程间通信订阅者类InterProcessSubscriber、共享内存写入类ShmWriter
 、共享内存读取类ShmReader、共享内存区控制部分SHMReader类和共享内存区数据部分MessageSlot类。
 
@@ -409,7 +409,7 @@ IntraProcessManager类中message\_poll函数对消息轮询的实现如算法\re
   \centering
   \includegraphics[width=0.75\textwidth]{5.14.png}
   \caption{进程间通信模块类图}
-  \label{fig:11}
+  \label{interprocess_communication_class}
 \end{figure}
 InterProcessManager类的设计与进程内通信模块中IntraProcessManager类的设计相同，InterProcessManager类
 将不同话题下的发布者和通信严格区分，该类不再采用单例模设计，而是根据实际不同话题下发布者和订阅者的数量进行实例化。
@@ -442,14 +442,14 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
 这些内存地址无法访问的。C++ Boost库（标准库的扩展）则提供了专为共享内存设计的容器，重新设计了容器的空间分配器，容器
 可以被跨进程访问。但Boost库的语法比较复杂且源码体积高达1G以上，程序编译时间会明显增加，本系统不采用Boost作为共享内存通信
 的实现手段。本系统采用C++中placement new的方式为共享内存数据结构分配内存，placement new的作用是在某个指定的内存地址上创建
-相关变量。如图5.15所示，共享内存数据结构各字段从mmap返回的首地址开始紧密排放，并且message\_slot中的消息起始内存地址addr
+相关变量。如图\ref{shm_addr_design}所示，共享内存数据结构各字段从mmap返回的首地址开始紧密排放，并且message\_slot中的消息起始内存地址addr
 也全部为共享内存中的地址。不同进程只需要在shm\_attach函数中通过mmap返回的共享内存首地址addr即可访问SHM Header和message slot
 中各变量。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{5.15.png}
   \caption{共享内存地址规划}
-  \label{fig:11}
+  \label{shm_addr_design}
 \end{figure}
 
 \subsubsection{共享内存通信机制设计}
@@ -609,7 +609,7 @@ ZeroMQ消息（第3行）；接收到消息后，对消息进行反序列化（�
 向用户提供查询网络拓扑信息功能。
 
 \subsection{服务发现模块类设计}
-服务发现模块相关类如图5.16所示，本模块类构成相对简单，包含ServiceDiscoveryManager、rpc\_client、rpc\_server
+服务发现模块相关类如图\ref{service_discovery_class}所示，本模块类构成相对简单，包含ServiceDiscoveryManager、rpc\_client、rpc\_server
 三个类。rpc\_client类和rpc\_server类由C++ RPC框架rest\_rpc实现，提供最基本的服务绑定与请求功能。
 ServiceDiscoveryManager类采用单例设计模式，
 使用rest\_rpc框架完成与中心节点的网络拓扑信息交互并控制通信链路，所有函数均由CommunicationAbstract通信抽象类
@@ -625,7 +625,7 @@ CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动�
   \centering
   \includegraphics[width=0.7\textwidth]{5.16.png}
   \caption{服务发现模块类图}
-  \label{fig:11}
+  \label{service_discovery_class}
 \end{figure}
 
 \subsection{发现机制设计}
@@ -659,19 +659,19 @@ CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动�
 
 \section{任务模块详细设计与实现}
 任务模块本身并不提供功能逻辑，功能模块的作用是向用户提供一个统一的基类，
-用户需要继承基类并创建具体的任务类。根据概要设计中的设计方案，任务模块类设计如图5.12所示。
+用户需要继承基类并创建具体的任务类。根据概要设计中的设计方案，任务模块类设计如图\ref{task_class}所示。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.4\textwidth]{5.18.png}
   \caption{任务模块类图}
-  \label{fig:12}
+  \label{task_class}
 \end{figure}
 任务模块的基类Task中的init、pause、resume、running和destroy五个函数全部为纯虚函数，内部不实现任何逻辑。
 用户需要定义自身的任务类如图5.12中的规划任务(PlanningTask)和感知任务(PerceptionTask)继承基类，并
 实现五个函数的逻辑功能。
 
 \section{调度模块详细设计与实现}
-调度模块使用基于消息触发和基于时间触发两种策略调度控制用户任务的运行，调度模块类图设计如图5.13所示。
+调度模块使用基于消息触发和基于时间触发两种策略调度控制用户任务的运行，调度模块类图设计如图\ref{schedul_class}所示。
 Scheduler类采用单例设计，每个进程中只存在一个实例。TaskEntity是调度实体，由任务名TaskName、任务回调函数TaskCallback
 以及缓冲队列Buffer构成，TaskEntity与调度任务一一对应，本系统规定TaskEntity中的回调函数必须是用户任务中的
 running函数。
@@ -682,8 +682,8 @@ create\_message\_task与create\_time\_task函数
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.65\textwidth]{5.19.png}
-  \caption{任务模块类图}
-  \label{fig:13}
+  \caption{调度模块类图}
+  \label{schedul_class}
 \end{figure}
 
 \subsection{基于消息触发的调度详细设计与实现}
@@ -727,13 +727,13 @@ create\_message\_task与create\_time\_task函数
   \label{scheduler}
 \end{algorithm}
 
-整个任务调度模块的线程运行如图5.14所示。消息调度线程只有当Subscriber类中的回调函数DataCallback被抽象订阅类调用是
+整个任务调度模块的线程运行如图\ref{thread_running}所示。消息调度线程只有当Subscriber类中的回调函数DataCallback被抽象订阅类调用是
 才会被激活并执行TaskCallback，而时间调度线程以固定频率执行TaskCallback。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{5.20.png}
   \caption{任务调度模块线程运行图}
-  \label{fig:13}
+  \label{thread_running}
 \end{figure}
 
 

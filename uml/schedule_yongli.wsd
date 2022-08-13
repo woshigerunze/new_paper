@@ -1,0 +1,12 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor 用户
+rectangle 调度策略管理 {
+用户 -- (基于时间的调度策略)
+(基于时间的调度策略) .-> (调度频率) : <<包含>>
+(基于时间的调度策略) .-> (调度任务) : <<包含>>
+
+}
+
+@enduml

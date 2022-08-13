@@ -1,0 +1,11 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor 通信抽象层
+rectangle 通信方式自适应选择 {
+通信抽象层 -- (进程间通信)
+通信抽象层 -- (进程内通信)
+通信抽象层 -- (网络通信)
+}
+
+@enduml
