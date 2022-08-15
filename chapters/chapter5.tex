@@ -587,9 +587,46 @@ ZeroMQ消息（第3行）；接收到消息后，对消息进行反序列化（�
 \end{algorithm}
 
 \subsection{消息模块详细设计与实现}
+消息模块模块作为网络通信模块和进程间通信模块的中间模块，该模块将C++原生数据结构与Google Protobuf进行抽象处理，
+为两个通信模块提供消息的序列化功能与反序列功能。
 
+本模块通过用户编写的.proto文件，通过C++构建工具CMake和python自动生成一套介于C++原生数据结构和protobuf数据结构之间
+的中间语言。中间语言生成的过程如图\ref{middle_language_flowchart}所示。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.25\textwidth]{middle_language_flowchart.pdf}
+  \caption{中间语言生成流程图}
+  \label{middle_language_flowchart}
+\end{figure}
+生成protobuf代码以及中间语言全部在通过构建工具CMake提供的EXECUTE\_PROCESS命令完成，首先通过该命令调用protobuf提供的
+protoc工具生成protobuf代码。随后继续使用EXECUTE\_PROCESS执行python脚本生成中间语言。
 
+python脚本首先读取目录下所有用户编写完成的.proto文件并扫描依赖项，若某个.proto文件依赖其他.proto文件则生成依赖图。
+扫描完成后，脚本内部得到所有.proto文件的字段名及其数据类型，脚本表\ref{type_convert}生成.proto数据类型和C++数据类型
+的字典。中间语言预设了C++ .h文件与.cpp文件的模板，python脚本生成数据类型字典后开始逐一生成.h文件与.cpp文件中的
+保留字段，保留字段包括头文件引用、消息类函数的声明、类函数的实现等。
+\begin{table}[htb]
+  \centering\small
+  \caption{类型转换表}
+  \label{type_convert}
+  \begin{tabular}{ll}
+    \toprule
+    proto & C++ \\
+    \midrule
+    bool & bool \\
+    int32 & int32\_t \\
+    int64 & int64\_t \\
+    uint32 & uint32\_t \\ 
+    uint64 & uint64\_t \\
+    float & float \\
+    double & double \\
+    string & std::string \\
+    Type[] & std::vector<Type>\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
+生成的消息类的类图如图所示，
 
 
 

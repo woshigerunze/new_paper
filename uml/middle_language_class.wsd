@@ -1,0 +1,7 @@
+@startuml
+
+class ExampleMessage<extends \nAbstractMessage> {
+  int size()
+}
+ExampleMessage *- AbstractMessage
+@enduml

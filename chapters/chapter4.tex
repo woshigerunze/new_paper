@@ -680,12 +680,12 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 处于暂停状态的任务重新恢复运行的功能；运行接口向用户提供任务运行时的数据处理逻辑等功能；销毁接口向用户提供销毁该任务回收所有资源的功能。
 其中运行接口是任务模块中最为重要的接口，该接口不仅是用户实现核心业务逻辑的接口，还是调度模块调度任务的入口。
 
-一个任务共存在四种状态：初始化、运行、暂停和销毁，任务的状态管理由状态机管理，任务模块的状态机设计如图4.13所示。
+一个任务共存在四种状态：初始化、运行、暂停和销毁，任务的状态管理由状态机管理，任务模块的状态机设计如图\ref{task_status_gaiyao}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{4.16.png}
+  \includegraphics[width=0.45\textwidth]{task_status_gaiyao.png}
   \caption{任务模块状态机}
-  \label{fig:19}
+  \label{task_status_gaiyao}
 \end{figure}
 
 \section{调度模块概要设计}
@@ -727,24 +727,24 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 调度模块支持基于基于消息触发的调度策略和基于时间触发的调度策略。基于消息触发的调度策略是侵入式的，即该调度策略
 并不需要由用户手动去激活调度任务，而是由通信抽象模块监听到新消息时调用订阅者模块中的回调函数，并最终在订阅者模块
 的回调函数中激活对应调度任务。在同一个任务中，基于消息触发的调度任务数量等于订阅者数量。基于消息触发的调度策略
-时序设计如图4.14所示。
+时序设计如图\ref{message_tick_gaiyao}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{4.17.png}
+  \includegraphics[width=0.9\textwidth]{message_tick_gaiyao.png}
   \caption{基于消息触发的调度策略时序图}
-  \label{fig:20}
+  \label{message_tick_gaiyao}
 \end{figure}
 
 基于时间触发的调度策略相较于基于消息触发调度策略不再是侵入式的，需要用户显式指定任务的调度频率。基于时间触发的调度策略
 并不根据是否有新消息到来判断是否激活调度任务，而是从创建调度线程时就以固定的频率调用任务用户任务中的运行接口。该调度策略下，
 调度模块记录首先计算任务在调度频率下的执行时间间隔，每当任务调度完成后继续计算当前时间与执行时间间隔计算调度剩余时间，
 若调度剩余时间大于零，则在线程内睡眠剩余时间后再进行下一次调度，若调度剩余时间小于零，则立即进行下一次调度。基于时间触发的调度策略
-时序设计如图4.15所示。
+时序设计如图\ref{time_tick_gaiyao}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{4.18.png}
+  \includegraphics[width=0.4\textwidth]{time_tick_gaiyao.png}
   \caption{基于时间触发的调度策略时序图}
-  \label{fig:21}
+  \label{time_tick_gaiyao}
 \end{figure}
 
 \section{中心节点概要设计}
