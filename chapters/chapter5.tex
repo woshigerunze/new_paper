@@ -454,14 +454,8 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
 
 \subsubsection{共享内存通信机制设计}
 发布者首次创建共享内存区过程如算法\ref{shm_create}所示。首先通过通信话题名称topic\_name获取用于共享内存
-通信的文件名称shm\_file，使用shm\_open以及mmap函数创建共享内存文件（第1-3行）；随后使用上文提到的C++ plancement new
-依次将SHMHeader、MessageSlot和data\_addr创建（第4-9行）。对于SHMHeader类中类型为pthread\_mutex\_t的互斥锁write\_lock，
-创建过程中SHMWriter使用pthread\_mutexattr\_setpshared函数将互斥锁write\_lock的进程共享属性设置为PTHREAD\_PROCESS\_SHARED，
-使用pthread\_mutexattr\_setrobust函数将互斥锁write\_lock的健壮属性设置为PTHREAD\_MUTEX\_ROBUST。设置后，互斥锁write\_lock
-可以被跨进程使用并且可以保证健壮性。
-创建完成后，共享内存中的各部分地址排列如上图5.15所示。
-
-\begin{algorithm}[H]
+通信的文件名称shm\_file，
+\begin{algorithm}
   \small
   \SetAlgoLined
   shm\_file = shm\_ipc+topic\_name\;
@@ -476,6 +470,28 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
   \caption{创建共享内存区过程}
   \label{shm_create}
 \end{algorithm}
+使用shm\_open以及mmap函数创建共享内存文件（第1-3行）；随后使用上文提到的C++ plancement new
+依次将SHMHeader、MessageSlot和data\_addr创建（第4-9行）。对于SHMHeader类中类型为pthread\_mutex\_t的互斥锁write\_lock，
+创建过程中SHMWriter使用pthread\_mutexattr\_setpshared函数将互斥锁write\_lock的进程共享属性设置为PTHREAD\_PROCESS\_SHARED，
+使用pthread\_mutexattr\_setrobust函数将互斥锁write\_lock的健壮属性设置为PTHREAD\_MUTEX\_ROBUST。设置后，互斥锁write\_lock
+可以被跨进程使用并且可以保证健壮性。
+创建完成后，共享内存中的各部分地址排列如上图5.15所示。
+
+% \begin{algorithm}[H]
+%   \small
+%   \SetAlgoLined
+%   shm\_file = shm\_ipc+topic\_name\;
+%   fd = shm\_open(shm\_file)\;
+%   addr = mmap(MAP\_SHARED,fd)\;
+%   SHMHeader* shm\_header = Create(addr,SHMHeader)\;
+%   MessageSlot* message\_slot = Create(addr+Size(SHMHeader),MessageSlot[message\_slot\_size])\;
+%   \For{$i \leftarrow 0$ \KwTo message\_slot\_size}{
+%     uint8\_t* data\_addr = Create(addr+Size(SHMHeader)+Size(MessageSlot)*message\_slot\_size\\+data\_size*i,data\_size)\;
+%     MessageSlot[i].data\_addr = data\_addr\;
+%   }
+%   \caption{创建共享内存区过程}
+%   \label{shm_create}
+% \end{algorithm}
 
 发布者向共享内存中写入消息过程如算法\ref{shm_pub}所示。首先发布者请求控制部分SHM Reader中的互斥锁write\_lock取得对共享内存
 区写入的权限（第1行）；随后遍历数据部分MessageSlot数组查看是否存在某个MessageSlot的readcount为0，若存在则对待发布消息
