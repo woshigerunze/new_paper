@@ -602,14 +602,14 @@ ZeroMQ消息（第3行）；接收到消息后，对消息进行反序列化（�
 protoc工具生成protobuf代码。随后继续使用EXECUTE\_PROCESS执行python脚本生成中间语言。
 
 python脚本首先读取目录下所有用户编写完成的.proto文件并扫描依赖项，若某个.proto文件依赖其他.proto文件则生成依赖图。
-扫描完成后，脚本内部得到所有.proto文件的字段名及其数据类型，脚本表\ref{type_convert}生成.proto数据类型和C++数据类型
+扫描完成后，脚本内部得到所有.proto文件的字段名及其数据类型，脚本表\ref{type_convert}生成protobuf数据类型和C++数据类型
 的字典。中间语言预设了C++ .h文件与.cpp文件的模板，python脚本生成数据类型字典后开始逐一生成.h文件与.cpp文件中的
 保留字段，保留字段包括头文件引用、消息类函数的声明、类函数的实现等。
 \begin{table}[htb]
   \centering\small
   \caption{类型转换表}
   \label{type_convert}
-  \begin{tabular}{ll}
+  \begin{tabular}{cc}
     \toprule
     proto & C++ \\
     \midrule
@@ -621,13 +621,25 @@ python脚本首先读取目录下所有用户编写完成的.proto文件并扫�
     float & float \\
     double & double \\
     string & std::string \\
-    Type[] & std::vector<Type>\\
+    repeated Type & std::vector<Type>\\
     \bottomrule
   \end{tabular}
 \end{table}
 
-生成的消息类的类图如图所示，
-
+本节以Example消息为例阐述中间消息类的构成，Example生成的中间消息类的类图如图\ref{middle_language_class}所示。
+本模块生成的所有中间消息类全部继承抽象消息类AbstractMessage，该类中定义了四个虚函数。serialized\_data\_bytes函数用于
+获取序列化后数据的大小；serialized函数用于序列化数据；deserialized函数用于反序列化数据；conver函数用于C++数据类型和protobuf数据类型
+的互换。ExampleMessage类实现AbstractMessage所有虚函数并在类内部定义protobuf生成的Example类实例，通过该实例
+与protobuf进行序列化与反序列化的交互。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{middle_language_class.png}
+  \caption{中间消息类图}
+  \label{middle_language_class}
+\end{figure}
+图\ref{middle_language_class}仅展示了一个消息类的构成，实际运用中会存在少则几十多则上百种不同的消息。本模块
+为了便于用户使用，将所有中间语言和protobuf生成的.cpp统一生成静态库，用户只需要引用对应消息的头文件和链接静态库即可将所有
+处理消息的函数符号导入到程序中。
 
 
 
@@ -653,17 +665,18 @@ ServiceDiscoveryManager类采用单例设计模式，
 和ServiceAbstract抽象服务类调用。ServiceDiscoveryManager类的内部保存本进程内所有发布者、订阅者、服务客户端和服务服务端的信息，即PublisherInfo、
 SubscriberInfo、ServiceClientInfo和ServiceServerInfo。
 
-ServiceDiscoveryManager类被实例化时会调用自身内部的start函数将本模块RPC通信地址（IP地址与端口号）通过RPC形式通知中心节点，
-随后执行init\_service函数绑定服务接收来自中心节点的信息查询请求。初始化完成后ServiceDiscoveryManager类一方面接受来自
-CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动调用，上传自身网络拓扑信息至中心节点；另一方面，ServiceDiscoveryManager类
-接受来自中心节点的更新信息查询请求。
-
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.7\textwidth]{5.16.png}
   \caption{服务发现模块类图}
   \label{service_discovery_class}
 \end{figure}
+
+ServiceDiscoveryManager类被实例化时会调用自身内部的start函数将本模块RPC通信地址（IP地址与端口号）通过RPC形式通知中心节点，
+随后执行init\_service函数绑定服务接收来自中心节点的信息查询请求。初始化完成后ServiceDiscoveryManager类一方面接受来自
+CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动调用，上传自身网络拓扑信息至中心节点；另一方面，ServiceDiscoveryManager类
+接受来自中心节点的更新信息查询请求。
+
 
 \subsection{发现机制设计}
 概要设计中，服务发现模块发现机制分为主动发现与被动发现两类。主动发现机制分为如下三情况：
@@ -674,6 +687,14 @@ CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动�
   \item 当注册、删除或修改服务客户端时，ServiceDiscoveryManager类不向中心节点更新客户端的信息，只有当客户端通过ServiceAbstract类发出实际请求时ServiceDiscoveryManager类
   根据服务名向中心节点查询服务端的IP和端口信息返回至ServiceAbstract类。
 \end{enumerate}
+以注册发布者为例，服务发现模块与中心节点之间的信息流向如图\ref{service_discovery_message_flow}所示。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{5.17.png}
+  \caption{服务发现信息流向图}
+  \label{service_discovery_message_flow}
+\end{figure}
 
 被动发现机制并不由用户的操作触发，而是由ServiceDiscoveryManager类在初始化中通过rest\_rpc注册供中心节点调用的服务。被动
 发现机制提供的服务如下：
@@ -685,14 +706,6 @@ CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动�
   ServiceDiscoveryManager类根据订阅者话题名称Topic找到对应的PublisherInfo，通过其中的Callback调用PubAbstract类的make\_communication\_connection函数
   选择对应的通信方式，最后将连接地址和订阅者信息返回至其他进程的服务发现模块。
 \end{enumerate}
-
-以注册发布者为例，服务发现模块与中心节点之间的信息流向如图5.17所示。
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=0.7\textwidth]{5.17.png}
-  \caption{服务发现信息流向图}
-  \label{fig:11}
-\end{figure}
 
 \section{任务模块详细设计与实现}
 任务模块本身并不提供功能逻辑，功能模块的作用是向用户提供一个统一的基类，
@@ -777,31 +790,71 @@ create\_message\_task与create\_time\_task函数
 \section{中心节点详细设计与实现}
 本系统将中心节点从整个自动驾驶运行时通信系统独立出来单独实现，作为一个独立的模块开发。
 中心节点提供的服务名称及其功能如表\ref{master}所示，中心节点提供的所有RPC服务全部由服务发现模块进行请求。
-\begin{table}[H]
-  \centering\small
-  \caption{中心节点服务}
-  \label{master}
-  \begin{tabular}{lll}
-    \toprule
-    服务名称 & 服务功能 & 请求参数\\
-    \midrule
-    start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
-    stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
-    create\_publisher & 创建发布者 & IP地址，发布者信息\\
-    create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
-    create\_service\_server & 创建服务端 & IP地址，服务端信息\\
-    delete\_publisher & 删除发布者 & IP地址，发布者信息\\
-    delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
-    modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
-    modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
-    modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
-    query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
-    query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
-    query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
-    lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
-    \bottomrule
-  \end{tabular}
-\end{table}
+
+
+\begin{longtable}{lll}
+  \caption{中心节点服务}\label{master}\\
+  % 表格“首页”显示内容
+  \toprule
+  服务名称 & 服务功能 & 请求参数\\
+  \midrule
+  \endfirsthead
+  % “后续页面”表头显示内容
+  \multicolumn{2}{r}{续表\ref{master}}\\
+  \toprule
+  服务名称 & 服务功能 & 请求参数\\
+  \hline
+  %\midrule
+  \endhead
+  % 表格“尾页前”，表格最后显示内容
+  %\bottomrule
+  \endfoot
+  % 表格“尾页”，表格最后显示内容
+  \bottomrule
+  \endlastfoot
+
+  start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
+  stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
+  create\_publisher & 创建发布者 & IP地址，发布者信息\\
+  create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
+  create\_service\_server & 创建服务端 & IP地址，服务端信息\\
+  delete\_publisher & 删除发布者 & IP地址，发布者信息\\
+  \hline
+  delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
+  modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
+  modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
+  modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
+  query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
+  query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
+  query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
+  lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
+  \end{longtable}  
+
+% \begin{table}[H]
+%   \centering\small
+%   \caption{中心节点服务}
+%   \label{master}
+%   \begin{tabular}{lll}
+%     \toprule
+%     服务名称 & 服务功能 & 请求参数\\
+%     \midrule
+%     start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
+%     stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
+%     create\_publisher & 创建发布者 & IP地址，发布者信息\\
+%     create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
+%     create\_service\_server & 创建服务端 & IP地址，服务端信息\\
+%     delete\_publisher & 删除发布者 & IP地址，发布者信息\\
+%     delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
+%     modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
+%     modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
+%     modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
+%     query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
+%     query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
+%     query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
+%     lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
 
 中心节点除了将表\ref{master}的服务绑定至自身的RPC服务器之外，自身还实现两个重要功能：保存网络拓扑信息至本地和从本地读取网络拓扑信息。
 中心节点每处理一个来自服务发现模块的RPC请求后，会将当前网络拓扑信息按照存储模型转换为json文件并保存在本地。中心节点在异常退出并被
