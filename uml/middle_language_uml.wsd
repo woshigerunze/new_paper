@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor 中间代码生成器
+
+actor 用户
+' actor 中间代码生成器
+rectangle 序列化代码自动生成 {
+用户 -- (编写.proto文件)
+用户 -- (使用静态库)
+(使用静态库) ..> (序列化数据) : <<包含>>
+(使用静态库) ..> (反序列化数据) : <<包含>>
+中间代码生成器 -- (解析.proto文件)
+中间代码生成器 -- (生成中间代码)
+(生成中间代码) ..> (打包代码为静态库) : <<包含>>
+
+}
+@enduml

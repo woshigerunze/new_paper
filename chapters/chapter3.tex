@@ -80,6 +80,13 @@
 和数据订阅者(subscriber)订阅数据对通信单元实现准确、完备的管理不仅可以实现用户对管理通信单元多样的
 需求，也是整个通信系统的基础。通信单元管理包括注册通信单元、删除通信单元、修改通信单元通信域和查询通信单元信息。
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{communication_unit_yongli.png}
+  \caption{通信单元管理用例图}
+  \label{communication_unit_yongli}
+\end{figure}
+
 注册通信单元，分为注册数据发布者与注册数据订阅者，而数据发布者与数据订阅者又分为本机域通信和
 全域通信。本机域通信规定通信单元只能在单机内通信；全域通信规定通信单元可以与任何通信单元进行通信。
 
@@ -93,17 +100,13 @@
 查询通信单元信息，分为查询发布者信息与查询订阅者信息，查询信息可以根据某一话题名称查询，也可以
 查询所有存在的信息。同样地，用户可以根据实际需要查询本机内和全域内的通信单元信息。
 
-通信单元管理用例图如图\ref{communication_unit_yongli}所示：
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.75\textwidth]{communication_unit_yongli.png}
-  \caption{通信单元管理用例图}
-  \label{communication_unit_yongli}
-\end{figure}
+通信单元管理用例图如图\ref{communication_unit_yongli}所示。
 
-考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，如表3.1和3.2所示：
+
+考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，如表3.1和3.2所示。
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{注册订阅者单元用例说明}
   \label{tab:exampletable}
   \begin{tabular}{ll}
@@ -146,6 +149,13 @@
 
 根据自动驾驶系统通信特点及用户的实际需要，服务管理包括创建服务、删除服务、修改服务通信域和查询服务信息。
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{service_yongli.png}
+  \caption{服务管理用例图}
+  \label{service_yongli}
+\end{figure}
+
 创建服务，分为创建服务端与创建客户端，同通信单元的发布者和订阅者一样，服务端与客户端可以自由选择通信域。
 
 删除服务，分为删除服务端与删除客户端，与通信单元不同的是，删除模式只有立即删除一种模式。
@@ -156,16 +166,11 @@
 查询服务信息仅提供查询服务端相关信息，用户最关心的是系统中存在哪些服务端及其信息。查询可以通过服务端名称
 进行查询，也可以进行全量查询，并且用户可根据需要确定在哪种通信域内进行查询。服务管理用例图如图\ref{service_yongli}所示。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{service_yongli.png}
-  \caption{服务管理用例图}
-  \label{service_yongli}
-\end{figure}
 
-本节以创建服务端和查询服务信息用例为例进行说明，如图表3.3和3.4所示：
+本节以创建服务端和查询服务信息用例为例进行说明，如图表3.3和3.4所示。
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{创建服务端用例说明}
   \label{tab:exampletable}
   \begin{tabular}{ll}
@@ -183,6 +188,7 @@
 \end{table}
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{查询服务信息用例说明}
   \label{tab:exampletable}
   \begin{tabular}{ll}
@@ -211,10 +217,13 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.55\textwidth]{adaptive_communication_yongli.png}
+  \includegraphics[width=0.45\textwidth]{adaptive_communication_yongli.png}
   \caption{通信方式自适应选择用例图}
   \label{adaptive_communication_yongli}
 \end{figure}
+
+
+
 
 
 % \subsection{进程间通信方式管理}
@@ -273,7 +282,8 @@
   \label{schedul_yongli}
 \end{figure}
 
-本节以设置基于时间驱动调度策略用例为例进行说明，如表3.5所示：
+本节以设置基于时间驱动调度策略用例为例进行说明，如表3.5所示。
+
 \begin{table}[H]
   \centering\small
   \caption{设置基于时间的调度策略用例说明}
@@ -291,6 +301,24 @@
     \bottomrule
   \end{tabular}
 \end{table}
+
+\subsection{序列化中间语言生成}
+本文采用Google Protocol Buffer作为网络通信和进程间通信中序列化和反序列化方案。该方案需要用户使用接口描述语言
+(interface descriptor language,IDL)创建.proto文件并生成某个自定义数据类型的序列化与反序列化代码。当用户数量增多并且数据类型
+变多时.proto文件的管理将变得复杂，同时将Protocol Buffer自动生成的代码集成到业务代码的工作量也将显著提升。考虑到
+Protocol Buffer生成代码的使用方法和数据赋值方法与C++有较大差别，本系统设计一套中间语言作为Protocol Buffer和原生
+C++的中间层，方便用户使用。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{middle_language_uml.png}
+  \caption{序列化中间语言生成用例图}
+  \label{middle_language_uml}
+\end{figure}
+
+序列化中间语言生成用例图如图\ref{middle_language_uml}所示。用户只需要编写自己需要的数据类型的.proto文件，
+中间代码生成器将解析用户编写的.proto文件并自动生成一套中间语言代码，生成之后打包为静态库。用户只需要链接静态库即可，
+简化了序列化与反序列化的操作过程。
 
 \section{非功能性需求}
 自动驾驶运行时通信系统在满足功能性需求的基础之上，还需要根据本系统实际应用场景满足非功能性需求。本系统应用在

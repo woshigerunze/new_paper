@@ -224,7 +224,7 @@ ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现�
       publisher.bind(connectURL)\;
     }{
       connectURL = ipc://topic\_name\;
-      publisher = 和InterProcessManager.create\_publisher(connectURL)\;
+      publisher = InterProcessManager.create\_publisher(connectURL)\;
       publisher.bind(connectURL)\;
     }
   }{
@@ -642,15 +642,15 @@ python脚本首先读取目录下所有用户编写完成的.proto文件并扫�
   \end{tabular}
 \end{table}
 
-本节以Example消息为例阐述中间消息类的构成，Example生成的中间消息类的类图如图\ref{middle_language_class}所示。
-本模块生成的所有中间消息类全部继承抽象消息类AbstractMessage，该类中定义了四个虚函数。serialized\_data\_bytes函数用于
+本节以Example消息为例阐述中间语言消息类的构成，Example生成的中间语言消息类的类图如图\ref{middle_language_class}所示。
+本模块生成的所有中间语言消息类全部继承抽象消息类AbstractMessage，该类中定义了四个虚函数。serialized\_data\_bytes函数用于
 获取序列化后数据的大小；serialized函数用于序列化数据；deserialized函数用于反序列化数据；conver函数用于C++数据类型和protobuf数据类型
 的互换。ExampleMessage类实现AbstractMessage所有虚函数并在类内部定义protobuf生成的Example类实例，通过该实例
 与protobuf进行序列化与反序列化的交互。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{middle_language_class.png}
-  \caption{中间消息类图}
+  \caption{中间语言消息类图}
   \label{middle_language_class}
 \end{figure}
 图\ref{middle_language_class}仅展示了一个消息类的构成，实际运用中会存在少则几十多则上百种不同的消息。本模块
