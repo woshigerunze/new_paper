@@ -497,23 +497,23 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 抽象发布类内部创建通信传输模块实现建立与订阅者通信链路的建立以及消息的发布，本系统通信方式自适应选择功能
 也在该类中实现，每个发布者都唯一对应了一个抽象发布类。当有匹配的订阅者时，服务发现模块将订阅者的IP地址与进程号作为参数传入抽象发布类的回调函数中，回调函数中
 抽象发布类通过对自身的IP地址和进程号与参数做判断完成通信方式的自适应选择，并返回连接地址。通信方式自适应选择
-流程如图4.9所示。
+流程如图\ref{adaptive_communication_select_flowchart}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{4.9.png}
+  \includegraphics[width=0.65\textwidth]{adaptive_communication_select_flowchart.pdf}
   \caption{通信方式自适应选择流程图}
-  \label{fig:29}
+  \label{adaptive_communication_select_flowchart}
 \end{figure}
 
 \subsection{抽象订阅类概要设计}
 抽象订阅类内部创建通信传输模块实现建立与发布者通信链路的建立以及消息的订阅，每个订阅者都唯一对应了一个抽象发布类
 当有匹配的发布者时，服务发现模块将抽象发布类返回的连接地址作为参数传入订阅抽象类的回调函数中，回调函数中
-通过对地址前缀的判断并连接至对应的通信链路，建立与发布者点对点的通信链路。抽象订阅类与发布者建立通信链路流程图如图4.10所示。
+通过对地址前缀的判断并连接至对应的通信链路，建立与发布者点对点的通信链路。通信方式自适应连接流程图如图\ref{adaptive_communication_connect_flowchart}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.35\textwidth]{4.10.png}
+  \includegraphics[width=0.65\textwidth]{adaptive_communication_connect_flowchart.pdf}
   \caption{通信方式自适应选择流程图}
-  \label{fig:39}
+  \label{adaptive_communication_connect_flowchart}
 \end{figure}
 
 \subsection{抽象服务类概要设计}
@@ -521,12 +521,12 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 创建并唯一存在，即多个服务端和客户端共用一个抽象服务类。抽象服务类内部创建两个线程，一个线程用于接收客户端请求，
 另一个线程用于发起服务请求和接收用户对客户端和服务的管理，两个线程处于异步运行状态。同一个进程中，抽象服务类
 和服务发现模块的RPC服务共用一个端口。
-抽象服务类时序设计如图4.11所示。
+抽象服务类时序设计如图\ref{abstract_service_gaiyao_shixu}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{4.11.png}
+  \includegraphics[width=0.45\textwidth]{abstract_service_gaiyao_shixu.png}
   \caption{抽象服务类时序设计}
-  \label{fig:31}
+  \label{abstract_service_gaiyao_shixu}
 \end{figure}
 
 \section{通信传输模块概要设计}
@@ -545,14 +545,14 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 由于发布者与订阅者处于同一个进程内，二者间的通信
 不需要使用网络通信或共享内存，只需要传递消息的指针即可完成通信，不需要对消息进行额外拷贝。进程内通信模式下，
 使用同一个话题通信的发布者与订阅者共用一个消息队列，发布者将消息的指针存入消息队列，而订阅者将消息的指针从
-消息队列中取出，进程内通信模块消息传输设计如图4.12所示。从图4.12可以看出，进程内通信模块根据话题创建不同的消息
+消息队列中取出，进程内通信模块消息传输设计如图\ref{intraprocess_gaiyao}所示。从图\ref{intraprocess_gaiyao}可以看出，进程内通信模块根据话题创建不同的消息
 队列，使用同一个话题通信的发布者与订阅者通过向消息队列压入或弹出消息的方式进行通信。同时，本模块为了保证消息
 队列在发布者之行压入消息和订阅者之行弹出消息操作时的原子性，使用了互斥锁机制对临界资源即消息队列进行保护。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{4.12.png}
   \caption{进程内通信消息传输}
-  \label{fig:32}
+  \label{intraprocess_gaiyao}
 \end{figure}
 
 \subsection{进程间通信模块概要设计}
@@ -563,12 +563,12 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 删除进程间通信下的发布者类与订阅者类，并开辟线程轮询是否有新的消息到来；进程间通信发布者类负责将待发布消息
 进行序列化处理，然后将序列化后的消息写入对应共享内存文件，通过ZeroMQ PUB套接字通知对应订阅者接收消息；进程间通信订阅者类
 通过ZeroMQ SUB套接字接收发布者的通知并从共享内存文件中取出对应的消息并进行反序列化操作，最后调用用户传入的回调函数
-将消息压入订阅者模块中的消息队列中供用户使用。进程间通信模块传输设计如图4.13所示。
+将消息压入订阅者模块中的消息队列中供用户使用。进程间通信模块传输设计如图\ref{interprocess_gaiyao}所示。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{4.13.pdf}
-  \caption{进程内通信消息传输}
-  \label{fig:33}
+  \caption{进程间通信消息传输}
+  \label{interprocess_gaiyao}
 \end{figure}
 
 \subsection{网络通信模块概要设计}
@@ -578,11 +578,11 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{4.14.pdf}
-  \caption{进程内通信消息传输}
-  \label{fig:34}
+  \caption{网络通信消息传输}
+  \label{network_gaiyao}
 \end{figure}
 
-网络通信模块消息传输设计如图4.14所示。
+网络通信模块消息传输设计如图\ref{network_gaiyao}所示。
 网络通信模块基于ZeroMQ中的PUB-SUB套接字完成，传输协议使用ZeroMQTCP协议。
 网络通信模块包含一个网络通信管理类、一个网络通信发布者类和一个网络通信订阅者类。网络通信管理类负责创建、删除网络通信
 下的发布者与订阅者，并开辟线程轮询网络链路是否有新的消息到来；网络通信发布者类负责将待发布消息进行序列化处理，然后
@@ -754,10 +754,10 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
   \centering
   \includegraphics[width=0.9\textwidth]{4.19.pdf}
   \caption{网络拓扑信息存储模型}
-  \label{fig:21}
+  \label{storage_model}
 \end{figure}
 
-中心节点根据IP地址以及端口号将服务发现模块进行区分，并且将每个服务发现模块中的网络拓扑信息进行单独存储，存储模型示意图如图4.17所示。
+中心节点根据IP地址以及端口号将服务发现模块进行区分，并且将每个服务发现模块中的网络拓扑信息进行单独存储，存储模型示意图如图\ref{storage_model}所示。
 从图中可以看出，中心节点将IP地址与端口号两个信息中任意一个不相同的服务发现模块都进行区分。中心节点存储信息包括发布者信息、订阅者信息以及
 服务端信息，三种信息都来自各服务发现模块进行主动发现时使用的请求参数。请求参数如表4.11中的PublisherInfo、SubscriberInfo和
 ServiceServerInfo。

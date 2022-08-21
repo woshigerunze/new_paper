@@ -18,13 +18,13 @@ ZeroMQ套接字与TCP套接字并不是同一个概念，二者在传输方面�
     队列，缓冲队列的大小可以进行设置。
     \item TCP协议只能进行点对点的连接，ZeroMQ套接字可以支持和多个套接字的连接。在套接字类型符合
     要求是，ZeroMQ套接字可以支持一对多、多对一、多对多和一对一的连接，因此ZeroMQ可以支持一个端点
-    发送消息到多个端点或一个端点接收多个端点的信息，即扇出模型和扇入模型。图2.1直观地展示了这两个模型的具体
+    发送消息到多个端点或一个端点接收多个端点的信息，即扇出模型和扇入模型。图\ref{fan-in-fan-out}直观地展示了这两个模型的具体
     结构：
     \begin{figure}[H]
         \centering
-        \includegraphics[width=0.65\textwidth]{2.1.png}
+        \includegraphics[width=0.65\textwidth]{fan-in-fan-out.pdf}
         \caption{ZeroMQ的扇入和扇出模型}
-        \label{fig:4}
+        \label{fan-in-fan-out}
       \end{figure}
 \end{enumerate}
 
@@ -90,26 +90,26 @@ ZeroMQ共有四种通信模式：请求－应答模式、发布－订阅模式�
 ZMQ\_SUB、ZMQ\_PUB、ZMQ\_XSUB和ZMQ\_XPUB。ZMQ\_SUB与ZMQ\_XSUB套接字作为订阅者，ZMQ\_SUB套接字只能
 订阅消息，ZMQ\_XSUB套接字既可以订阅消息也可以发布消息。ZMQ\_PUB与
 ZMQ\_XPUB作为发布者，ZMQ\_PUB套接字只能发布消息，ZMQ\_XPUB套接字既可以发布消息也可以订阅消息。
-发布者套接字与订阅者套接字之间的连接关系可以是一对一的，也可以是多对多的。图2.6是一个发布者连接多个订阅者的模式。
+发布者套接字与订阅者套接字之间的连接关系可以是一对一的，也可以是多对多的。图\ref{1-N-pub-sub}是一个发布者连接多个订阅者的模式。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{2.6.png}
+  \includegraphics[width=0.7\textwidth]{1-N-pub-sub.pdf}
   \caption{一对多发布－订阅模式}
-  \label{fig:9}
+  \label{1-N-pub-sub}
 \end{figure}
 
 使用发布－订阅通信模式会面临发布者与订阅者动态变化的问题，开发者通过
 使用ZMQ\_XSUB与ZMQ\_XPUB套接字实现发布－订阅代理，这两个套接字既可以发送消息也可以接收消息，基于这两种套接字
 开发者可以开发出发布者与订阅者之间的通信代理装置。
-图2.7展示了使用代理解决发布者与订阅者动态变化问题的方法。
+图\ref{N-N-pub-sub}展示了使用代理解决发布者与订阅者动态变化问题的方法。
 所有的发布者与订阅者不直接连接而是连接到代理装置，代理装置通过ZMQ\_XSUB获取所有发布者发布的消息，随后通过代理装置将这些
 消息转通过ZMQ\_XPUB发布至所有订阅者，从而实现消息的间接发布。代理装置变动的频率相较于发布者与订阅者较低，代理装置可以灵活应对分布式
 通信系统等使用场景中中频繁新增或减少的发布者与订阅者。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{2.7.png}
+  \includegraphics[width=0.7\textwidth]{N-N-pub-sub.pdf}
   \caption{发布－订阅代理架构}
-  \label{fig:10}
+  \label{N-N-pub-sub}
 \end{figure}
 
 开发中使用ZeroMQ的发布－订阅通信模式进行通信时，需要使用zmq\_socketopt函数设置ZMQ\_SUB套接字设置为ZMQ\_SUBSCRIBE属性，
@@ -244,12 +244,12 @@ RPC的具体实现包括RPC-JSON和RPC-XML\cite{2011TOWARD,2013Web}，此外还�
 仅在传输的数据格式本身有差异。
 
 RPC解决的问题是实现分布式系统中各个通信单元调用不同服务的过程
-像本地调用一样方便。RPC为了保证调用远程的服务的透明性，也引入了代理的概念\cite{5694349}。图2.9是一次RPC调用的流程图：
+像本地调用一样方便。RPC为了保证调用远程的服务的透明性，也引入了代理的概念\cite{5694349}。图\ref{rpc_flowchart}是一次RPC调用的流程图：
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{2.9.png}
-  \caption{发布－订阅代理架构}
-  \label{fig:12}
+  \includegraphics[width=0.8\textwidth]{rpc_flowchart.pdf}
+  \caption{RPC调用流程}
+  \label{rpc_flowchart}
 \end{figure}
 从图2.9可以看出，RPC调用过程主要分为以下几个步骤：
 \begin{enumerate}
