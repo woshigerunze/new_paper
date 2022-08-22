@@ -5,17 +5,17 @@
 \section{系统软件架构设计}
 在概要设计中为了方便本系统向用户提供高抽象能力的接口对本系统进行了层次划分，同时为了便于开发对模块也进行了划分。
 本节从代码开发的角度对本系统软件架构的各层次、各模块关系进行明确定义。
-本系统的组件图如图\ref{system_component}所示。
+本系统的组件图如图\ref{software_component}所示。
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{5.1.png}
+    \includegraphics[width=1\textwidth]{software_component.png}
     \caption{自动驾驶运行时通信系统组件图}
-    \label{system_component}
+    \label{software_component}
   \end{figure}
 从图5.1可以看出，本系统在开发阶段严格遵守概要设计阶段对本系统的层次划分以及模块划分规则。
 
 \section{通信单元模块详细设计与实现}
-通信单元模块向用户实现了用户管理基于发布-订阅的异步通信的应用程序接口，根据概要设计中提出的设计方案，通信单元模块由发布者模块和订阅者模块
+通信单元模块向用户实现了用户管理基于发布－订阅的异步通信的应用程序接口，根据概要设计中提出的设计方案，通信单元模块由发布者模块和订阅者模块
 两个二级子模块共同实现功能。发布者模块实现管理发布者以及发布消息的功能，订阅和模块实现管理订阅者以及订阅消息的功能。
 
 \subsection{发布者模块详细设计与实现}
@@ -112,7 +112,7 @@ SubAbstract类在完成通信链路的建立后开辟轮询新消息的新线程
 中的消息保存至用户空间，随后删除过程同删除发布者过程一致。此外修改订阅者通信域、查询发布者信息和查询订阅者信息这三个操作同发布者模块的过程并无区别，本小节及下一节不再赘述这三种操作的过程。
 
 \section{服务模块详细设计与实现}
-服务模块实现了基于RPC请求-应答的同步通信功能，根据概要设计中提出的设计方案，服务模块由客户端和服务端两个二级
+服务模块实现了基于RPC请求－应答的同步通信功能，根据概要设计中提出的设计方案，服务模块由客户端和服务端两个二级
 子模块共同实现功能。服务端实现管理服务端以及向客户端提供服务的功能，客户端实现管理客户端以及向服务端请求服务的功能。
 服务模块设计思想同通信单元模块一致，都采用了面向对象的编程方法，向用户提供高度抽象的应用程序接口。
 \subsection{服务端详细设计与实现}
@@ -190,7 +190,7 @@ lookup\_for\_service函数得到服务的IP地址，随后使用本地的rpc服�
 PubAbstract、SubAbstract和ServiceAbsract三个类是本模块的核心类，三个类的生命周期CommunicationAbstract类负责。
 NetworkManager（网络通信管理类）、IntraProcessManager（进程内通信管理类）和InterProcessManager（进程间通信管理类）
 三个类由PubAbstract类和SubAbstract类创建并负责管理其生命周期，三个属于通信传输模块的入口类。PubAbstract类和SubAbstract类本身不实现通信的功能，而是
-由内部的三个通信管理类进行实际的基于发布-订阅的通信。
+由内部的三个通信管理类进行实际的基于发布－订阅的通信。
 ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现了基于服务的通信，不需要创建额外的通信管理类辅助通信。
 \begin{figure}[H]
   \centering
@@ -224,7 +224,7 @@ ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现�
       publisher.bind(connectURL)\;
     }{
       connectURL = ipc://topic\_name\;
-      publisher = 和InterProcessManager.create\_publisher(connectURL)\;
+      publisher = InterProcessManager.create\_publisher(connectURL)\;
       publisher.bind(connectURL)\;
     }
   }{
@@ -294,7 +294,7 @@ ServiceAbstract类时序图如图\ref{service_abstract_timesequence}所示。
 \end{figure}
 
 \section{通信传输模块详细设计与实现}
-通信传输模块是本系统的核心模块，基于发布-订阅的异步通信的实际消息传输全部由本模块实现。根据概要设计的设计方案，
+通信传输模块是本系统的核心模块，基于发布－订阅的异步通信的实际消息传输全部由本模块实现。根据概要设计的设计方案，
 本节将进程内通信模块、进程间通信模块、网络通信模块和消息模块进行详细设计与实现。
 \subsection{进程内通信模块详细设计与实现}
 根据概要设计中对本模块提出的设计方案，本模块相关类设计如图\ref{intraprocess_communication_class}所示。本模块包含进程内通信管理类IntraProcessManager、
@@ -416,7 +416,7 @@ InterProcessManager类的设计与进程内通信模块中IntraProcessManager类
 同时，InterProcessManager类也不需要将Subscriber类中的DataCallback函数与connectURL一一对应并保存。
 
 ShmWriter和ShmReader是本模块最重要的两个类，实现了向共享内存写入消息和从共享内存
-读取消息的功能。如算法\ref{create}和算法\ref{connect}所示，当抽象发布类和抽象订阅类建立建立通信链路时，会分别调用InterProcessPublisher中的bind函数和InterProcessSubscriber
+读取消息的功能。如算法\ref{create}和算法\ref{connect}所示，当抽象发布类和抽象订阅类建立通信链路时，会分别调用InterProcessPublisher中的bind函数和InterProcessSubscriber
 中的connect函数，随后ShmWriter与ShmReader类被创建并初始化。ShmWriter类在shm\_attach函数中根据connectURL创建
 共享内存文件并在共享内存文件中初始化共享内存区数据结构，将共享内存文件地址映射至本进程的地址空间；ShmReader类
 在shm\_attach函数中根据connectURL打开ShmWriter类创建的共享内存文件并将共享内存文件地址映射至本进程的地址空间。
@@ -454,14 +454,8 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
 
 \subsubsection{共享内存通信机制设计}
 发布者首次创建共享内存区过程如算法\ref{shm_create}所示。首先通过通信话题名称topic\_name获取用于共享内存
-通信的文件名称shm\_file，使用shm\_open以及mmap函数创建共享内存文件（第1-3行）；随后使用上文提到的C++ plancement new
-依次将SHMHeader、MessageSlot和data\_addr创建（第4-9行）。对于SHMHeader类中类型为pthread\_mutex\_t的互斥锁write\_lock，
-创建过程中SHMWriter使用pthread\_mutexattr\_setpshared函数将互斥锁write\_lock的进程共享属性设置为PTHREAD\_PROCESS\_SHARED，
-使用pthread\_mutexattr\_setrobust函数将互斥锁write\_lock的健壮属性设置为PTHREAD\_MUTEX\_ROBUST。设置后，互斥锁write\_lock
-可以被跨进程使用并且可以保证健壮性。
-创建完成后，共享内存中的各部分地址排列如上图5.15所示。
-
-\begin{algorithm}[H]
+通信的文件名称shm\_file，
+\begin{algorithm}
   \small
   \SetAlgoLined
   shm\_file = shm\_ipc+topic\_name\;
@@ -476,6 +470,28 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
   \caption{创建共享内存区过程}
   \label{shm_create}
 \end{algorithm}
+使用shm\_open以及mmap函数创建共享内存文件（第1-3行）；随后使用上文提到的C++ plancement new
+依次将SHMHeader、MessageSlot和data\_addr创建（第4-9行）。对于SHMHeader类中类型为pthread\_mutex\_t的互斥锁write\_lock，
+创建过程中SHMWriter使用pthread\_mutexattr\_setpshared函数将互斥锁write\_lock的进程共享属性设置为PTHREAD\_PROCESS\_SHARED，
+使用pthread\_mutexattr\_setrobust函数将互斥锁write\_lock的健壮属性设置为PTHREAD\_MUTEX\_ROBUST。设置后，互斥锁write\_lock
+可以被跨进程使用并且可以保证健壮性。
+创建完成后，共享内存中的各部分地址排列如上图5.15所示。
+
+% \begin{algorithm}[H]
+%   \small
+%   \SetAlgoLined
+%   shm\_file = shm\_ipc+topic\_name\;
+%   fd = shm\_open(shm\_file)\;
+%   addr = mmap(MAP\_SHARED,fd)\;
+%   SHMHeader* shm\_header = Create(addr,SHMHeader)\;
+%   MessageSlot* message\_slot = Create(addr+Size(SHMHeader),MessageSlot[message\_slot\_size])\;
+%   \For{$i \leftarrow 0$ \KwTo message\_slot\_size}{
+%     uint8\_t* data\_addr = Create(addr+Size(SHMHeader)+Size(MessageSlot)*message\_slot\_size\\+data\_size*i,data\_size)\;
+%     MessageSlot[i].data\_addr = data\_addr\;
+%   }
+%   \caption{创建共享内存区过程}
+%   \label{shm_create}
+% \end{algorithm}
 
 发布者向共享内存中写入消息过程如算法\ref{shm_pub}所示。首先发布者请求控制部分SHM Reader中的互斥锁write\_lock取得对共享内存
 区写入的权限（第1行）；随后遍历数据部分MessageSlot数组查看是否存在某个MessageSlot的readcount为0，若存在则对待发布消息
@@ -587,10 +603,59 @@ ZeroMQ消息（第3行）；接收到消息后，对消息进行反序列化（�
 \end{algorithm}
 
 \subsection{消息模块详细设计与实现}
+消息模块模块作为网络通信模块和进程间通信模块的中间模块，该模块将C++原生数据结构与Google Protobuf进行抽象处理，
+为两个通信模块提供消息的序列化功能与反序列功能。
 
+本模块通过用户编写的.proto文件，通过C++构建工具CMake和python自动生成一套介于C++原生数据结构和protobuf数据结构之间
+的中间语言。中间语言生成的过程如图\ref{middle_language_flowchart}所示。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.25\textwidth]{middle_language_flowchart.pdf}
+  \caption{中间语言生成流程图}
+  \label{middle_language_flowchart}
+\end{figure}
+生成protobuf代码以及中间语言全部在通过构建工具CMake提供的EXECUTE\_PROCESS命令完成，首先通过该命令调用protobuf提供的
+protoc工具生成protobuf代码。随后继续使用EXECUTE\_PROCESS执行python脚本生成中间语言。
 
+python脚本首先读取目录下所有用户编写完成的.proto文件并扫描依赖项，若某个.proto文件依赖其他.proto文件则生成依赖图。
+扫描完成后，脚本内部得到所有.proto文件的字段名及其数据类型，脚本表\ref{type_convert}生成protobuf数据类型和C++数据类型
+的字典。中间语言预设了C++ .h文件与.cpp文件的模板，python脚本生成数据类型字典后开始逐一生成.h文件与.cpp文件中的
+保留字段，保留字段包括头文件引用、消息类函数的声明、类函数的实现等。
+\begin{table}[htb]
+  \centering\small
+  \caption{类型转换表}
+  \label{type_convert}
+  \begin{tabular}{cc}
+    \toprule
+    Protocol Buffer & C++ \\
+    \midrule
+    bool & bool \\
+    int32 & int32\_t \\
+    int64 & int64\_t \\
+    uint32 & uint32\_t \\ 
+    uint64 & uint64\_t \\
+    float & float \\
+    double & double \\
+    string & std::string \\
+    repeated Type & std::vector<Type>\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-
+本节以Example消息为例阐述中间语言消息类的构成，Example生成的中间语言消息类的类图如图\ref{middle_language_class}所示。
+本模块生成的所有中间语言消息类全部继承抽象消息类AbstractMessage，该类中定义了四个虚函数。serialized\_data\_bytes函数用于
+获取序列化后数据的大小；serialized函数用于序列化数据；deserialized函数用于反序列化数据；conver函数用于C++数据类型和protobuf数据类型
+的互换。ExampleMessage类实现AbstractMessage所有虚函数并在类内部定义protobuf生成的Example类实例，通过该实例
+与protobuf进行序列化与反序列化的交互。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{middle_language_class.png}
+  \caption{中间语言消息类图}
+  \label{middle_language_class}
+\end{figure}
+图\ref{middle_language_class}仅展示了一个消息类的构成，实际运用中会存在少则几十多则上百种不同的消息。本模块
+为了便于用户使用，将所有中间语言和protobuf生成的.cpp统一生成静态库，用户只需要引用对应消息的头文件和链接静态库即可将所有
+处理消息的函数符号导入到程序中。
 
 
 
@@ -616,17 +681,18 @@ ServiceDiscoveryManager类采用单例设计模式，
 和ServiceAbstract抽象服务类调用。ServiceDiscoveryManager类的内部保存本进程内所有发布者、订阅者、服务客户端和服务服务端的信息，即PublisherInfo、
 SubscriberInfo、ServiceClientInfo和ServiceServerInfo。
 
-ServiceDiscoveryManager类被实例化时会调用自身内部的start函数将本模块RPC通信地址（IP地址与端口号）通过RPC形式通知中心节点，
-随后执行init\_service函数绑定服务接收来自中心节点的信息查询请求。初始化完成后ServiceDiscoveryManager类一方面接受来自
-CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动调用，上传自身网络拓扑信息至中心节点；另一方面，ServiceDiscoveryManager类
-接受来自中心节点的更新信息查询请求。
-
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.7\textwidth]{5.16.png}
   \caption{服务发现模块类图}
   \label{service_discovery_class}
 \end{figure}
+
+ServiceDiscoveryManager类被实例化时会调用自身内部的start函数将本模块RPC通信地址（IP地址与端口号）通过RPC形式通知中心节点，
+随后执行init\_service函数绑定服务接收来自中心节点的信息查询请求。初始化完成后ServiceDiscoveryManager类一方面接受来自
+CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动调用，上传自身网络拓扑信息至中心节点；另一方面，ServiceDiscoveryManager类
+接受来自中心节点的更新信息查询请求。
+
 
 \subsection{发现机制设计}
 概要设计中，服务发现模块发现机制分为主动发现与被动发现两类。主动发现机制分为如下三情况：
@@ -637,6 +703,14 @@ CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动�
   \item 当注册、删除或修改服务客户端时，ServiceDiscoveryManager类不向中心节点更新客户端的信息，只有当客户端通过ServiceAbstract类发出实际请求时ServiceDiscoveryManager类
   根据服务名向中心节点查询服务端的IP和端口信息返回至ServiceAbstract类。
 \end{enumerate}
+以注册发布者为例，服务发现模块与中心节点之间的信息流向如图\ref{service_discovery_message_flow}所示。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{5.17.png}
+  \caption{服务发现信息流向图}
+  \label{service_discovery_message_flow}
+\end{figure}
 
 被动发现机制并不由用户的操作触发，而是由ServiceDiscoveryManager类在初始化中通过rest\_rpc注册供中心节点调用的服务。被动
 发现机制提供的服务如下：
@@ -648,14 +722,6 @@ CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动�
   ServiceDiscoveryManager类根据订阅者话题名称Topic找到对应的PublisherInfo，通过其中的Callback调用PubAbstract类的make\_communication\_connection函数
   选择对应的通信方式，最后将连接地址和订阅者信息返回至其他进程的服务发现模块。
 \end{enumerate}
-
-以注册发布者为例，服务发现模块与中心节点之间的信息流向如图5.17所示。
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=0.7\textwidth]{5.17.png}
-  \caption{服务发现信息流向图}
-  \label{fig:11}
-\end{figure}
 
 \section{任务模块详细设计与实现}
 任务模块本身并不提供功能逻辑，功能模块的作用是向用户提供一个统一的基类，
@@ -740,31 +806,71 @@ create\_message\_task与create\_time\_task函数
 \section{中心节点详细设计与实现}
 本系统将中心节点从整个自动驾驶运行时通信系统独立出来单独实现，作为一个独立的模块开发。
 中心节点提供的服务名称及其功能如表\ref{master}所示，中心节点提供的所有RPC服务全部由服务发现模块进行请求。
-\begin{table}[H]
-  \centering\small
-  \caption{中心节点服务}
-  \label{master}
-  \begin{tabular}{lll}
-    \toprule
-    服务名称 & 服务功能 & 请求参数\\
-    \midrule
-    start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
-    stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
-    create\_publisher & 创建发布者 & IP地址，发布者信息\\
-    create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
-    create\_service\_server & 创建服务端 & IP地址，服务端信息\\
-    delete\_publisher & 删除发布者 & IP地址，发布者信息\\
-    delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
-    modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
-    modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
-    modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
-    query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
-    query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
-    query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
-    lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
-    \bottomrule
-  \end{tabular}
-\end{table}
+
+
+\begin{longtable}{lll}
+  \caption{中心节点服务}\label{master}\\
+  % 表格“首页”显示内容
+  \toprule
+  服务名称 & 服务功能 & 请求参数\\
+  \midrule
+  \endfirsthead
+  % “后续页面”表头显示内容
+  \multicolumn{2}{r}{续表\ref{master}}\\
+  \toprule
+  服务名称 & 服务功能 & 请求参数\\
+  \hline
+  %\midrule
+  \endhead
+  % 表格“尾页前”，表格最后显示内容
+  %\bottomrule
+  \endfoot
+  % 表格“尾页”，表格最后显示内容
+  \bottomrule
+  \endlastfoot
+
+  start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
+  stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
+  create\_publisher & 创建发布者 & IP地址，发布者信息\\
+  create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
+  create\_service\_server & 创建服务端 & IP地址，服务端信息\\
+  delete\_publisher & 删除发布者 & IP地址，发布者信息\\
+  \hline
+  delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
+  modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
+  modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
+  modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
+  query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
+  query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
+  query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
+  lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
+  \end{longtable}  
+
+% \begin{table}[H]
+%   \centering\small
+%   \caption{中心节点服务}
+%   \label{master}
+%   \begin{tabular}{lll}
+%     \toprule
+%     服务名称 & 服务功能 & 请求参数\\
+%     \midrule
+%     start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
+%     stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
+%     create\_publisher & 创建发布者 & IP地址，发布者信息\\
+%     create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
+%     create\_service\_server & 创建服务端 & IP地址，服务端信息\\
+%     delete\_publisher & 删除发布者 & IP地址，发布者信息\\
+%     delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
+%     modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
+%     modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
+%     modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
+%     query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
+%     query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
+%     query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
+%     lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
 
 中心节点除了将表\ref{master}的服务绑定至自身的RPC服务器之外，自身还实现两个重要功能：保存网络拓扑信息至本地和从本地读取网络拓扑信息。
 中心节点每处理一个来自服务发现模块的RPC请求后，会将当前网络拓扑信息按照存储模型转换为json文件并保存在本地。中心节点在异常退出并被
@@ -774,7 +880,7 @@ create\_message\_task与create\_time\_task函数
 脚本。该脚本每隔5秒钟使用linux中的pgref -f命令查询中心节点的进程号，若查询结果为空则认为中心节点异常退出并在脚本
 内重新启动中心节点程序。
 
-\section{本章小节}
+\section{本章小结}
 本章在第四章概要设计的基础之上，结合类图和时序图阐述了自动驾驶运行时通信系统各模块的具体实现。本章重点从通信方式自适应选择算法和
 基于共享内存的进程间通信机制算法展开对本系统核心功能的描述。
 

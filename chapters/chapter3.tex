@@ -8,27 +8,27 @@
 \subsubsection{单车内通信特点}
 自动驾驶系统单车内的通信是指部署在车端计算平台各个功能模块相互通信的过程。
 通常自动驾驶系统会将整个系统按照功能划分成若干模块，如传感器、规划、决策、控制、感知及地图引擎等。这
-些模块之间会进行接收发送相关数据从而控制整个自动驾驶系统的性能表现。图3.1是自动驾驶系统单车内各功能模块
+些模块之间会进行接收发送相关数据从而控制整个自动驾驶系统的性能表现。图\ref{one_car_communication_model}是自动驾驶系统单车内各功能模块
 消息传递的拓扑网络。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.65\textwidth]{3.1.png}
+  \includegraphics[width=0.65\textwidth]{one_car_communication_model}
   \caption{自动驾驶单车内模块通信拓扑图}
-  \label{fig:13}
+  \label{one_car_communication_model}
 \end{figure}
 从图3.1可以分析出，模块之间通信主要是依次从上游原始数据传递到算法处理模块最终由下游的模块直接使用
 并输出车辆的行为结果，此外还存在两个模块互相发送接收信息的模式。当系统内参与通信模块数量持续增加时，
-通信的拓扑网络将变得复杂。针对自动驾驶系统中通信网络拓扑复杂的问题，采取基于话题的发布-订阅通信模式是
+通信的拓扑网络将变得复杂。针对自动驾驶系统中通信网络拓扑复杂的问题，采取基于话题的发布－订阅通信模式是
 解决此问题的一个较好方法。
 
 同时注意到一个模块发送的信息可以被多个模块接收，这代表同一份数据需要被传输到不同的模块中，结合第二章
 论述的利用TCP/IP通信方式的特点，同一份数据需要被拷贝多次到不同的模块中，而单模块传输数据本身也需要
-多次拷贝，如图3.2所示：
+多次拷贝，如图\ref{one_car_1_to_N_communication}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.65\textwidth]{3.1.png}
+  \includegraphics[width=0.65\textwidth]{one_car_1_to_N_communication.png}
   \caption{自动驾驶单车内模块通信拓扑图}
-  \label{fig:14}
+  \label{one_car_1_to_N_communication}
 \end{figure}
 从图中可以看出当传输摄像机拍摄的图像等较大的数据时，数据的多次额外拷贝就会成为通信系统本身的性能瓶颈。
 \subsubsection{单车与云端平台通信特点}
@@ -37,7 +37,7 @@
 大部分自动驾驶系统是基于高精度地图来提供结构化道路信息供算法使用。高精度地图是一种精度更高，纬度更多，兼有动态数据和静态数据的
 电子地图。高精度地图的生产的原则之一是反映实际道路的形态，当道路形态改变时，高精度地图将不再可靠。
 在这种技术方案下，自动驾驶系统需要更新最新的高精度地图数据且频率并不低，所以自动驾驶系统需要频繁地去更新地图数据。
-针对此问题，自动驾驶系统会在每次运行时都向云端的数据平台下载最新的地图数据，流程如图3.3所示：
+针对此问题，自动驾驶系统会在每次运行时都向云端的数据平台下载最新的地图数据，流程如图3.3所示。
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.65\textwidth]{3.1.png}
@@ -80,6 +80,13 @@
 和数据订阅者(subscriber)订阅数据对通信单元实现准确、完备的管理不仅可以实现用户对管理通信单元多样的
 需求，也是整个通信系统的基础。通信单元管理包括注册通信单元、删除通信单元、修改通信单元通信域和查询通信单元信息。
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{communication_unit_yongli.png}
+  \caption{通信单元管理用例图}
+  \label{communication_unit_yongli}
+\end{figure}
+
 注册通信单元，分为注册数据发布者与注册数据订阅者，而数据发布者与数据订阅者又分为本机域通信和
 全域通信。本机域通信规定通信单元只能在单机内通信；全域通信规定通信单元可以与任何通信单元进行通信。
 
@@ -93,17 +100,13 @@
 查询通信单元信息，分为查询发布者信息与查询订阅者信息，查询信息可以根据某一话题名称查询，也可以
 查询所有存在的信息。同样地，用户可以根据实际需要查询本机内和全域内的通信单元信息。
 
-通信单元管理用例图如图\ref{communication_unit_yongli}所示：
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.75\textwidth]{communication_unit_yongli.png}
-  \caption{通信单元管理用例图}
-  \label{communication_unit_yongli}
-\end{figure}
+通信单元管理用例图如图\ref{communication_unit_yongli}所示。
 
-考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，如表3.1和3.2所示：
+
+考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，如表3.1和3.2所示。
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{注册订阅者单元用例说明}
   \label{tab:exampletable}
   \begin{tabular}{ll}
@@ -139,12 +142,19 @@
   
   
 \subsection{服务管理}
-在自动驾驶系统中，不仅仅需要给予发布-订阅模式的异步通信功能，还需要具备同步通信功能。当用户
+在自动驾驶系统中，不仅仅需要给予发布－订阅模式的异步通信功能，还需要具备同步通信功能。当用户
 注册了发布者和订阅者后，仅获得了最基本的异步消息收发能力，而服务的概念可以为用户提供更为高级的同步消息请求
 能力，更契合自动驾驶系统SOA架构风格。在3.1节提到自动驾驶系统需要向云端数据平台请求高精度地图等数据，在这种情况下，
 车端请求数据的动作的时间是不确定的，需要数据平台提供请求数据的服务，等待车端发起数据请求。
 
 根据自动驾驶系统通信特点及用户的实际需要，服务管理包括创建服务、删除服务、修改服务通信域和查询服务信息。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{service_yongli.png}
+  \caption{服务管理用例图}
+  \label{service_yongli}
+\end{figure}
 
 创建服务，分为创建服务端与创建客户端，同通信单元的发布者和订阅者一样，服务端与客户端可以自由选择通信域。
 
@@ -156,16 +166,11 @@
 查询服务信息仅提供查询服务端相关信息，用户最关心的是系统中存在哪些服务端及其信息。查询可以通过服务端名称
 进行查询，也可以进行全量查询，并且用户可根据需要确定在哪种通信域内进行查询。服务管理用例图如图\ref{service_yongli}所示。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{service_yongli.png}
-  \caption{服务管理用例图}
-  \label{service_yongli}
-\end{figure}
 
-本节以创建服务端和查询服务信息用例为例进行说明，如图表3.3和3.4所示：
+本节以创建服务端和查询服务信息用例为例进行说明，如图表3.3和3.4所示。
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{创建服务端用例说明}
   \label{tab:exampletable}
   \begin{tabular}{ll}
@@ -183,6 +188,7 @@
 \end{table}
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{查询服务信息用例说明}
   \label{tab:exampletable}
   \begin{tabular}{ll}
@@ -211,10 +217,13 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.55\textwidth]{adaptive_communication_yongli.png}
+  \includegraphics[width=0.45\textwidth]{adaptive_communication_yongli.png}
   \caption{通信方式自适应选择用例图}
   \label{adaptive_communication_yongli}
 \end{figure}
+
+
+
 
 
 % \subsection{进程间通信方式管理}
@@ -273,9 +282,11 @@
   \label{schedul_yongli}
 \end{figure}
 
-本节以设置基于时间驱动调度策略用例为例进行说明，如表3.5所示：
+本节以设置基于时间驱动调度策略用例为例进行说明，如表3.5所示。
+
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{设置基于时间的调度策略用例说明}
   \label{tab:exampletable}
   \begin{tabular}{ll}
@@ -291,6 +302,24 @@
     \bottomrule
   \end{tabular}
 \end{table}
+
+\subsection{序列化中间语言生成}
+本文采用Google Protocol Buffer作为网络通信和进程间通信中序列化和反序列化方案。该方案需要用户使用接口描述语言
+(interface descriptor language,IDL)创建.proto文件并生成某个自定义数据类型的序列化与反序列化代码。当用户数量增多并且数据类型
+变多时.proto文件的管理将变得复杂，同时将Protocol Buffer自动生成的代码集成到业务代码的工作量也将显著提升。考虑到
+Protocol Buffer生成代码的使用方法和数据赋值方法与C++有较大差别，本系统设计一套中间语言作为Protocol Buffer和原生
+C++的中间层，方便用户使用。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{middle_language_uml.png}
+  \caption{序列化中间语言生成用例图}
+  \label{middle_language_uml}
+\end{figure}
+
+序列化中间语言生成用例图如图\ref{middle_language_uml}所示。用户只需要编写自己需要的数据类型的.proto文件，
+中间代码生成器将解析用户编写的.proto文件并自动生成一套中间语言代码，生成之后打包为静态库。用户只需要链接静态库即可，
+简化了序列化与反序列化的操作过程。
 
 \section{非功能性需求}
 自动驾驶运行时通信系统在满足功能性需求的基础之上，还需要根据本系统实际应用场景满足非功能性需求。本系统应用在

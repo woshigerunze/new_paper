@@ -1,0 +1,24 @@
+@startuml
+class AbstractMessage{
+  +{abstract}int serialized_data_bytes()
+  +{abstract}void serialize(uint8_t* data, int size)
+  +{abstract}void deserialize(uint8_t* data, int size)
+  +{abstract}void convert(T cpp_struct, U pb_struct)
+}
+class ExampleMessage<extends \nAbstractMessage> {
+  +{abstract}int serialized_data_bytes()
+  +{abstract}void serialize(uint8_t* data, int size)
+  +{abstract}void deserialize(uint8_t* data, int size)
+  +{abstract}void convert(cpp_struct,pb_struct)
+  - example_proto* proto
+}
+
+class Example{
+  +size_t ByteSizeLong()
+  +bool SerializeToArray(void* data, int size)
+  +bool ParseFromArray(void* data, int size)
+}
+ExampleMessage -|> AbstractMessage
+ExampleMessage ..> Example
+note right of Example:protobuf生成类
+@enduml
