@@ -5,12 +5,12 @@
 \section{系统软件架构设计}
 在概要设计中为了方便本系统向用户提供高抽象能力的接口对本系统进行了层次划分，同时为了便于开发对模块也进行了划分。
 本节从代码开发的角度对本系统软件架构的各层次、各模块关系进行明确定义。
-本系统的组件图如图\ref{system_component}所示。
+本系统的组件图如图\ref{software_component}所示。
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{5.1.png}
+    \includegraphics[width=1\textwidth]{software_component.png}
     \caption{自动驾驶运行时通信系统组件图}
-    \label{system_component}
+    \label{software_component}
   \end{figure}
 从图5.1可以看出，本系统在开发阶段严格遵守概要设计阶段对本系统的层次划分以及模块划分规则。
 
@@ -416,7 +416,7 @@ InterProcessManager类的设计与进程内通信模块中IntraProcessManager类
 同时，InterProcessManager类也不需要将Subscriber类中的DataCallback函数与connectURL一一对应并保存。
 
 ShmWriter和ShmReader是本模块最重要的两个类，实现了向共享内存写入消息和从共享内存
-读取消息的功能。如算法\ref{create}和算法\ref{connect}所示，当抽象发布类和抽象订阅类建立建立通信链路时，会分别调用InterProcessPublisher中的bind函数和InterProcessSubscriber
+读取消息的功能。如算法\ref{create}和算法\ref{connect}所示，当抽象发布类和抽象订阅类建立通信链路时，会分别调用InterProcessPublisher中的bind函数和InterProcessSubscriber
 中的connect函数，随后ShmWriter与ShmReader类被创建并初始化。ShmWriter类在shm\_attach函数中根据connectURL创建
 共享内存文件并在共享内存文件中初始化共享内存区数据结构，将共享内存文件地址映射至本进程的地址空间；ShmReader类
 在shm\_attach函数中根据connectURL打开ShmWriter类创建的共享内存文件并将共享内存文件地址映射至本进程的地址空间。
@@ -627,7 +627,7 @@ python脚本首先读取目录下所有用户编写完成的.proto文件并扫�
   \label{type_convert}
   \begin{tabular}{cc}
     \toprule
-    proto & C++ \\
+    Protocol Buffer & C++ \\
     \midrule
     bool & bool \\
     int32 & int32\_t \\

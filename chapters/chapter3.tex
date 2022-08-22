@@ -8,13 +8,13 @@
 \subsubsection{单车内通信特点}
 自动驾驶系统单车内的通信是指部署在车端计算平台各个功能模块相互通信的过程。
 通常自动驾驶系统会将整个系统按照功能划分成若干模块，如传感器、规划、决策、控制、感知及地图引擎等。这
-些模块之间会进行接收发送相关数据从而控制整个自动驾驶系统的性能表现。图3.1是自动驾驶系统单车内各功能模块
+些模块之间会进行接收发送相关数据从而控制整个自动驾驶系统的性能表现。图\ref{one_car_communication_model}是自动驾驶系统单车内各功能模块
 消息传递的拓扑网络。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.65\textwidth]{3.1.png}
+  \includegraphics[width=0.65\textwidth]{one_car_communication_model}
   \caption{自动驾驶单车内模块通信拓扑图}
-  \label{fig:13}
+  \label{one_car_communication_model}
 \end{figure}
 从图3.1可以分析出，模块之间通信主要是依次从上游原始数据传递到算法处理模块最终由下游的模块直接使用
 并输出车辆的行为结果，此外还存在两个模块互相发送接收信息的模式。当系统内参与通信模块数量持续增加时，
@@ -23,12 +23,12 @@
 
 同时注意到一个模块发送的信息可以被多个模块接收，这代表同一份数据需要被传输到不同的模块中，结合第二章
 论述的利用TCP/IP通信方式的特点，同一份数据需要被拷贝多次到不同的模块中，而单模块传输数据本身也需要
-多次拷贝，如图3.2所示：
+多次拷贝，如图\ref{one_car_1_to_N_communication}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.65\textwidth]{3.1.png}
+  \includegraphics[width=0.65\textwidth]{one_car_1_to_N_communication.png}
   \caption{自动驾驶单车内模块通信拓扑图}
-  \label{fig:14}
+  \label{one_car_1_to_N_communication}
 \end{figure}
 从图中可以看出当传输摄像机拍摄的图像等较大的数据时，数据的多次额外拷贝就会成为通信系统本身的性能瓶颈。
 \subsubsection{单车与云端平台通信特点}
@@ -37,7 +37,7 @@
 大部分自动驾驶系统是基于高精度地图来提供结构化道路信息供算法使用。高精度地图是一种精度更高，纬度更多，兼有动态数据和静态数据的
 电子地图。高精度地图的生产的原则之一是反映实际道路的形态，当道路形态改变时，高精度地图将不再可靠。
 在这种技术方案下，自动驾驶系统需要更新最新的高精度地图数据且频率并不低，所以自动驾驶系统需要频繁地去更新地图数据。
-针对此问题，自动驾驶系统会在每次运行时都向云端的数据平台下载最新的地图数据，流程如图3.3所示：
+针对此问题，自动驾驶系统会在每次运行时都向云端的数据平台下载最新的地图数据，流程如图3.3所示。
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.65\textwidth]{3.1.png}
@@ -286,6 +286,7 @@
 
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{设置基于时间的调度策略用例说明}
   \label{tab:exampletable}
   \begin{tabular}{ll}

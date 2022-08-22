@@ -148,6 +148,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 后的通信域作为参数；query\_publishers\_info与query\_subscribers\_info接口根据查询范围与查询条件查询系统内的发布者信息或订阅者信息，
 查询范围可以选择本地域或全域，查询条件可以选择按话题查询或全量查询。
 \begin{table}[htb]
+  \renewcommand\arraystretch{1.2}
   \centering\small
   \caption{订阅者模块接口}
   \label{tab:exampletable}
@@ -157,7 +158,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
     \midrule
     create\_subscriber & 创建订阅者\\
     delete\_subscriber & 删除订阅者\\
-    modify\_subscriber\_domain & 修改订阅者者通信域\\
+    modify\_subscriber\_domain & 修改订阅者通信域\\
     query\_publishers\_info & 查询发布者信息\\
     query\_subscribers\_info & 查询订阅者信息\\
     \bottomrule
@@ -258,6 +259,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 通信域作为参数；publish接口是发布者发布消息的唯一接口；query\_publishers\_info与query\_subscribers\_info接口功能与订阅者模块中的接口功能相同。
 \begin{table}[htb]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{发布者模块接口}
   \label{tab:exampletable}
   \begin{tabular}{cc}
@@ -640,8 +642,6 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
   其他进程。其他进程根据连接地址完成自适应通信方式连接后，双方开始通信。
 \end{enumerate}
 
-服务发现模块的服务发现工作流程图如图4.14所示。
-
 服务发现模块除了提供服务发现的功能外，还提供查询网络拓扑信息的功能。服务发现模块的查询功能的工作流如下：
 \begin{enumerate}
   \item 用户查询网络内订阅者或发布者信息，服务发现模块根据用户设置的查询模式以及通信域构造RPC请求体向中心节点发出查询请求。
@@ -649,8 +649,6 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
   \item 用户查询网络内服务端信息，服务发现模块根据用户设置的查询模式以及通信域构造RPC请求体向中心节点发出查询请求。
   中心节点根据服务发现模块的请求参数将符合查询条件的信息返回至服务发现模块，服务发现模块继续将查询结果返回至用户。
 \end{enumerate}
-
-服务发现模块的查询网络拓扑信息工作流程图如图4.15所示。
 
 \section{任务模块概要设计}
 任务模块的功能是将进程内一个个分散的发布者、订阅者、服务客户端和服务端统一包装为一个完整的任务，这样设计的原因是
