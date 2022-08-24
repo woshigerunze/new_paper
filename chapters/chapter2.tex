@@ -138,11 +138,11 @@ ZeroMQ中的tcp传输协议基于计算机网络中传输层中的TCP进行二�
 
 \subsection{ZeroMQ性能表现}
 国外文章\cite{mqcompare}比较了MSMQ、ActiveMQ、RabbitMQ和ZeroMQ每秒钟可以发送和接受的消息数量，
-从表2.1可以看出ZeroMQ拥有比较明显的优势。
+从表\ref{messge_queue_compare}可以看出ZeroMQ拥有比较明显的优势。
 \begin{table}[htb]
   \centering\small
   \caption{常见消息队列每秒收发消息数量对比\cite{mqcompare}}
-  \label{tab:exampletable}
+  \label{messge_queue_compare}
   \begin{tabular}{ccccc}
     \toprule
     & ZeroMQ & RabbitMQ & ActiveMQ & MSMQ \\
@@ -176,7 +176,7 @@ ZeroMQ作为网络通信的工具。
 扩展性较强的数据存储格式，支持Python、C++和Java语言\cite{sxy}。
 
 使用Protocol Buffer最重要的一步就是编写IDL(交互式数据语言)文件，通常IDL的编写是依据使用者
-已有的数据类型进行对照进行的，即参照已有的C+结构体或Java对象的内部数据成员进行编写。图2.8展示
+已有的数据类型进行对照进行的，即参照已有的C+结构体或Java对象的内部数据成员进行编写。图\ref{IDL_compare}展示
 了如何根据C++结构体编写IDL。
 \begin{figure}[H]
   \centering
@@ -187,7 +187,7 @@ ZeroMQ作为网络通信的工具。
     \label{Fig.sub.2}
     \includegraphics[width=0.38\textwidth]{2.8-1.png}}
   \caption{根据C++结构体编写对应IDL}
-  \label{Fig.11}
+  \label{IDL_compare}
 \end{figure}
 通过比较图2.8(a)与图2.8(b)可以看出，IDL的编写基本和C++等主流语言保持了一致规则，学习IDL编写的
 成本并不大。IDL提供了一系列的关键字供使用者实现更为复杂的序列化规则，不止包括定义一个数据类型，
@@ -197,11 +197,11 @@ IDL时并不会发生大规模重构反序列化代码以及IDL的md5值不一�
 
 常见的序列化技术并不只有Protocol Buffer一种，XML和JSON也是应用非常广泛的序列化技术方案，但本文
 选用Protocol Buffer而不使用其他序列化技术主要有性能上和序列化技术本身的数据表达能力的考虑。
-表2.2展示了Protocol Buffer、XML以及JSON表达相同一个数据类型的格式。
+表\ref{serialize_tool_compare}展示了Protocol Buffer、XML以及JSON表达相同一个数据类型的格式。
 \begin{table}[H]
   \centering\small
   \caption{三种序列化技术描述数据的格式对比\cite{6215346}}
-  \label{tab:exampletable}
+  \label{serialize_tool_compare}
   \begin{tabular}{cc}
     \toprule
     序列化技术   &  格式                                       \\
@@ -216,12 +216,12 @@ IDL时并不会发生大规模重构反序列化代码以及IDL的md5值不一�
 直观，每一个成员变量的类型在编写IDL时就直接确定。而XML和JSON对一个数据类型描述的格式并不能
 让使用者直观地看出每一个变量的具体类型，且当数据类型本身非常复杂时他们的描述格式阅读起来更为困难。
 
-Protocol Buffer在性能方面也较XML和JSON有明显的优势。表2.3列出了这三种
+Protocol Buffer在性能方面也较XML和JSON有明显的优势。表\ref{serialize_performance_compare}列出了这三种
 序列化方案序列化同一份数据的耗时、反序列化同一份数据的耗时以及序列化后的字节大小\cite{proto}：
 \begin{table}[H]
   \centering\small
   \caption{三种序列化技术性能对比}
-  \label{tab:exampletable}
+  \label{serialize_performance_compare}
   \begin{tabular}{cccc}
     \toprule
     序列化技术 & 序列化耗时(ms) & 序列化后字节数(Byte) & 反序列化耗时(ms)                                       \\
@@ -251,7 +251,7 @@ RPC解决的问题是实现分布式系统中各个通信单元调用不同服�
   \caption{RPC调用流程}
   \label{rpc_flowchart}
 \end{figure}
-从图2.9可以看出，RPC调用过程主要分为以下几个步骤：
+从图\ref{rpc_flowchart}可以看出，RPC调用过程主要分为以下几个步骤：
 \begin{enumerate}
   \item 客户端发起调用之前，首先要确定需要调用什么服务。服务端为了将自身提供的不同服务做区分，会将
   每一个提供的服务加上标识(Call ID)，以此让客户端能够指定调用某一个服务。客户端确定调用的服务后，
@@ -274,7 +274,7 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
 有明显的优势。共享内存的原理是将两个或多个独立的进程的一段虚拟地址映射到同一块物理地址，这些进程共同使用
 物理地址的某一个区域。进程对共享内存的修改直接作用在物理内存上，不会发生用户态与内核态之间的数据拷贝，所以
 共享内存并没有多余的数据拷贝，称零拷贝(零拷贝并不代表一次数据拷贝都没有发生，零的概念是相对于拷贝次数更多的通信方式而言)。
-图2.10对比了共享内存与TCP socket读写数据过程的对比：
+图\ref{IPC_compare}对比了共享内存与TCP socket读写数据过程的对比：
 \begin{figure}[H]
   \centering
   \subfigure[C++共享内存]{
@@ -284,17 +284,17 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
     \label{Fig.sub.2}
     \includegraphics[width=0.6\textwidth]{2.10-1.png}}
   \caption{共享内存与TCP socket读写过程对比}
-  \label{Fig.13}
+  \label{IPC_compare}
 \end{figure}
-从图2.10(a)和图2.10(b)可以看出，使用共享内存读写数据过程中只会发生两次数据拷贝，一次是将数据写入共享内存中
+从图\ref{IPC_compare}(a)和图\ref{IPC_compare}(b)可以看出，使用共享内存读写数据过程中只会发生两次数据拷贝，一次是将数据写入共享内存中
 一次是从共享内存中读取数据；而使用TCP socket在读写数据过程中会发生四次数据拷贝。使用进程间通信传输本身就
 比较小的数据时，拷贝次数对于系统性能及延迟的影响可以忽略不计，但传输大数据时会明显造成系统通信延迟的上升以及性能
-的下降。不仅如此，在本系统内会发生一个发布者向多个订阅者发送消息，这会造成同一份数据被拷贝数十次。表2.4
-总结了常见的自动驾驶通信系统使用进程间通信传输一次数据期间发生的拷贝次数。表2.5是常用几种进程间通信方式吞吐量性能对比。
+的下降。不仅如此，在本系统内会发生一个发布者向多个订阅者发送消息，这会造成同一份数据被拷贝数十次。表\ref{data_copy_compare}
+总结了常见的自动驾驶通信系统使用进程间通信传输一次数据期间发生的拷贝次数。表\ref{IPC_output_compare}是常用几种进程间通信方式吞吐量性能对比。
 \begin{table}[H]
   \centering\small
   \caption{自动驾驶通信系统数据拷贝次数总结\cite{8968462}}
-  \label{tab:exampletable}
+  \label{data_copy_compare}
   \setlength{\tabcolsep}{10mm}{
   \begin{tabular}{ccc}
     \toprule
@@ -305,13 +305,13 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
     \bottomrule
   \end{tabular}
   }
-  \note{注：$sub$代表同一个数据(即话题)被订阅的次数。}
+  \note{注：$sub$代表同一个话题被订阅的次数。}
 \end{table}
 
 \begin{table}[H]
   \centering\small
   \caption{不同进程间通信方式吞吐量对比}
-  \label{tab:exampletable}
+  \label{IPC_output_compare}
   \begin{tabular}{ccccc}
     \toprule
     \diagbox{通信方式}{数据量} & 128$\times$1000 & 512$\times$1000 & 2048$\times$1000 & 4096$\times$1000\\
@@ -325,7 +325,7 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
   \note{注：表格中数据量单位为(Byte\ $\times$次数)；SHM为共享内存，PIPE为匿名管道，FIFO为命名管道。
   吞吐量测试均未对临界数据进行加锁保护。不同的测试环境数据可能出现不同。}
 \end{table}
-从表2.4和2.5可以看出，共享内存的吞吐量相较于其他进程间通信方式在吞吐量和减少消息拷贝方面有明显的优势。
+从表\ref{data_copy_compare}和\ref{IPC_output_compare}可以看出，共享内存的吞吐量相较于其他进程间通信方式在吞吐量和减少消息拷贝方面有明显的优势。
 虽然共享内存的优点很多，但也有不可忽视的缺点：
 共享内存没有提供数据同步的功能，这代表如果要使用共享内存来进行数据的读写需要使用者自身保证对临界资源的保护。
 本文选用共享内存作为进程间通信手段的同时，通过重新设计共享内存数据结构改进了第一章提到的现有共享内存数据结构的缺陷，
@@ -335,7 +335,7 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
 最重要的一环\cite{fuyong}。
 
 目前自动驾驶行业存在两种主流的操作系统方案，一种是基于Linux内核的方案，另一种是基于RTOS等嵌入式操作系统的方案。两种方案下
-的软件架构如图2.7所示。使用基于Linux内核的方案代表厂商有Waymo、Tesla、NVIDIA、百度等，该方案的优点是Linux具备开放、
+的软件架构如图\ref{ad_os_compare}所示。使用基于Linux内核的方案代表厂商有Waymo、Tesla、NVIDIA、百度等，该方案的优点是Linux具备开放、
 应用生态良好和工具链齐全的特点，满足自动驾驶系统快速迭代的需求，但难以满足自动驾驶系统对安全性和实时性的需求。使用基于RTOS等嵌入式
 操作系统的代表厂商有大众、戴姆勒、雷诺等，该方案的优点是QNX等嵌入式实时内核安全性和实时性较好，但其应用生态差、对AI软件栈
 支持一般。
@@ -349,7 +349,7 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
     \label{Fig.sub.2}
     \includegraphics[width=0.75\textwidth]{ADOS_rtos.png}}
   \caption{两种操作系统方案软件架构对比}
-  \label{Fig.13}
+  \label{ad_os_compare}
 \end{figure}
 \section{本章小结}
 本章首先介绍了本文系统所使用的ZeroMQ、RPC、序列化技术和共享内存相关的知识，并且阐述本文系统为何要使用这些技术。最后

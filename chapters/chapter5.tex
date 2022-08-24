@@ -31,7 +31,7 @@
 类根据用户传入的发布者配置文件PublisherConfig使用工厂函数make()创建InternalPublisherImpl类，并
 通过C++多态的特性将Publisher类的指针指向InternalPublisherImpl类，用户最终使用Publisher类完成管理、发布消息等操作。
 InternalPublisherImpl类中保存发布者配置文件PublisherConfig和抽象发布类PubAbstract的指针。
-CommunicationAbstract(通信抽象类)、PubAbstract(抽象发布类)和ServiceDiscoveryManager(服务发现类)三个类共同
+CommunicationAbstract（通信抽象类）、PubAbstract（抽象发布类）和ServiceDiscoveryManager（服务发现类）三个类共同
 服务于Publisher类的创建、修改、修改和发布消息功能。
 
 \begin{figure}[htb]
@@ -73,9 +73,9 @@ QueryType向中心节点查询订阅者或发布者的信息，返回结果。
 如图5.4所示，订阅者模块类图设计同发布者模块基本一致，主要由Subscriber、InternalSubscriber和InternalSubscriberImpl
 三个类构成。InternalSubscriberImpl内部保存订阅者配置文件和调度配置文件，除了创建、删除和修改通信域三个
 函数，该类新增了修改通信方式的函数change\_communication\_mode和一系列操作消息队列的函数。
-CommunicationAbstract(通信抽象类)、SubAbstract(抽象订阅类)和ServiceDiscoveryManager(服务发现类)三个类共同
-服务于Subscriber类的创建、修改、修改和发布消息功能。不同的是，InternalSubscriberImpl类需要使用Dequeue(双向队列类)
-作为消息队列存放订阅到的消息，并使用TaskScheduler(调度类)侵入式地注册基于消息触发的调度策略调度任务。
+CommunicationAbstract（通信抽象类）、SubAbstract（抽象订阅类）和ServiceDiscoveryManager（服务发现类）三个类共同
+服务于Subscriber类的创建、修改、修改和发布消息功能。不同的是，InternalSubscriberImpl类需要使用Dequeue（双向队列类）
+作为消息队列存放订阅到的消息，并使用TaskScheduler（调度类）侵入式地注册基于消息触发的调度策略调度任务。
 Dequeue类内部存放了互斥锁保证用户从队列中取出消息和底层通信抽象模块向队列压入消息这两个操作是互斥的，保证数据
 的同步性。
 
