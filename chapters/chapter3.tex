@@ -13,10 +13,10 @@
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.65\textwidth]{one_car_communication_model}
-  \caption{自动驾驶单车内模块通信拓扑图}
+  \caption{自动驾驶单车内算法模块通信拓扑图}
   \label{one_car_communication_model}
 \end{figure}
-从图3.1可以分析出，模块之间通信主要是依次从上游原始数据传递到算法处理模块最终由下游的模块直接使用
+从图\ref{one_car_communication_model}可以分析出，模块之间通信主要是依次从上游原始数据传递到算法处理模块最终由下游的模块直接使用
 并输出车辆的行为结果，此外还存在两个模块互相发送接收信息的模式。当系统内参与通信模块数量持续增加时，
 通信的拓扑网络将变得复杂。针对自动驾驶系统中通信网络拓扑复杂的问题，采取基于话题的发布－订阅通信模式是
 解决此问题的一个较好方法。
@@ -27,7 +27,7 @@
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.65\textwidth]{one_car_1_to_N_communication.png}
-  \caption{自动驾驶单车内模块通信拓扑图}
+  \caption{算法模块一对多通信拓扑图}
   \label{one_car_1_to_N_communication}
 \end{figure}
 从图中可以看出当传输摄像机拍摄的图像等较大的数据时，数据的多次额外拷贝就会成为通信系统本身的性能瓶颈。
@@ -35,24 +35,24 @@
 目前自动驾驶系统通信并不局限于车内各功能模块的通信，而是正迈向SOA架构风格。
 即自动驾驶系统运行时需要的元数据、配置文件甚至路线的规划都逐渐从本地保存转变为与云端服务器进行数据的交互。
 大部分自动驾驶系统是基于高精度地图来提供结构化道路信息供算法使用。高精度地图是一种精度更高，纬度更多，兼有动态数据和静态数据的
-电子地图。高精度地图的生产的原则之一是反映实际道路的形态，当道路形态改变时，高精度地图将不再可靠。
-在这种技术方案下，自动驾驶系统需要更新最新的高精度地图数据且频率并不低，所以自动驾驶系统需要频繁地去更新地图数据。
-针对此问题，自动驾驶系统会在每次运行时都向云端的数据平台下载最新的地图数据，流程如图3.3所示。
+电子地图。高精度地图的生产的原则之一是反映实际道路的形态，
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.65\textwidth]{3.1.png}
-  \caption{自动驾驶单车内模块通信拓扑图}
-  \label{fig:15}
+  \includegraphics[width=0.6\textwidth]{one_car_cloud_communication.pdf}
+  \caption{单车与多终端通信示意图}
+  \label{one_car_cloud_communication}
 \end{figure}
+当道路形态改变时，高精度地图将不再可靠。
+在这种技术方案下，自动驾驶系统需要更新最新的高精度地图数据且频率并不低，所以自动驾驶系统需要频繁地去更新地图数据。
+同时，自动驾驶车辆在行驶时需要上报行驶状态至数据平台，手机、电脑等终端也逐渐开始与自动驾驶车辆进行通信。
+自动驾驶车辆与不同终端的通信如图\ref{one_car_cloud_communication}所示。
+
 从此实际例子可以看出，自动驾驶系统通信已经不能局限于车内本地的通信，需要更多地考虑与云端或更多终端
 进行通信的能力。更早地布局自动驾驶车辆与不同终端的通信能力可以实时地将数据同步到车内实现更好的自动驾驶
 性能表现，同时未来也可以更快速地接入智能路网等应用。
 
 综合本节阐述的自动驾驶单车内通信及单车与云端平台通信特点，可以得出自动驾驶系统对通信系统的要求是多样的。
 
-在业务形态方面，传统的通信系统通常只提供单一的通信模式，限制了用户根据使用场景灵活调整通信模式的需求。而
-自动驾驶要求通信系统具备多样化的通信模式，既要求通信系统具备进程间通信能力，还要求其具备网络通信能力，甚至
-要求具备进程内通信能力。
 
 \subsection{业务流程描述}
 虽然自动驾驶运行时通信系统业务流程复杂，但从更抽象的角度来看，业务流程可大致分为如下四步：
@@ -103,12 +103,13 @@
 通信单元管理用例图如图\ref{communication_unit_yongli}所示。
 
 
-考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，如表3.1和3.2所示。
+考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，如表\ref{regist_subscriber_yongli}
+和\ref{delete_subscriber_yongli}所示。
 \begin{table}[H]
   \centering\small
   \renewcommand\arraystretch{1.2}
   \caption{注册订阅者单元用例说明}
-  \label{tab:exampletable}
+  \label{regist_subscriber_yongli}
   \begin{tabular}{ll}
     \toprule
     \multicolumn{1}{l}{用例名称} & \multicolumn{1}{l}{注册订阅者单元}  \\
@@ -125,7 +126,7 @@
 \begin{table}[H]
   \centering\small
   \caption{删除订阅者单元用例说明}
-  \label{tab:exampletable}
+  \label{delete_subscriber_yongli}
   \begin{tabular}{ll}
     \toprule
     \multicolumn{1}{l}{用例名称} & \multicolumn{1}{l}{删除订阅者单元}  \\
@@ -167,12 +168,13 @@
 进行查询，也可以进行全量查询，并且用户可根据需要确定在哪种通信域内进行查询。服务管理用例图如图\ref{service_yongli}所示。
 
 
-本节以创建服务端和查询服务信息用例为例进行说明，如图表3.3和3.4所示。
+本节以创建服务端和查询服务信息用例为例进行说明，如表\ref{regist_service_server_yongli}
+和\ref{delete_service_server_yongli}所示。
 \begin{table}[H]
   \centering\small
   \renewcommand\arraystretch{1.2}
   \caption{创建服务端用例说明}
-  \label{tab:exampletable}
+  \label{regist_service_server_yongli}
   \begin{tabular}{ll}
     \toprule
     \multicolumn{1}{l}{用例名称} & \multicolumn{1}{l}{创建服务端}  \\
@@ -190,7 +192,7 @@
   \centering\small
   \renewcommand\arraystretch{1.2}
   \caption{查询服务信息用例说明}
-  \label{tab:exampletable}
+  \label{delete_service_server_yongli}
   \begin{tabular}{ll}
     \toprule
     \multicolumn{1}{l}{用例名称} & \multicolumn{1}{l}{查询服务信息}  \\
@@ -267,7 +269,7 @@
 自动驾驶对通信系统需求不仅是对通信功能的需求，还包含对任务调度方式的需求。同通信性能本身对整个通信
 系统性能表现的影响程度，调度策略的选择一样重要。
 
-在自动驾驶系统中，会存在多种传感器如摄像头、LiDAR(激光雷达)、IMU(惯性测量单元)等。自动驾驶对传感器发送
+在自动驾驶系统中，会存在多种传感器如摄像头、LiDAR（激光雷达）、IMU（惯性测量单元）等。自动驾驶对传感器发送
 数据的频率有着较为严格的要求，通常会限定某个传感器在某个时间段内的平均频率为稳定在系统可接受范围内。针对此类
 定频任务的实际需求，采用基于时间驱动的调度策略即每秒固定调度次数是较好的解决方法；传感器作为自动驾驶最上游的数据，
 最终要经过处理供下游业务模块使用，而大多下游模块并不需要像传感器一样要求较为稳定的频率发送信息。此类业务模块
@@ -282,13 +284,13 @@
   \label{schedul_yongli}
 \end{figure}
 
-本节以设置基于时间驱动调度策略用例为例进行说明，如表3.5所示。
+本节以设置基于时间驱动调度策略用例为例进行说明，如表\ref{set_scheduler_yongli}所示。
 
 \begin{table}[H]
   \centering\small
   \renewcommand\arraystretch{1.2}
   \caption{设置基于时间的调度策略用例说明}
-  \label{tab:exampletable}
+  \label{set_scheduler_yongli}
   \begin{tabular}{ll}
     \toprule
     \multicolumn{1}{l}{用例名称} & \multicolumn{1}{l}{设置基于时间的调度策略}  \\
@@ -296,8 +298,8 @@
     行为角色 & 发布者或订阅者\\
     用例说明 & 该用例实现对任务调度策略的设置；\\
     前置条件 & 已经注册通信单元；\\
-    后置条件 & 设置调度策略成功，系统返回成功状态码\\
-    基本流   & \makecell[l]{1.设置调度策略为基于时间;\\2.设置调度频率;\\3.设置成功，调度策略生效}\\
+    后置条件 & 设置调度策略成功，系统返回成功状态码；\\
+    基本流   & \makecell[l]{1.设置调度策略为基于时间；\\2.设置调度频率；\\3.设置成功，调度策略生效；}\\
     异常流   & \makecell[l]{1a.未设置调度策略，设置失败；\\2a.未设置调度频率或调度频率为非法频率，设置失败；}\\
     \bottomrule
   \end{tabular}

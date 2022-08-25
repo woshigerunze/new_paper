@@ -4,11 +4,11 @@
 
 \section{测试环境}
 本节是对测试环境的介绍，即自动驾驶运行时通信系统的运行环境。本系统支持在兼容Linux的操作系统上运行，并且支持在x86或ARM架构
-的CPU上运行。本文测试选用个人笔记本对系统进行测试，具体配置如表6.1所示。
+的CPU上运行。本文测试选用个人笔记本对系统进行测试，具体配置如表\ref{test_env}所示。
 \begin{table}[htb]
   \centering\small
   \caption{测试环境配置}
-  \label{tab:exampletable}
+  \label{test_env}
   \begin{tabular}{cc}
     \toprule
     硬件 & 配置信息 \\
@@ -43,12 +43,12 @@
 向服务端发起请求，服务端将客户端的请求数据返回给客户端。
 
 
-测试结果如图6.2所示。左侧为服务端所在任务终端，右侧为客户端所在任务的终端。从图中可以看出，服务端正确地返回了客户端的请求数据。
+测试结果如图\ref{request_and_response_test}所示。左侧为服务端所在任务终端，右侧为客户端所在任务的终端。从图中可以看出，服务端正确地返回了客户端的请求数据。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{pub_sub_test.png}
+  \includegraphics[width=0.95\textwidth]{request_and_response_test.png}
   \caption{服务模块测试结果}
-  \label{pub_sub_test}
+  \label{request_and_response_test}
 \end{figure}
 
 \subsection{调度模块测试}
@@ -152,7 +152,7 @@ CSHM的读者采用原子变量主动轮询缓冲区，因此CSHM读写不受网
 
 表\ref{multi_subscribers}详细列出了四个订阅者同时订阅一个发布者各通信方式的通信延迟数据。从表中可以看出，ROSTCP
 在订阅者数量明显增多的情况下通信延迟明显上升，在本测试场景下，ROSTCP的平均通信延迟达到了一个订阅者时的四倍。而
-SHM和CSHM通信延迟上升不明显，测试结果表明在1-N的通信模式下，使用网络通信作为进程间通信的方式在通信延迟方面远远落后于共享内存。
+SHM和CSHM通信延迟上升不明显，测试结果表明在1－N的通信模式下，使用网络通信作为进程间通信的方式在通信延迟方面远远落后于共享内存。
 \begin{table}[htb]
   \centering\small
   \caption{四个订阅者订阅消息各通信方式延迟}
@@ -172,6 +172,28 @@ SHM和CSHM通信延迟上升不明显，测试结果表明在1-N的通信模式�
     \bottomrule
   \end{tabular}
   \note{注：通信延迟数据包含数据序列化耗时}
+\end{table}
+
+\subsubsection{实车测试}
+为了反映通信系统最真实的实时性性能，需要使用实车部署全量的算法模块及传感器。本次测试使用两种硬件平台：x86架构的
+工控机和基于ARM的华为嵌入式车载计算平台MDC610，两种平台的配置如表\ref{car_hardware}所示。
+\begin{table}[H]
+  \centering\small
+  \caption{实车硬件平台配置}
+  \renewcommand\arraystretch{1.2}
+  \label{car_hardware}
+  \begin{tabular}{ccc}
+    \toprule
+    \diagbox[width=8em,trim=l]{硬件名称}{硬件平台} & 工控机 & MDC610 \\
+    \midrule
+    架构 & x86 & ARM \\
+    CPU & Intel Ice Lake gold 6346 $\times$ 2 & 昇腾610 + MCU\\
+    GPU & NVidia RTX 3090 $\times$ 2& 内置AI芯片\\
+    RAM & 4 $\times$ 32GB, DDR4& 24GB, LPDDR4X\\
+    存储 & 2TB NVMe SSD& 128GB SSD\\
+    功耗 & 约2000W& 约100W\\
+    \bottomrule
+  \end{tabular}
 \end{table}
 
 \subsection{鲁棒性测试}

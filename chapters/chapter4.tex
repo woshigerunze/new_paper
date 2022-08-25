@@ -122,14 +122,14 @@
 订阅者模块的管理接口包括创建订阅者、删除订阅者与修改订阅者通信域，订阅消息由订阅者模块内部通过消息队列完成，用户无需
 调用显式接口完成订阅消息的操作。
 
-订阅者模块内部保存订阅者配置文件，该文件决定了订阅者需要订阅的话题以及通信域，配置文件如表4.1所示。
+订阅者模块内部保存订阅者配置文件，该文件决定了订阅者需要订阅的话题以及通信域，配置文件如表\ref{subscriber_config_file}所示。
 配置文件中，Topic与Domain需要由用户显式给定，字段不可为空；QueueSize系统默认为100，用户可以自由设置消息队列的长度；
 DataCallback为订阅者模块收到消息后执行的回调函数，系统默认的回调函数为将收到的消息压入消息队列，但用户可以自定义
 收到消息后的回调函数。
 \begin{table}[htb]
   \centering\small
   \caption{订阅者模块配置文件}
-  \label{tab:exampletable}
+  \label{subscriber_config_file}
   \begin{tabular}{cc}
     \toprule
     字段名 & 字段解释 \\
@@ -142,7 +142,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \end{tabular}
 \end{table}
 
-订阅者模块中的管理接口由用户直接调用，接口设计如表4.2所示。管理接口中，create\_subscriber接口需要配置文件作为
+订阅者模块中的管理接口由用户直接调用，接口设计如表\ref{subscriber_interface}所示。管理接口中，create\_subscriber接口需要配置文件作为
 参数并根据话题名称与通信域供服务发现模块进行服务发现并与匹配的发布者进行点对点的连接；delete\_subscriber接口
 需要由用户指定删除类型，接口内部根据删除类型判断是否需要保存未接受的消息并向服务发现模块发出删除请求；modify\_subscriber\_domain接口需要由用户指定修改
 后的通信域作为参数；query\_publishers\_info与query\_subscribers\_info接口根据查询范围与查询条件查询系统内的发布者信息或订阅者信息，
@@ -151,7 +151,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \renewcommand\arraystretch{1.2}
   \centering\small
   \caption{订阅者模块接口}
-  \label{tab:exampletable}
+  \label{subscriber_interface}
   \begin{tabular}{cc}
     \toprule
     接口签名 & 接口解释 \\
@@ -168,7 +168,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 
 订阅者模块中的消息队列保存自身订阅话题对应发布者发布的消息，根据消息队列大小动态地接收与丢弃消息队列中
 保存的消息。消息队列在基于C++标准库提供的队列之上加入了互斥锁与条件变量以保证消息同步性。同样地，消息队列
-也向用户提供了操作接口，接口设计如表4.3所示。
+也向用户提供了操作接口，接口设计如表\ref{message_queue_interface}所示。
 
 % \begin{table}[H]
 %   \centering\small
@@ -187,7 +187,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 %   \end{tabular}
 % \end{table}
 \begin{longtable}{cc}
-  \caption{消息队列相关接口}\label{tab1}\\
+  \caption{消息队列相关接口}\label{message_queue_interface}\\
   % 表格“首页”显示内容
   \toprule
   接口签名 & 接口解释 \\
@@ -215,17 +215,18 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \end{longtable}  
 
 订阅者模块的时序设计如图\ref{subscriber_gaiyao_timesequence}所示。
+用户调用创建订阅者接口后，订阅者模块首先校验配置文件中的必填字段是按要求填写，若配置文件校验失败则本次创建失败；
+配置文件校验成功后，将其中的回调函数作为任务调度模块的调度任务；调度任务设置完成后，将配置文件传至通信抽象模块，
+通信抽象模块根据配置文件信息创建抽象订阅类，在订阅者配置文件的基础上加入IP地址、进程号以及订阅者更新通信链路的回调函数
+形成抽象订阅者配置文件，作为服务发现参数传至服务发现模块；服务模块根据抽象订阅者配置文件中的IP地址、进程号、话题名称以及通信域
+进入循环寻找与订阅者匹配的发布者，若寻找成功则调用抽象订阅者配置文件中的回调函数，发布订阅双方完成点对点的连接并开始通信。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.75\textwidth]{subscriber_gaiyao_timesequence.png}
   \caption{创建订阅者时序图}
   \label{subscriber_gaiyao_timesequence}
 \end{figure}
-用户调用创建订阅者接口后，订阅者模块首先校验配置文件中的必填字段是按要求填写，若配置文件校验失败则本次创建失败；
-配置文件校验成功后，将其中的回调函数作为任务调度模块的调度任务；调度任务设置完成后，将配置文件传至通信抽象模块，
-通信抽象模块根据配置文件信息创建抽象订阅类，在订阅者配置文件的基础上加入IP地址、进程号以及订阅者更新通信链路的回调函数
-形成抽象订阅者配置文件，作为服务发现参数传至服务发现模块；服务模块根据抽象订阅者配置文件中的IP地址、进程号、话题名称以及通信域
-进入循环寻找与订阅者匹配的发布者，若寻找成功则调用抽象订阅者配置文件中的回调函数，发布订阅双方完成点对点的连接并开始通信。
+
 % \begin{figure}[H]
 %   \centering
 %   \includegraphics[width=0.8\textwidth]{4.4.png}
@@ -237,12 +238,12 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 发布者模块用于实现基于发布－订阅模式异步通信中发布者的基础功能，并向用户管理订阅者和发布消息的功能接口。
 发布者模块的管理接口包括创建发布者、删除发布者与修改发布者通信域，发布消息接口由发布者模块唯一提供。
 
-同订阅者模块类似，发布者模块内部保存了发布者配置文件，该文件决定了发布者发布消息的话题以及通信域，配置文件如表4.4所示。
+同订阅者模块类似，发布者模块内部保存了发布者配置文件，该文件决定了发布者发布消息的话题以及通信域，配置文件如表\ref{publisher_config_file}所示。
 由于发布者内部并不需要维护消息队列，其配置文件内容相比订阅者配置文件较少，但Topic与Domain仍需要由用户显式给定。
 \begin{table}[htb]
   \centering\small
-  \caption{订阅者配置文件}
-  \label{tab:exampletable}
+  \caption{发布者模块配置文件}
+  \label{publisher_config_file}
   \begin{tabular}{cc}
     \toprule
     字段名 & 字段解释 \\
@@ -253,7 +254,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \end{tabular}
 \end{table}
 
-发布者模块中的管理接口和发布消息接口由用户直接调用，接口设计如表4.5所示。同订阅者模块的管理接口类似，create\_publisher
+发布者模块中的管理接口和发布消息接口由用户直接调用，接口设计如表\ref{publisher_interface}所示。同订阅者模块的管理接口类似，create\_publisher
 需要配置文件作为参数并根据配置文件中的话题名称与通信域供服务发现模块寻找匹配的订阅者进行点对点连接；delete\_publisher
 接口同样不需要任何参数，由接口内部向服务发现模块发出删除请求；modify\_publisher\_domain接口需要由用户指定修改后的
 通信域作为参数；publish接口是发布者发布消息的唯一接口；query\_publishers\_info与query\_subscribers\_info接口功能与订阅者模块中的接口功能相同。
@@ -261,7 +262,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \centering\small
   \renewcommand\arraystretch{1.2}
   \caption{发布者模块接口}
-  \label{tab:exampletable}
+  \label{publisher_interface}
   \begin{tabular}{cc}
     \toprule
     接口签名 & 接口解释 \\
@@ -276,8 +277,9 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \end{tabular}
 \end{table}
 
-发布者模块的创建、删除与修改流程与订阅者模块大致相似，二者唯一的不同是通信抽象模块会返回与该发布者对应的抽象发布类。
-发布者模块保存该类并通过该类中保存的发布管理类进行发布消息，发布者创建及发布消息时序设计如图\ref{publisher_gaiyao_timesequence}所示。
+发布者模块的创建、删除与修改流程与订阅者模块大致相似，二者不同的地方是通信抽象模块会返回与该发布者对应的抽象发布类，
+发布者模块保存该类并通过该类中保存的发布管理类进行发布消息；创建发布者过程中不需要向调度模块注册调度任务。
+发布者创建及发布消息时序设计如图\ref{publisher_gaiyao_timesequence}所示。
 
 \begin{figure}[H]
   \centering
@@ -292,12 +294,12 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 \subsection{服务客户端设计}
 服务客户端用于实现基于RPC同步数据通信中客户端即服务请求方的基础功能，提供管理服务客户端接口及请求服务的功能接口。
 
-服务客户端内部保存客户端配置文件，该文件决定了客户端需要请求的服务名称、通信域，配置文件如表4.6所示。
+服务客户端内部保存客户端配置文件，该文件决定了客户端需要请求的服务名称、通信域，配置文件如表\ref{service_client_config_file}所示。
 配置文件中，ServiceName与Domain需要由显式给定，不可为空。
 \begin{table}[H]
   \centering\small
   \caption{服务客户端配置文件}
-  \label{tab:exampletable}
+  \label{service_client_config_file}
   \begin{tabular}{cc}
     \toprule
     字段名 & 字段解释 \\
@@ -308,7 +310,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \end{tabular}
 \end{table}
 
-服务客户端接口设计如表4.7所示。create\_service\_client根据客户端配置文件中的ServiceName与Domain初始化服务客户端；
+服务客户端接口设计如表\ref{service_client_interface}所示。create\_service\_client根据客户端配置文件中的ServiceName与Domain初始化服务客户端；
 delete\_service\_client不需要任何参数，被调用后直接删除客户端，删除过程不需要由服务发现模块参与；
 modify\_service\_client\_domain在接收用户指定的目标通信域后由服务发现模块完成通信域的切换；
 is\_service\_available接口实现查询客户端需要请求服务可用性；call\_service接口实现发起向服务服务端发起请求；
@@ -316,7 +318,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 \begin{table}[htb]
   \centering\small
   \caption{服务客户端接口}
-  \label{tab:exampletable}
+  \label{service_client_interface}
   \begin{tabular}{cc}
     \toprule
     接口签名 & 接口解释 \\
@@ -351,12 +353,12 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 \subsection{服务服务端设计}
 服务服务端用于实现基于RPC同步数据通信中服务端即服务提供方的基础功能，提供管理服务端接口及创建服务的功能接口。
 
-服务服务端内部保存服务端配置文件，该文件决定了服务端提供的服务名称、服务功能以及通信域，配置文件如表4.8所示。
+服务服务端内部保存服务端配置文件，该文件决定了服务端提供的服务名称、服务功能以及通信域，配置文件如表\ref{service_server_config_file}所示。
 配置文件中的所有字段全部由用户显式给定，不能为空。
 \begin{table}[H]
   \centering\small
   \caption{服务服务端配置文件}
-  \label{tab:exampletable}
+  \label{service_server_config_file}
   \begin{tabular}{cc}
     \toprule
     字段名 & 字段解释 \\
@@ -368,12 +370,12 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
   \end{tabular}
 \end{table}
 
-服务服务端接口设计如表4.9所示。服务服务端提供的接口与服务客户端大致相同。根据服务端的特点，服务端接口
+服务服务端接口设计如表\ref{service_server_interface}所示。服务服务端提供的接口与服务客户端大致相同。根据服务端的特点，服务端接口
 删除了客户端中的发起服务请求接口与查询服务可用性接口。
 \begin{table}[htb]
   \centering\small
   \caption{服务服务端接口}
-  \label{tab:exampletable}
+  \label{service_server_interface}
   \begin{tabular}{cc}
     \toprule
     接口签名 & 接口解释 \\
@@ -411,10 +413,10 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 
 \subsection{通信抽象类概要设计}
 通信抽象类负责处理通信单元模块和服务模块的所有请求，控制抽象发布类、抽象订阅类与抽象服务类的创建与删除，协助
-服务发现模块完成服务发现功能，该类唯一存在，其接口设计如表4.10所示。
+服务发现模块完成服务发现功能，该类唯一存在，其接口设计如表\ref{communication_abstract_interface}所示。
  
 \begin{longtable}{cc}
-  \caption{通信抽象模块接口设计}\label{tab1}\\
+  \caption{通信抽象模块接口设计}\label{communication_abstract_interface}\\
   % 表格“首页”显示内容
   \toprule
   接口签名 & 接口解释 \\
@@ -460,11 +462,11 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 服务发现请求参数。
 处理服务端或客户端的创建请求时，会创建抽象服务类并由该类完成基于RPC的通信功能，并不需要
 在抽象服务类中绑定更新通信链路的回调函数。通信抽象类在服务端的配置文件基础上加入本机IP地址，而对客户端的配置文件
-不加入任何信息，随后生成对应服务发现请求参数。服务发现请求参数如表4.11所示。
+不加入任何信息，随后生成对应服务发现请求参数。服务发现请求参数如表\ref{service_discovery_parameter}所示。
 
 
 \begin{longtable}{ccc}
-  \caption{服务发现请求参数}\label{tab1}\\
+  \caption{服务发现请求参数}\label{service_discovery_parameter}\\
   % 表格“首页”显示内容
   \toprule
   请求参数 & 字段 & 字段解释 \\
@@ -687,13 +689,13 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 
 \section{调度模块概要设计}
 调度模块的功能是根据调度策略控制任务模块的运行，调度模块唯一存在于每个不同的进程。调度模块根据用户提供的调度
-配置文件创建调度任务并执行调度任务，调度配置文件如表4.13所示。taks\_name是不同调度任务的名称，不同的调度任务
+配置文件创建调度任务并执行调度任务，调度配置文件如表\ref{schedule_config_file}所示。taks\_name是不同调度任务的名称，不同的调度任务
 以任务名称区分；task\_callback是调度任务对应的回调函数，当任务被调度时将执行该函数。配置文件中的字段全部由
 用户指定。
 \begin{table}[H]
   \centering\small
   \caption{调度配置文件}
-  \label{tab:exampletable}
+  \label{schedule_config_file}
   \begin{tabular}{cc}
     \toprule
     字段名 & 字段解释 \\
@@ -704,12 +706,12 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
   \end{tabular}
 \end{table}
 
-调度模块的接口设计如表4.14所示。create\_message\_task接口用于创建基于消息触发的调度任务，create\_time\_task
+调度模块的接口设计如表\ref{schedule_interface}所示。create\_message\_task接口用于创建基于消息触发的调度任务，create\_time\_task
 接口用于创建基于时间触发的调度任务，avtivate\_task接口用于激活指定的调度任务。
 \begin{table}[H]
   \centering\small
   \caption{调度模块接口设计}
-  \label{tab:exampletable}
+  \label{schedule_interface}
   \begin{tabular}{cc}
     \toprule
     接口签名 & 接口解释 \\
