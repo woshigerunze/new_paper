@@ -413,10 +413,10 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 
 \subsection{通信抽象类概要设计}
 通信抽象类负责处理通信单元模块和服务模块的所有请求，控制抽象发布类、抽象订阅类与抽象服务类的创建与删除，协助
-服务发现模块完成服务发现功能，该类唯一存在，其接口设计如表4.10所示。
+服务发现模块完成服务发现功能，该类唯一存在，其接口设计如表\ref{communication_abstract_interface}所示。
  
 \begin{longtable}{cc}
-  \caption{通信抽象模块接口设计}\label{tab1}\\
+  \caption{通信抽象模块接口设计}\label{communication_abstract_interface}\\
   % 表格“首页”显示内容
   \toprule
   接口签名 & 接口解释 \\
@@ -462,11 +462,11 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 服务发现请求参数。
 处理服务端或客户端的创建请求时，会创建抽象服务类并由该类完成基于RPC的通信功能，并不需要
 在抽象服务类中绑定更新通信链路的回调函数。通信抽象类在服务端的配置文件基础上加入本机IP地址，而对客户端的配置文件
-不加入任何信息，随后生成对应服务发现请求参数。服务发现请求参数如表4.11所示。
+不加入任何信息，随后生成对应服务发现请求参数。服务发现请求参数如表\ref{service_discovery_parameter}所示。
 
 
 \begin{longtable}{ccc}
-  \caption{服务发现请求参数}\label{tab1}\\
+  \caption{服务发现请求参数}\label{service_discovery_parameter}\\
   % 表格“首页”显示内容
   \toprule
   请求参数 & 字段 & 字段解释 \\
@@ -689,13 +689,13 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 
 \section{调度模块概要设计}
 调度模块的功能是根据调度策略控制任务模块的运行，调度模块唯一存在于每个不同的进程。调度模块根据用户提供的调度
-配置文件创建调度任务并执行调度任务，调度配置文件如表4.13所示。taks\_name是不同调度任务的名称，不同的调度任务
+配置文件创建调度任务并执行调度任务，调度配置文件如表\ref{schedule_config_file}所示。taks\_name是不同调度任务的名称，不同的调度任务
 以任务名称区分；task\_callback是调度任务对应的回调函数，当任务被调度时将执行该函数。配置文件中的字段全部由
 用户指定。
 \begin{table}[H]
   \centering\small
   \caption{调度配置文件}
-  \label{tab:exampletable}
+  \label{schedule_config_file}
   \begin{tabular}{cc}
     \toprule
     字段名 & 字段解释 \\
@@ -706,12 +706,12 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
   \end{tabular}
 \end{table}
 
-调度模块的接口设计如表4.14所示。create\_message\_task接口用于创建基于消息触发的调度任务，create\_time\_task
+调度模块的接口设计如表\ref{schedule_interface}所示。create\_message\_task接口用于创建基于消息触发的调度任务，create\_time\_task
 接口用于创建基于时间触发的调度任务，avtivate\_task接口用于激活指定的调度任务。
 \begin{table}[H]
   \centering\small
   \caption{调度模块接口设计}
-  \label{tab:exampletable}
+  \label{schedule_interface}
   \begin{tabular}{cc}
     \toprule
     接口签名 & 接口解释 \\
