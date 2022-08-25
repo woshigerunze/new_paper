@@ -273,15 +273,15 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
 有明显的优势。共享内存的原理是将两个或多个独立的进程的一段虚拟地址映射到同一块物理地址，这些进程共同使用
 物理地址的某一个区域。进程对共享内存的修改直接作用在物理内存上，不会发生用户态与内核态之间的数据拷贝，所以
 共享内存并没有多余的数据拷贝，称零拷贝(零拷贝并不代表一次数据拷贝都没有发生，零的概念是相对于拷贝次数更多的通信方式而言)。
-图\ref{IPC_compare}对比了共享内存与TCP socket读写数据过程的对比：
+图\ref{IPC_compare}对比了共享内存与TCP socket读写数据过程的对比。
 \begin{figure}[H]
   \centering
-  \subfigure[C++共享内存]{
+  \subfigure[共享内存]{
     \label{Fig.sub.1}
-    \includegraphics[width=0.6\textwidth]{2.10-0.png}}
+    \includegraphics[width=0.6\textwidth]{shared_memory_introduction.pdf}}
   \subfigure[TCP socket]{
     \label{Fig.sub.2}
-    \includegraphics[width=0.6\textwidth]{2.10-1.png}}
+    \includegraphics[width=0.6\textwidth]{tcp_socket_introduction.pdf}}
   \caption{共享内存与TCP socket读写过程对比}
   \label{IPC_compare}
 \end{figure}
@@ -343,10 +343,10 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
   \centering
   \subfigure[Linux]{
     \label{Fig.sub.1}
-    \includegraphics[width=0.75\textwidth]{ADOS_linux.png}}
+    \includegraphics[width=0.7\textwidth]{ADOS_linux.png}}
   \subfigure[嵌入式操作系统]{
     \label{Fig.sub.2}
-    \includegraphics[width=0.75\textwidth]{ADOS_rtos.png}}
+    \includegraphics[width=0.7\textwidth]{ADOS_RTOS.png}}
   \caption{两种操作系统方案软件架构对比}
   \label{ad_os_compare}
 \end{figure}
