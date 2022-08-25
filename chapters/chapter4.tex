@@ -11,9 +11,9 @@
 软件的抽象表达能力越强，而层次越低抽象表达能力就越低，这使得用户无需关心系统底层复杂的实现，只需要关心系统
 最上层提供的API（应用程序接口）来实现自身业务。
 
-如图4.1所示，本文将自动驾驶运行时通信系统架构分为应用层、任务层、调度层、数据通信层和通信抽象层。从图4.1可以看出，在第三章
-需求分析中导出的用户需求全部位于应用层，整个系统将为应用层提供高度抽象的API，通信单元间通信链路的建立、
-自动驾驶运行时系统网络拓扑的同步等实现全部隐藏在系统底层。
+如图\ref{communication_system_structure_gaiyao}所示，本文将自动驾驶运行时通信系统架构分为应用层、任务层、调度层、数据通信层和通信抽象层。
+从图\ref{communication_system_structure_gaiyao}可以看出，在第三章需求分析中导出的用户需求全部位于应用层，
+整个系统将为应用层提供高度抽象的API，通信单元间通信链路的建立、自动驾驶运行时系统网络拓扑的同步等实现全部隐藏在系统底层。
 下文按照自顶向下的顺序
 介绍系统的五个层次：
 \begin{enumerate}
@@ -36,7 +36,7 @@
     \centering
     \includegraphics[width=1\textwidth]{4.1.png}
     \caption{自动驾驶运行时通信系统架构图}
-    \label{fig:35}
+    \label{communication_system_structure_gaiyao}
   \end{figure}
 
 \subsection{通信系统组网设计}
@@ -46,19 +46,20 @@
 实际的通信。当任务内的通信单元或服务建立通信后消息通信是点对点的，不需要中心节点进行代理通信。
 
 本文提出的自动驾驶运行时通信系统对于同一个局域网下的多个物理机不处于同一个网络中。本系统提供的通信域对通信范围作出了划分，
-本机域指的是同一台物理机内的通信，全域指的是在网络内所有物理机之间的通信。本系统组网设计如图4.2所示。
+本机域指的是同一台物理机内的通信，全域指的是在网络内所有物理机之间的通信。本系统组网设计如图\ref{communication_system_network_gaiyao}所示。
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.5\textwidth]{4.2.png}
   \caption{通信系统组网设计图}
-  \label{fig:23}
+  \label{communication_system_network_gaiyao}
 \end{figure}
 
 \subsection{系统功能模块设计}
 根据需求分析结果及系统架构，本文将系统分为如下七个模块：通信单元模块、服务模块、
 任务模块、调度模块、通信传输模块、通信抽象模块及服务发现模块。本文根据业务与软件设计两个维度将系统模块层级分为一级模块与二级子模块，
-其中通信单元模块、任务模块、通信传输模块与通信抽象模块被分为多个二级子模块，系统功能模块设计如图4.3所示。
+其中通信单元模块、任务模块、通信传输模块与通信抽象模块被分为多个二级子模块，系统功能模块设计如图
+\ref{communication_system_function_module}所示。
 根据功能模块图所示，本文设计的自动驾驶运行时通信系统各模块实现功能如下：
 \begin{enumerate}
   \item 通信单元模块：包含发布者模块与订阅者模块两个二级子模块，该模块实现基于发布－订阅通信模式功能，同时
@@ -67,9 +68,9 @@
   提供接口。服务服务端实现注册服务和管理服务端功能；服务客户端实现请求服务和管理客户端功能。
   \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.6\textwidth]{4.3.pdf}
+    \includegraphics[width=0.6\textwidth]{communication_system_function_module.pdf}
     \caption{自动驾驶运行时通信系统功能模块图}
-    \label{fig:22}
+    \label{communication_system_function_module}
   \end{figure}
   \item 通信抽象模块：包含通信抽象类、抽象订阅类、抽象发布类和抽象服务类四个二级子模块，该模块将通信单元模块
   和服务模块所有的操作进行统一管理并且负责生成服务发现请求参数供服务发现模块完成服务发现功能。抽象订阅类
@@ -77,9 +78,9 @@
   至服务发现模块；抽象订阅类控制每个订阅者的通信链路，并通过通信传输模块监听通信链路中的消息；抽象发布类控制每个发布者的通信链路，
   并将待发布消息通过通信传输模块发送消息；抽象服务类控制所有服务端与客户端的注册服务和请求服务操作。
   \item 通信传输模块：包含进程间通信模块、进程内通信模块、网络通信模块与消息模块四个字模块，该模块是通信系统
-  发布－订阅通信模式的实际传输模块，发布者发布消息与订阅者订阅消息全部由该模块负责序列化、加密与传输。进程间通信模块
+  发布－订阅通信模式的实际传输模块，发布者发布消息与订阅者订阅消息全部由该模块负责序列化与传输。进程间通信模块
   通过共享内存方式传输消息；进程内通信模块通过指针方式传输信息；网络通信模块通过ZeroMQ传输消息；消息模块负责
-  将进程间通信模块与网络通信模块待传输消息进行序列化与加密处理。
+  将进程间通信模块与网络通信模块待传输消息进行序列化处理。
   \item 任务模块：该模块将所有的发布者、订阅者、服务服务端和服务客户端及用户的逻辑代码封装为一个统一的任务，
   同时提供对任务状态的管理功能。
   \item 调度模块：该模块将用户的任务进行调度，调度策略分为基于消息触发的调度策略和基于时间的调度策略。
@@ -222,7 +223,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 进入循环寻找与订阅者匹配的发布者，若寻找成功则调用抽象订阅者配置文件中的回调函数，发布订阅双方完成点对点的连接并开始通信。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.75\textwidth]{subscriber_gaiyao_timesequence.png}
+  \includegraphics[width=0.85\textwidth]{subscriber_gaiyao_timesequence.png}
   \caption{创建订阅者时序图}
   \label{subscriber_gaiyao_timesequence}
 \end{figure}
@@ -543,7 +544,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 进程内订阅者。
 
 进程内通信模块包含一个进程内通信管理类、一个进程内通信发布者类和一个进程内通信订阅者类。进程内通信管理类负责创建、删除
-进程内通信下的发布者与订阅者，并开辟线程轮询消息队列是否有新消息的到来；进程内通信发布者类负责将待发布消息压入消息对垒中；
+进程内通信下的发布者与订阅者，并开辟线程轮询消息队列是否有新消息的到来；进程内通信发布者类负责将待发布消息压入消息队列中；
 进程内订阅者类负责从消息队列弹出订阅消息，并调用用户传入的回调函数将消息压入订阅者模块中的消息队列中供用户使用。
 
 由于发布者与订阅者处于同一个进程内，二者间的通信
@@ -554,7 +555,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 队列在发布者之行压入消息和订阅者之行弹出消息操作时的原子性，使用了互斥锁机制对临界资源即消息队列进行保护。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{4.12.png}
+  \includegraphics[width=0.9\textwidth]{intraprocess_gaiyao.pdf}
   \caption{进程内通信消息传输}
   \label{intraprocess_gaiyao}
 \end{figure}
@@ -570,7 +571,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 将消息压入订阅者模块中的消息队列中供用户使用。进程间通信模块传输设计如图\ref{interprocess_gaiyao}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{4.13.pdf}
+  \includegraphics[width=0.8\textwidth]{interprocess_gaiyao.pdf}
   \caption{进程间通信消息传输}
   \label{interprocess_gaiyao}
 \end{figure}
@@ -581,7 +582,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{4.14.pdf}
+  \includegraphics[width=0.8\textwidth]{network_gaiyao.pdf}
   \caption{网络通信消息传输}
   \label{network_gaiyao}
 \end{figure}
@@ -616,7 +617,7 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 \section{服务发现模块概要设计}
 服务发现模块是实现本系统实现动态网络下通信功能的重要模块，服务发现模块唯一存在于每个进程。
 
-服务发现模块根据抽象服务类以及中心发出的服务发现请求参数实现服务发现功能，服务发现请求参数如表4.11所示。
+服务发现模块根据抽象服务类以及中心发出的服务发现请求参数实现服务发现功能，服务发现请求参数如表\ref{service_discovery_parameter}所示。
 服务发现模块服务发现机制分为两类：主动发现和被动发现。
 一方面，通信抽象类在本机内新增、删除或修改发布者、订阅者以及服务服务端时导致网络拓扑变化时向服务发现模块发出请求，服务发现模块主动向中心节点发出发现请求获取匹配通信方信息；
 另一方面，在其他进程中中网络拓扑发生变化时其自身的服务发现模块会向中心节点发出发现请求获取匹配通信方信息，中心节点会自动寻找
@@ -726,24 +727,24 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 调度模块支持基于基于消息触发的调度策略和基于时间触发的调度策略。基于消息触发的调度策略是侵入式的，即该调度策略
 并不需要由用户手动去激活调度任务，而是由通信抽象模块监听到新消息时调用订阅者模块中的回调函数，并最终在订阅者模块
 的回调函数中激活对应调度任务。在同一个任务中，基于消息触发的调度任务数量等于订阅者数量。基于消息触发的调度策略
-时序设计如图\ref{message_tick_gaiyao}所示。
+时序设计如图\ref{message_tick_gaiyao_sequence}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{message_tick_gaiyao.png}
+  \includegraphics[width=0.9\textwidth]{message_tick_gaiyao_sequence.png}
   \caption{基于消息触发的调度策略时序图}
-  \label{message_tick_gaiyao}
+  \label{message_tick_gaiyao_sequence}
 \end{figure}
 
 基于时间触发的调度策略相较于基于消息触发调度策略不再是侵入式的，需要用户显式指定任务的调度频率。基于时间触发的调度策略
 并不根据是否有新消息到来判断是否激活调度任务，而是从创建调度线程时就以固定的频率调用任务用户任务中的运行接口。该调度策略下，
 调度模块记录首先计算任务在调度频率下的执行时间间隔，每当任务调度完成后继续计算当前时间与执行时间间隔计算调度剩余时间，
 若调度剩余时间大于零，则在线程内睡眠剩余时间后再进行下一次调度，若调度剩余时间小于零，则立即进行下一次调度。基于时间触发的调度策略
-时序设计如图\ref{time_tick_gaiyao}所示。
+时序设计如图\ref{time_tick_gaiyao_sequence}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.4\textwidth]{time_tick_gaiyao.png}
+  \includegraphics[width=0.4\textwidth]{time_tick_gaiyao_sequence.png}
   \caption{基于时间触发的调度策略时序图}
-  \label{time_tick_gaiyao}
+  \label{time_tick_gaiyao_sequence}
 \end{figure}
 
 \section{中心节点概要设计}
@@ -752,14 +753,14 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.9\textwidth]{4.19.pdf}
+  \includegraphics[width=0.9\textwidth]{storage_model.pdf}
   \caption{网络拓扑信息存储模型}
   \label{storage_model}
 \end{figure}
 
 中心节点根据IP地址以及端口号将服务发现模块进行区分，并且将每个服务发现模块中的网络拓扑信息进行单独存储，存储模型示意图如图\ref{storage_model}所示。
 从图中可以看出，中心节点将IP地址与端口号两个信息中任意一个不相同的服务发现模块都进行区分。中心节点存储信息包括发布者信息、订阅者信息以及
-服务端信息，三种信息都来自各服务发现模块进行主动发现时使用的请求参数。请求参数如表4.11中的PublisherInfo、SubscriberInfo和
+服务端信息，三种信息都来自各服务发现模块进行主动发现时使用的请求参数。请求参数如\ref{service_discovery_parameter}中的PublisherInfo、SubscriberInfo和
 ServiceServerInfo。
 
 为了防止中心节点异常退出导致网络拓扑信息丢失，中心节点会定期将自身保存的通信系统网络拓扑信息转换为json文件并保存至本地。

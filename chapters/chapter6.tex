@@ -24,12 +24,14 @@
 \section{功能性测试}
 根据需求分析中对通信单元模块和服务模块提出的功能性需求，本节对通信单元模块、服务模块和调度模块展开功能性测试。
 \subsection{通信单元模块测试}
-对于通信单元模块的测试，编写一个仅包含发布者的任务(test\_pub\_task)和一个仅包含订阅者(test\_sub\_task)的任务，双方以话题/test进行通信，通信数据为C++中的std::string类型，
-通信类型使用共享内存进行进程间通信，发布者以20HZ的频率向订阅者发布随机消息。
-
+对于通信单元模块基于发布－订阅通信功能的测试，编写一个仅包含发布者的任务(test\_pub\_task)和一个仅包含订阅者(test\_sub\_task)的任务，双方以话题/test进行通信，通信数据为C++中的std::string类型，
+通信类型使用共享内存进行进程间通信，发布者以20Hz的频率向订阅者发布随机消息。
 
 测试结果如图\ref{pub_sub_test}所示，左侧为发布者所在任务的终端，右侧为订阅者所在任务的终端。从图中可以看出，订阅者全部正确接收到
 发布者发布的所有消息。
+
+通信单元模块的基于发布－订阅通信功能是最基础的功能，除此之外还向用户提供通信域相关功能，
+表\ref{communication_unit_communication_domain}列出了关于通信单元模块通信域相关功能的测试用例、测试步骤和测试结果。
 
 \begin{figure}[H]
   \centering
@@ -38,10 +40,26 @@
   \label{pub_sub_test}
 \end{figure}
 
+\begin{table}[H]
+  \centering\small
+  \caption{通信单元模块通信域功能测试}
+  \renewcommand\arraystretch{1.2}
+  \label{communication_unit_communication_domain}
+  \begin{tabular}{ccc}
+    \toprule
+    测试用例名称 & 测试步骤 & 测试结果 \\
+    \midrule
+    \makecell[l]{不同物理机下\\局部域发布订阅\\通信测试}& \makecell[l]{1.在物理机A创建局部域发布者\\，发布话题为/test；\\2.在物理机B创建局部域订阅者\\，订阅话题为/test；\\3.观察订阅者能否收到发布者\\发布的消息；} & \makecell[l]{1.订阅者无法收到发布者发布的\\消息；\\2.测试结果符合需求分析对通信\\系统的要求；}\\
+    \hline
+    修改通信域测试 & \makecell[l]{1.在物理机A创建局部域发布者\\，发布话题为/test；\\2.在物理机B创建局部域订阅者\\，订阅话题为/test；\\3.修改发布者和订阅者通信域为\\全局域；} & \makecell[l]{1.修改通信域前订阅者无法收到\\发布者发布的消息；\\2.修改通信域后订阅者可以收到\\发布者发布的消息；\\3.测试结果符合需求分析对通信\\系统的要求；} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
 \subsection{服务模块测试}
 对于服务模块的测试，编写一个仅包含一个服务服务端的任务(test\_server\_task)和一个仅包含服务客户端(test\_client\_task)的任务，服务端提供名为/test的回射服务，客户端
 向服务端发起请求，服务端将客户端的请求数据返回给客户端。
-
 
 测试结果如图\ref{request_and_response_test}所示。左侧为服务端所在任务终端，右侧为客户端所在任务的终端。从图中可以看出，服务端正确地返回了客户端的请求数据。
 \begin{figure}[H]
@@ -50,6 +68,24 @@
   \caption{服务模块测试结果}
   \label{request_and_response_test}
 \end{figure}
+同样地，服务模块的基于请求－应答的通信功能是最基础的功能，该模块也同样系统通信域相关功能，
+表\ref{service_communication_domain}列出了关于服务模块通信域相关功能的
+测试用例、测试步骤和测试结果。
+\begin{table}[H]
+  \centering\small
+  \caption{服务模块通信域功能测试}
+  \renewcommand\arraystretch{1.2}
+  \label{service_communication_domain}
+  \begin{tabular}{ccc}
+    \toprule
+    测试用例名称 & 测试步骤 & 测试结果 \\
+    \midrule
+    \makecell[l]{不同物理机下\\局部域请求应答\\通信测试}& \makecell[l]{1.在物理机A创建局部域服务端\\，服务名称为/test；\\2.在物理机B创建局部域客户端\\，请求服务名称为/test；\\3.观察客户端能否向服务端请求\\服务；} & \makecell[l]{1.客户端无法向服务端请求服务；\\2.测试结果符合需求分析对通信\\系统的要求；}\\
+    \hline
+    修改通信域测试 & \makecell[l]{1.在物理机A创建局部域服务端\\，服务名称为/test；\\2.在物理机B创建局部域客户端\\，请求服务名称为/test；\\3.修改服务端和客户端通信域为\\全局域；} & \makecell[l]{1.修改通信域前客户端无法向服务\\端请求服务；\\2.修改通信域后客户端可以向服务\\端请求服务；\\3.测试结果符合需求分析对通信\\系统的要求；} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsection{调度模块测试}
 对于调度模块的测试，本节针对其基于时间触发的调度策略进行测试。测试方法为编写一个任务，在任务中设置调度策略为基于时间触发，通过
@@ -62,10 +98,10 @@
     \toprule
     调度频率 & 平均时间间隔 & 最小时间间隔 & 最大时间间隔\\
     \midrule
-    10HZ & 99.9ms & 99.7ms & 100.3ms \\
-    20HZ & 49.8ms & 49.7ms & 50.2ms\\
-    50HZ & 19.9ms& 19.7ms & 20.2ms\\
-    100HZ & 9.94ms& 9.75ms & 10.21ms\\
+    10Hz & 99.9ms & 99.7ms & 100.3ms \\
+    20Hz & 49.8ms & 49.7ms & 50.2ms\\
+    50Hz & 19.9ms& 19.7ms & 20.2ms\\
+    100Hz & 9.94ms& 9.75ms & 10.21ms\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -79,7 +115,7 @@
 为变量，全面地对系统的通信性能进行测试。
 \subsubsection{消息大小对通信延迟的影响}
 本测试场景使用进程间通信的方式，在同一物理机内创建一个发布者和一个订阅者，将本系统共享内存通信（下文统一简写为SHM）、ROS的TCP通信（下文统一简写为ROSTCP）、ROS的UDP通信（下文统一简写为ROSUDP）和百度CyberRT共享内存通信（下文统一简写为CSHM）做通信性能
-的对比。本测试固定发布者发布消息频率为10HZ，固定发送500条消息，消息大小分别选用1KB、1MB、4MB和8MB，给出四种通信方式的平均通信延迟、最小通信延迟以及
+的对比。本测试固定发布者发布消息频率为10Hz，固定发送500条消息，消息大小分别选用1KB、1MB、4MB和8MB，给出四种通信方式的平均通信延迟、最小通信延迟以及
 最大通信延迟。
 \begin{table}[htb]
   \centering\small
@@ -112,7 +148,7 @@
 
 \subsubsection{发布消息频率对通信延迟的影响}
 本场景使用进程间通信的方式，在同一物理机内创建一个发布者和一个订阅者，将SHM、ROSTCP、和CSHM做通信性能对比。
-本测试固定消息大小为4MB，固定发送1000条消息，发布频率分别选用10HZ、20HZ和50HZ，给出三种通信方式的平均通信延迟、最小通信延迟以及
+本测试固定消息大小为4MB，固定发送1000条消息，发布频率分别选用10Hz、20Hz和50Hz，给出三种通信方式的平均通信延迟、最小通信延迟以及
 最大通信延迟。
 
 \begin{table}[htb]
@@ -126,11 +162,11 @@
     % \cline{3-5}
      & & 平均延迟 & 最小延迟 & 最大延迟\\
     \midrule
-    \multirow{3}{*}{SHM} & 10HZ& 2.429173ms& 2.101929ms& 2.981249ms\\ & 20HZ & 2.310824ms & 2.099812ms & 2.791724ms \\ & 50HZ & 2.258231ms & 1.986102ms & 2.710980ms \\
+    \multirow{3}{*}{SHM} & 10Hz& 2.429173ms& 2.101929ms& 2.981249ms\\ & 20Hz & 2.310824ms & 2.099812ms & 2.791724ms \\ & 50Hz & 2.258231ms & 1.986102ms & 2.710980ms \\
     \hline
-    \multirow{3}{*}{ROSTCP} & 10HZ& 11.984234ms& 9.975642ms& 12.370449ms\\ & 20HZ & 8.958139ms & 4.623674ms & 12.128937ms \\ & 50HZ & 4.362920ms & 3.106624ms & 11.234283ms \\
+    \multirow{3}{*}{ROSTCP} & 10Hz& 11.984234ms& 9.975642ms& 12.370449ms\\ & 20Hz & 8.958139ms & 4.623674ms & 12.128937ms \\ & 50Hz & 4.362920ms & 3.106624ms & 11.234283ms \\
     \hline
-    \multirow{3}{*}{CSHM} & 10HZ& 2.117953ms& 1.889123ms& 2.327153ms\\ & 20HZ & 2.073856ms & 1.908924ms & 2.291289ms \\ & 50HZ & 2.052384ms & 1.886123ms & 2.319872ms \\
+    \multirow{3}{*}{CSHM} & 10Hz& 2.117953ms& 1.889123ms& 2.327153ms\\ & 20Hz & 2.073856ms & 1.908924ms & 2.291289ms \\ & 50Hz & 2.052384ms & 1.886123ms & 2.319872ms \\
     \bottomrule
   \end{tabular}
   \note{注：通信延迟数据包含数据序列化耗时}
@@ -138,7 +174,7 @@
 
 表\ref{frequency_test}详细列出了各通信方式的通信延迟数据。从表中可以看出，SHM、ROSTCP和CSHM的通信延迟都随着发布
 消息频率的提升而降低，这个情况验证了\cite{9591166}中提到的可能和节能管理或调度模式的原因导致发布频率提升时端到端
-的通信延迟反而降低的情况。其中ROSTCP是受发布频率影响最大的通信方式，发布频率从10HZ提升到50HZ后平均通信延迟下降了
+的通信延迟反而降低的情况。其中ROSTCP是受发布频率影响最大的通信方式，发布频率从10Hz提升到50Hz后平均通信延迟下降了
 65.6\%。而SHM和CSHM两种通信方式的通信延迟并没有ROSTCP明显，CSHM的通信延迟只下降了2\%，SHM则要稍微明显，下降了7\%。
 本文通过对CyberRT共享内存机制以及Linux系统中对网络缓冲区的分析，得出CSHM的读写模型基于无锁环形缓冲区实现，
 CSHM的读者采用原子变量主动轮询缓冲区，因此CSHM读写不受网络缓冲区刷新策略的影响。而本文提出的SHM读写模型
@@ -147,7 +183,7 @@ CSHM的读者采用原子变量主动轮询缓冲区，因此CSHM读写不受网
 
 \subsubsection{订阅者数量对通信延迟的影响}
 本场景使用进程间通信的方式，将SHM、ROSTCP和CSHM做通信性能对比。本测试固定消息大小为4MB，固定发送1000条消息，
-固定发布频率为10HZ，在同一台物理机内创建一个发布者和四个订阅者，给出三种通信方式的平均通信延迟、最小通信延迟以及
+固定发布频率为10z，在同一台物理机内创建一个发布者和四个订阅者，给出三种通信方式的平均通信延迟、最小通信延迟以及
 最大通信延迟。
 
 表\ref{multi_subscribers}详细列出了四个订阅者同时订阅一个发布者各通信方式的通信延迟数据。从表中可以看出，ROSTCP
@@ -164,11 +200,11 @@ SHM和CSHM通信延迟上升不明显，测试结果表明在1－N的通信模�
     % \cline{3-5}
      & & 平均延迟 & 最小延迟 & 最大延迟\\
     \midrule
-    SHM & 10HZ& 2.429173ms& 2.101929ms& 2.981249ms\\ 
+    SHM & 10Hz & 2.429173ms & 2.101929ms & 2.981249ms\\ 
     \hline
-    ROSTCP & 10HZ& 44.846649ms& 28.584917ms& 64.373177ms\\ 
+    ROSTCP & 10Hz & 44.846649ms & 28.584917ms & 64.373177ms\\ 
     \hline
-    CSHM & 10HZ& 2.117953ms& 1.889123ms& 2.327153ms\\ 
+    CSHM & 10Hz & 2.117953ms & 1.889123ms & 2.327153ms\\ 
     \bottomrule
   \end{tabular}
   \note{注：通信延迟数据包含数据序列化耗时}
@@ -188,13 +224,62 @@ SHM和CSHM通信延迟上升不明显，测试结果表明在1－N的通信模�
     \midrule
     架构 & x86 & ARM \\
     CPU & Intel Ice Lake gold 6346 $\times$ 2 & 昇腾610 + MCU\\
-    GPU & NVidia RTX 3090 $\times$ 2& 内置AI芯片\\
+    GPU & NVidia RTX 3090 $\times$ 2& DaVince AI芯片\\
     RAM & 4 $\times$ 32GB, DDR4& 24GB, LPDDR4X\\
     存储 & 2TB NVMe SSD& 128GB SSD\\
     功耗 & 约2000W& 约100W\\
     \bottomrule
   \end{tabular}
 \end{table}
+
+实车测试将在车端硬件平台上部署所有的算法及功能模块，其中占资源的模块有预测模块、规划模块、视觉感知模块、Lidar感知模块
+和感知融合模块。车端硬件共计11个1080p Camera（摄像机）、1个128线Lidar（激光雷达）、2个32线补盲Lidar、5个Radar（毫米波雷达）
+和1个IMU（惯性测量单元）和1个RTK（实时动态载波相位差分）。
+各传感器消息大小与频率如表\ref{sensor_frequency_size}所示。
+\begin{table}[H]
+  \centering\small
+  \caption{传感器消息大小及频率}
+  \label{sensor_frequency_size}
+  \begin{tabular}{ccccc}
+    \toprule
+    传感器 & Camera & Lidar & IMU & Radar \\
+    \midrule
+    频率/Hz & 30 & 20 & 100 & 20 \\
+    数据大小/Byte & 4M & 4M & 1k & 1M\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+所有算法模块、功能模块和传感器数据后处理模块全部使用通信系统进行数据通信。实车测试对两种硬件平台分别进行测试，针对
+表\ref{sensor_frequency_size}中的Lidar和Radar及其对应的后处理模块进行监控，导出通信系统通信延迟数据。
+两种硬件平台下实车测试中的通信延迟数据如图\ref{x86_latency_statistic}和图\ref{mdc_latency_statistic}所示。
+
+\begin{figure}[H]
+  \centering
+  \subfigure[Lidar]{
+    \label{Fig.sub.1}
+    \includegraphics[width=0.41\textwidth]{Lidar_x86.png}}
+  \subfigure[Radar]{
+    \label{Fig.sub.2}
+    \includegraphics[width=0.41\textwidth]{Radar_x86.png}}
+  \note{注：IAP为进程内通信(指针)，ITP为进程间通信(共享内存)}
+  \caption{工控机平台通信延迟统计}
+  \label{x86_latency_statistic}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \subfigure[Lidar]{
+    \label{Fig.sub.1}
+    \includegraphics[width=0.41\textwidth]{Lidar_x86.png}}
+  \subfigure[Radar]{
+    \label{Fig.sub.2}
+    \includegraphics[width=0.41\textwidth]{Radar_x86.png}}
+  \note{注：IAP为进程内通信(指针)，ITP为进程间通信(共享内存)}
+  \caption{MDC610平台通信延迟统计}
+  \label{mdc_latency_statistic}
+\end{figure}
+
+从图\ref{x86_latency_statistic}和图\ref{mdc_latency_statistic}可以看出，
 
 \subsection{鲁棒性测试}
 本文对共享内存发布订阅端崩溃情况和中心节点崩溃情况进行鲁棒性测试，检测系统在发生异常时能否保持通信和恢复通信。
@@ -212,9 +297,9 @@ SHM和CSHM通信延迟上升不明显，测试结果表明在1－N的通信模�
     \toprule
     测试用例名称 & 测试步骤 & 测试结果 \\
     \midrule
-    发布者崩溃 & \makecell[l]{1.创建五个发布者和五个订阅者，\\以话题/test通信；\\2.使用kill -9命令强制终止一个发布者\\所在进程；} & \makecell[l]{1.发布者所在进程立即终止；\\2.互斥锁一致性恢复正常，\\剩余发布者正常发送消息\\3.订阅者能够正常接收消息；}\\
+    发布者崩溃测试 & \makecell[l]{1.创建五个发布者和五个订阅者，\\以话题/test通信；\\2.使用kill -9命令强制终止一个发布者\\所在进程；} & \makecell[l]{1.发布者所在进程立即终止；\\2.互斥锁一致性恢复正常，\\剩余发布者正常发送消息\\3.订阅者能够正常接收消息；}\\
     \hline
-    订阅者崩溃 & \makecell[l]{1.创建五个发布者和五个订阅者，\\以话题/test通信；\\2.使用kill -9命令强制终止一个订阅者\\所在进程；} & \makecell[l]{1.订阅者所在进程立即终止；\\2.message slot的readcount被\\发布者恢复；\\3.订阅者能够正常接收消息，\\没有出现message slot全部无\\法获取的情况；} \\
+    订阅者崩溃测试 & \makecell[l]{1.创建五个发布者和五个订阅者，\\以话题/test通信；\\2.使用kill -9命令强制终止一个订阅者\\所在进程；} & \makecell[l]{1.订阅者所在进程立即终止；\\2.message slot的readcount被\\发布者恢复；\\3.订阅者能够正常接收消息，\\没有出现message slot全部无\\法获取的情况；} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -226,14 +311,14 @@ SHM和CSHM通信延迟上升不明显，测试结果表明在1－N的通信模�
 
 \begin{table}[H]
   \centering\small
-  \caption{共享内存鲁棒性测试}
+  \caption{中心节点鲁棒性测试}
   \renewcommand\arraystretch{1.2}
   \label{master_robust}
   \begin{tabular}{ccc}
     \toprule
     测试用例名称 & 测试步骤 & 测试结果 \\
     \midrule
-    发布者崩溃 & \makecell[l]{1.启动中心节点；\\2.使用kill -9命令强制终止中心节点\\所在进程；} & \makecell[l]{1.中心节点所在进程立即终止；\\2.监控脚本检测到中心节点异常\\退出并重启中心节点；\\3.中心节点成功从json文件恢复\\网络拓扑信息；}\\
+    中心节点崩溃测试 & \makecell[l]{1.启动中心节点；\\2.使用kill -9命令强制终止\\中心节点所在进程；} & \makecell[l]{1.中心节点所在进程立即终止；\\2.监控脚本检测到中心节点异常\\退出并重启中心节点；\\3.中心节点成功从json文件恢复\\网络拓扑信息；}\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -253,7 +338,7 @@ SHM和CSHM通信延迟上升不明显，测试结果表明在1－N的通信模�
     \toprule
     测试用例名称 & 测试步骤 & 测试结果 \\
     \midrule
-    通信系统可靠性测试 & \makecell[l]{1.启动自动驾驶车辆；\\2.部署自动驾驶算法软件包；\\3.为自动驾驶车辆选择行驶路线；\\4.通过拨杆使自动驾驶车辆进入\\自动驾驶状态；\\5.跑完10圈路线} & \makecell[l]{通信系统在6小时48分钟的长时\\间运行期间能够保证正常通信。\\}\\
+    通信系统可靠性测试 & \makecell[l]{1.启动自动驾驶车辆；\\2.部署自动驾驶算法软件包；\\3.为自动驾驶车辆选择行驶路线；\\4.通过拨杆使自动驾驶车辆进入\\自动驾驶状态；\\5.跑完10圈路线；} & \makecell[l]{通信系统在6小时48分钟的长时\\间运行期间能够保证正常通信。\\}\\
     \bottomrule
   \end{tabular}
 \end{table}

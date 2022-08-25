@@ -118,7 +118,7 @@ ZMQ\_XPUB作为发布者，ZMQ\_PUB套接字只能发布消息，ZMQ\_XPUB套接
 根据每个订阅者的过滤条件选择性地发布消息，而是发布所有消息。
 
 \subsection{ZeroMQ传输协议}
-ZeroMQ提供了三种单播传输协议(tcp,ipc,inproc)和两种广播传输协议(epgm,pgm)。本系统没有使用广播传输协议，故本节只对
+ZeroMQ提供了三种单播传输协议(tcp, ipc, inproc)和两种广播传输协议(epgm, pgm)。本系统没有使用广播传输协议，故本节只对
 三种单播传输协议进行介绍。
 
 ZeroMQ中的tcp传输协议基于计算机网络中传输层中的TCP进行二次封装，在TCP报文中的数据部分加入了ZeroMQ消息的
@@ -238,7 +238,7 @@ Protocol Buffer在性能方面也较XML和JSON有明显的优势。表\ref{seria
 通过对比Protocol Buffer、XML以及JSON描述数据类型格式的可阅读性，以及列出实际数据对比了
 三种序列化技术的性能参数，最终本文选用Protocol Buffer作为序列化工具。
 \section{远程服务调用}
-远程服务调用(Remote Proceduce Calls,RPC)是由Nelson于1982年提出的一种跨进程消息同步的一种通信机制\cite{Andrew}。
+远程服务调用(Remote Proceduce Calls, RPC)是由Nelson于1982年提出的一种跨进程消息同步的一种通信机制\cite{Andrew}。
 RPC屏蔽了底层的通信细节和传输错误并为分布式系统提供了灵活便捷的通信功能。
 RPC的具体实现包括RPC-JSON和RPC-XML\cite{2011TOWARD,2013Web}，此外还有许多不同类型的实现，但RPC的通信方法是类似的，不同的实现方法
 仅在传输的数据格式本身有差异。
@@ -273,15 +273,15 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
 有明显的优势。共享内存的原理是将两个或多个独立的进程的一段虚拟地址映射到同一块物理地址，这些进程共同使用
 物理地址的某一个区域。进程对共享内存的修改直接作用在物理内存上，不会发生用户态与内核态之间的数据拷贝，所以
 共享内存并没有多余的数据拷贝，称零拷贝(零拷贝并不代表一次数据拷贝都没有发生，零的概念是相对于拷贝次数更多的通信方式而言)。
-图\ref{IPC_compare}对比了共享内存与TCP socket读写数据过程的对比：
+图\ref{IPC_compare}对比了共享内存与TCP socket读写数据过程的对比。
 \begin{figure}[H]
   \centering
-  \subfigure[C++共享内存]{
+  \subfigure[共享内存]{
     \label{Fig.sub.1}
-    \includegraphics[width=0.6\textwidth]{2.10-0.png}}
+    \includegraphics[width=0.65\textwidth]{shared_memory_introduction.pdf}}
   \subfigure[TCP socket]{
     \label{Fig.sub.2}
-    \includegraphics[width=0.6\textwidth]{2.10-1.png}}
+    \includegraphics[width=0.6\textwidth]{tcp_socket_introduction.pdf}}
   \caption{共享内存与TCP socket读写过程对比}
   \label{IPC_compare}
 \end{figure}
@@ -343,10 +343,10 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
   \centering
   \subfigure[Linux]{
     \label{Fig.sub.1}
-    \includegraphics[width=0.75\textwidth]{ADOS_linux.png}}
+    \includegraphics[width=0.7\textwidth]{ADOS_linux.png}}
   \subfigure[嵌入式操作系统]{
     \label{Fig.sub.2}
-    \includegraphics[width=0.75\textwidth]{ADOS_rtos.png}}
+    \includegraphics[width=0.7\textwidth]{ADOS_RTOS.png}}
   \caption{两种操作系统方案软件架构对比}
   \label{ad_os_compare}
 \end{figure}

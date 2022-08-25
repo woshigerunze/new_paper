@@ -12,7 +12,7 @@
     \caption{自动驾驶运行时通信系统组件图}
     \label{software_component}
   \end{figure}
-从图5.1可以看出，本系统在开发阶段严格遵守概要设计阶段对本系统的层次划分以及模块划分规则。
+从图\ref{software_component}可以看出，本系统在开发阶段严格遵守概要设计阶段对本系统的层次划分以及模块划分规则。
 
 \section{通信单元模块详细设计与实现}
 通信单元模块向用户实现了用户管理基于发布－订阅的异步通信的应用程序接口，根据概要设计中提出的设计方案，通信单元模块由发布者模块和订阅者模块
@@ -27,7 +27,7 @@
   \caption{发布者模块类图}
   \label{publisher_class}
 \end{figure}
-如图5.2所示，发布者模块主要由Publisher、InternalPublisher和InteralPublisher三个类构成。InternalPublisher
+发布者模块主要由Publisher、InternalPublisher和InteralPublisher三个类构成。InternalPublisher
 类根据用户传入的发布者配置文件PublisherConfig使用工厂函数make()创建InternalPublisherImpl类，并
 通过C++多态的特性将Publisher类的指针指向InternalPublisherImpl类，用户最终使用Publisher类完成管理、发布消息等操作。
 InternalPublisherImpl类中保存发布者配置文件PublisherConfig和抽象发布类PubAbstract的指针。
@@ -70,7 +70,7 @@ QueryType向中心节点查询订阅者或发布者的信息，返回结果。
 本模块与发布者模块设计思想一致，向用户提供高度抽象的应用程序接口。根据概要设计中的接口设计方案，
 订阅者模块相关类设计如图\ref{subscriber_class}所示。
 
-如图5.4所示，订阅者模块类图设计同发布者模块基本一致，主要由Subscriber、InternalSubscriber和InternalSubscriberImpl
+订阅者模块类图设计同发布者模块基本一致，主要由Subscriber、InternalSubscriber和InternalSubscriberImpl
 三个类构成。InternalSubscriberImpl内部保存订阅者配置文件和调度配置文件，除了创建、删除和修改通信域三个
 函数，该类新增了修改通信方式的函数change\_communication\_mode和一系列操作消息队列的函数。
 CommunicationAbstract（通信抽象类）、SubAbstract（抽象订阅类）和ServiceDiscoveryManager（服务发现类）三个类共同
@@ -124,7 +124,7 @@ SubAbstract类在完成通信链路的建立后开辟轮询新消息的新线程
   \label{server_class}
 \end{figure}
 
-如图5.6所示，ServiceServer类通过make()函数根据传入的服务端配置文件构造实际工作类InternalServiceServerImpl类。
+ServiceServer类通过make()函数根据传入的服务端配置文件构造实际工作类InternalServiceServerImpl类。
 InternalServiceServerImpl类实现了ServiceServer类的所有虚函数，用户基于多态特性通过ServiceServer类即可调用
 InternalServiceServerImpl的所有函数。CommunicationAbstract、ServiceDiscoveryManager和SubAbstract三个类
 共同完成服务于ServiceServer类的提供服务功能。
@@ -274,7 +274,7 @@ ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现�
 \subsection{抽象服务类详细设计与实现}
 抽象服务类内部基于rest\_rpc框架实现了基于服务的通信方式，与抽象发布类和抽象订阅类不同，该类并不需要通信抽象模块的参与即可完成通信。
 
-从图5.10中可以看出，ServiceAbstract类存在bind\_service、unbind\_service、call\_service和lookup\_for\_service四个函数。
+从图\ref{service_abstract_timesequence}中可以看出，ServiceAbstract类存在bind\_service、unbind\_service、call\_service和lookup\_for\_service四个函数。
 bind\_service函数负责绑定用户服务端提供的服务至本地rpc服务器rpc\_server中；
 unbind\_service函数负责将用户需要删除的服务从本地rpc服务器中解除绑定；
 call\_service函数接收用户发出的服务请求并通过rpc\_client请求服务；
@@ -475,7 +475,7 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
 创建过程中SHMWriter使用pthread\_mutexattr\_setpshared函数将互斥锁write\_lock的进程共享属性设置为PTHREAD\_PROCESS\_SHARED，
 使用pthread\_mutexattr\_setrobust函数将互斥锁write\_lock的健壮属性设置为PTHREAD\_MUTEX\_ROBUST。设置后，互斥锁write\_lock
 可以被跨进程使用并且可以保证健壮性。
-创建完成后，共享内存中的各部分地址排列如上图5.15所示。
+创建完成后，共享内存中的各部分地址排列如上图\ref{shm_addr_design}所示。
 
 % \begin{algorithm}[H]
 %   \small
@@ -542,8 +542,8 @@ pthread\_mutexattr\_setrobust函数将互斥锁write\_lock设置为PTHREAD\_MUTE
 
 当订阅者发生异常退出无法正常释放message slot中的readcount时，本模块并不会立即采取恢复readcount一致性的操作。
 根据算法\ref{shm_pub}发布者向共享内存中写入消息会查找第一个readcount等于零的message slot，当发布者无法找到满足
-条件的message slot时，会调用test\_readcount函数对每一个message slot中的readcount进行检查。检查算法如算法\ref{shm_test}
-所示。首先定义订阅者异常退出数量kdump\_count（第1行）；随后遍历共享内存区数据部分中所有MessageSlot类，使用原子操作CAS尝试将其中的readcount置0，
+条件的message slot时，会调用test\_readcount函数对每一个message slot中的readcount进行检查。检查算法如算法\ref{shm_test}所示。
+首先定义订阅者异常退出数量kdump\_count（第1行）；随后遍历共享内存区数据部分中所有MessageSlot类，使用原子操作CAS尝试将其中的readcount置0，
 若尝试次数超过10次则将该readcount与kdump\_count取较大值并赋值给kdump\_dump（第4-10行）；最后使用原子操作将共享
 内存区控制部分SHMHeader中的attach\_count减去异常退出的订阅者数量（第12行）。执行完test\_readcount函数后，SHMHeader
 中的attach\_count与实际连接至共享内存订阅者数量恢复一致。
@@ -733,7 +733,7 @@ CommunicationAbstract通信抽象类和ServiceAbstract抽象服务类的主动�
   \label{task_class}
 \end{figure}
 任务模块的基类Task中的init、pause、resume、running和destroy五个函数全部为纯虚函数，内部不实现任何逻辑。
-用户需要定义自身的任务类如图5.12中的规划任务(PlanningTask)和感知任务(PerceptionTask)继承基类，并
+用户需要定义自身的任务类如图\ref{task_class}中的规划任务(PlanningTask)和感知任务(PerceptionTask)继承基类，并
 实现五个函数的逻辑功能。
 
 \section{调度模块详细设计与实现}
