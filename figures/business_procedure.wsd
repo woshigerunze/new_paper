@@ -1,6 +1,6 @@
 @startuml
 |通信申请方|
-start
+                start
 :申请通信;
 |通信系统|
 if (申请合法) is (合法) then

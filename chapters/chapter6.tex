@@ -270,16 +270,20 @@ SHM和CSHM通信延迟上升不明显，测试结果表明在1－N的通信模�
   \centering
   \subfigure[Lidar]{
     \label{Fig.sub.1}
-    \includegraphics[width=0.41\textwidth]{Lidar_x86.png}}
+    \includegraphics[width=0.41\textwidth]{MDC_lidar.png}}
   \subfigure[Radar]{
     \label{Fig.sub.2}
-    \includegraphics[width=0.41\textwidth]{Radar_x86.png}}
+    \includegraphics[width=0.41\textwidth]{MDC_Radar.png}}
   \note{注：IAP为进程内通信(指针)，ITP为进程间通信(共享内存)}
   \caption{MDC610平台通信延迟统计}
   \label{mdc_latency_statistic}
 \end{figure}
 
-从图\ref{x86_latency_statistic}和图\ref{mdc_latency_statistic}可以看出，
+从图\ref{x86_latency_statistic}和图\ref{mdc_latency_statistic}可以看出在同样为x86平台的个人笔记本与
+工控机平台上，工控机平台的通信延迟表现明显优于个人笔记本，硬件配置水平对通信延迟有较大影响。同时注意到，
+MDC610平台在使用进程间通信传输数据量大的传感器数据时，通信延迟较工控机平台高出约为26\%。一方面是因为MDC610平台
+分出了4个CPU核心用于运行车辆功能安全相关服务；另一方面是因为MDC610平台本身算力在200TOPS数量级，与MDC810平台400TOPS算力
+存在较大差距。
 
 \subsection{鲁棒性测试}
 本文对共享内存发布订阅端崩溃情况和中心节点崩溃情况进行鲁棒性测试，检测系统在发生异常时能否保持通信和恢复通信。

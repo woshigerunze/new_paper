@@ -120,7 +120,7 @@ iceoryx和CyberRT非常类似，都采用了发布－订阅的通信模型和服
 如图\ref{ringbuffer}\cite{9235068}所示，
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.75\textwidth]{1-2.png}
+  \includegraphics[width=0.7\textwidth]{1-2.png}
   \caption{环形缓冲区多进程不安全性}
   \label{ringbuffer}
 \end{figure}
@@ -154,7 +154,8 @@ iceoryx和CyberRT非常类似，都采用了发布－订阅的通信模型和服
   \item 调研基于共享内存的进程间通信方式，对共享内存中的地址空间进行分配与使用，独立设计了基于网络同步的高鲁棒性共享内存读写模型，
   同时满足了自动驾驶通信高实时性的要求。
   \item 对系统现有的中心节点方案作出改进，独立设计了一种通过进程监控和实时备份数据的中心节点方案，提高了中心节点的鲁棒性，
-  保证了整个通信系统网络拓扑的可靠性。
+  保证了整个通信系统网络拓扑的可靠性；设计查询通信系统网络拓扑功能，为数采模块提供了准确了需要录制的数据，提高了数据回流的效率，各算法
+  模块也能够根据网络拓扑调整相应的算法。
   \item 参与系统中通信单元模块、服务模块、服务发现模块和通信传输模块的开发工作，在四个模块中融合了DDS中通信域的概念并负责
   优化内存的申请以及减少额外的内存拷贝操作。
   \item 独立设计了一种测试通信系统实时性的方法，通过多种场景准确反映通信系统的通信延迟数据。
@@ -184,7 +185,7 @@ iceoryx和CyberRT非常类似，都采用了发布－订阅的通信模型和服
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{thesis_structure.png}
+  \includegraphics[width=0.78\textwidth]{thesis_structure.png}
   \caption{论文章节结构图}
   \label{thesis_structure}
 \end{figure}

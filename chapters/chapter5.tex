@@ -367,12 +367,12 @@ IntraProcessManager类中message\_poll函数对消息轮询的实现如算法\re
   \label{shm_data_structure}
 \end{figure}
 
-在共享内存区的控制部分SHM Header中，由write lock、message slot size、attach count三个字段对共享内存区进行实际的控制。表
-5.1对SHM Header中三个字段的定义和作用作出了说明。
+在共享内存区的控制部分SHM Header中，由write lock、message slot size、attach count三个字段对共享内存区进行实际的控制。
+表\ref{shm_control_part}对SHM Header中三个字段的定义和作用作出了说明。
 \begin{table}[htb]
   \centering\small
   \caption{控制部分参数说明}
-  \label{tab:exampletable}
+  \label{shm_control_part}
   \begin{tabular}{ccc}
     \toprule
     字段名称 & 字段类型 & 字段作用\\
@@ -384,12 +384,12 @@ IntraProcessManager类中message\_poll函数对消息轮询的实现如算法\re
   \end{tabular}
 \end{table}
 
-共享内存区数据部分由多个message slot组成，message slot内部由数据地址data addr和引用计数read count组成。表5.2
-对message slot中字段的定义和作用作出了说明。
+共享内存区数据部分由多个message slot组成，message slot内部由数据地址data addr和引用计数read count组成。
+表\ref{shm_data_part}对message slot中字段的定义和作用作出了说明。
 \begin{table}[htb]
   \centering\small
   \caption{数据部分参数说明}
-  \label{tab:exampletable}
+  \label{shm_data_part}
   \begin{tabular}{ccc}
     \toprule
     字段名称 & 字段类型 & 字段作用\\
