@@ -78,9 +78,9 @@
   至服务发现模块；抽象订阅类控制每个订阅者的通信链路，并通过通信传输模块监听通信链路中的消息；抽象发布类控制每个发布者的通信链路，
   并将待发布消息通过通信传输模块发送消息；抽象服务类控制所有服务端与客户端的注册服务和请求服务操作。
   \item 通信传输模块：包含进程间通信模块、进程内通信模块、网络通信模块与消息模块四个字模块，该模块是通信系统
-  发布－订阅通信模式的实际传输模块，发布者发布消息与订阅者订阅消息全部由该模块负责序列化、加密与传输。进程间通信模块
+  发布－订阅通信模式的实际传输模块，发布者发布消息与订阅者订阅消息全部由该模块负责序列化与传输。进程间通信模块
   通过共享内存方式传输消息；进程内通信模块通过指针方式传输信息；网络通信模块通过ZeroMQ传输消息；消息模块负责
-  将进程间通信模块与网络通信模块待传输消息进行序列化与加密处理。
+  将进程间通信模块与网络通信模块待传输消息进行序列化处理。
   \item 任务模块：该模块将所有的发布者、订阅者、服务服务端和服务客户端及用户的逻辑代码封装为一个统一的任务，
   同时提供对任务状态的管理功能。
   \item 调度模块：该模块将用户的任务进行调度，调度策略分为基于消息触发的调度策略和基于时间的调度策略。
@@ -223,7 +223,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 进入循环寻找与订阅者匹配的发布者，若寻找成功则调用抽象订阅者配置文件中的回调函数，发布订阅双方完成点对点的连接并开始通信。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.75\textwidth]{subscriber_gaiyao_timesequence.png}
+  \includegraphics[width=0.85\textwidth]{subscriber_gaiyao_timesequence.png}
   \caption{创建订阅者时序图}
   \label{subscriber_gaiyao_timesequence}
 \end{figure}
@@ -544,7 +544,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 进程内订阅者。
 
 进程内通信模块包含一个进程内通信管理类、一个进程内通信发布者类和一个进程内通信订阅者类。进程内通信管理类负责创建、删除
-进程内通信下的发布者与订阅者，并开辟线程轮询消息队列是否有新消息的到来；进程内通信发布者类负责将待发布消息压入消息对垒中；
+进程内通信下的发布者与订阅者，并开辟线程轮询消息队列是否有新消息的到来；进程内通信发布者类负责将待发布消息压入消息队列中；
 进程内订阅者类负责从消息队列弹出订阅消息，并调用用户传入的回调函数将消息压入订阅者模块中的消息队列中供用户使用。
 
 由于发布者与订阅者处于同一个进程内，二者间的通信
@@ -555,7 +555,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 队列在发布者之行压入消息和订阅者之行弹出消息操作时的原子性，使用了互斥锁机制对临界资源即消息队列进行保护。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{4.12.png}
+  \includegraphics[width=0.9\textwidth]{intraprocess_gaiyao.pdf}
   \caption{进程内通信消息传输}
   \label{intraprocess_gaiyao}
 \end{figure}
@@ -571,7 +571,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 将消息压入订阅者模块中的消息队列中供用户使用。进程间通信模块传输设计如图\ref{interprocess_gaiyao}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{4.13.pdf}
+  \includegraphics[width=0.8\textwidth]{interprocess_gaiyao.pdf}
   \caption{进程间通信消息传输}
   \label{interprocess_gaiyao}
 \end{figure}
@@ -582,7 +582,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{4.14.pdf}
+  \includegraphics[width=0.8\textwidth]{network_gaiyao.pdf}
   \caption{网络通信消息传输}
   \label{network_gaiyao}
 \end{figure}
@@ -727,24 +727,24 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 调度模块支持基于基于消息触发的调度策略和基于时间触发的调度策略。基于消息触发的调度策略是侵入式的，即该调度策略
 并不需要由用户手动去激活调度任务，而是由通信抽象模块监听到新消息时调用订阅者模块中的回调函数，并最终在订阅者模块
 的回调函数中激活对应调度任务。在同一个任务中，基于消息触发的调度任务数量等于订阅者数量。基于消息触发的调度策略
-时序设计如图\ref{message_tick_gaiyao}所示。
+时序设计如图\ref{message_tick_gaiyao_sequence}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{message_tick_gaiyao.png}
+  \includegraphics[width=0.9\textwidth]{message_tick_gaiyao_sequence.png}
   \caption{基于消息触发的调度策略时序图}
-  \label{message_tick_gaiyao}
+  \label{message_tick_gaiyao_sequence}
 \end{figure}
 
 基于时间触发的调度策略相较于基于消息触发调度策略不再是侵入式的，需要用户显式指定任务的调度频率。基于时间触发的调度策略
 并不根据是否有新消息到来判断是否激活调度任务，而是从创建调度线程时就以固定的频率调用任务用户任务中的运行接口。该调度策略下，
 调度模块记录首先计算任务在调度频率下的执行时间间隔，每当任务调度完成后继续计算当前时间与执行时间间隔计算调度剩余时间，
 若调度剩余时间大于零，则在线程内睡眠剩余时间后再进行下一次调度，若调度剩余时间小于零，则立即进行下一次调度。基于时间触发的调度策略
-时序设计如图\ref{time_tick_gaiyao}所示。
+时序设计如图\ref{time_tick_gaiyao_sequence}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.4\textwidth]{time_tick_gaiyao.png}
+  \includegraphics[width=0.4\textwidth]{time_tick_gaiyao_sequence.png}
   \caption{基于时间触发的调度策略时序图}
-  \label{time_tick_gaiyao}
+  \label{time_tick_gaiyao_sequence}
 \end{figure}
 
 \section{中心节点概要设计}
@@ -753,7 +753,7 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.9\textwidth]{4.19.pdf}
+  \includegraphics[width=0.9\textwidth]{storage_model.pdf}
   \caption{网络拓扑信息存储模型}
   \label{storage_model}
 \end{figure}
@@ -765,6 +765,14 @@ ServiceServerInfo。
 
 为了防止中心节点异常退出导致网络拓扑信息丢失，中心节点会定期将自身保存的通信系统网络拓扑信息转换为json文件并保存至本地。
 当中心节点异常退出并重启时首先加载json文件中的历史网络拓扑信息，可以有效恢复异常退出前的网络拓扑信息并继续工作。
+为了事实监控中心节点的运行状态，本系统使用linux脚本作为中心节点进程的监控手段，通过脚本完成启动中心节点和重启
+中心节点的工作，如图\ref{master_EM}所示。
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.6\textwidth]{master_EM.pdf}
+  \caption{中心节点进程监控}
+  \label{master_EM}
+\end{figure}
 
 中心节点提供了一系列供服务发现模块请求的服务，其中最主要的服务包括对发布者、订阅者以及服务端的注册、删除和修改。除此之外，中心节点
 还提供网络拓扑信息查询服务。

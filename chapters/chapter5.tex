@@ -8,7 +8,7 @@
 本系统的组件图如图\ref{software_component}所示。
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{software_component.png}
+    \includegraphics[width=1.1\textwidth]{software_component.png}
     \caption{自动驾驶运行时通信系统组件图}
     \label{software_component}
   \end{figure}
@@ -34,7 +34,7 @@ InternalPublisherImpl类中保存发布者配置文件PublisherConfig和抽象�
 CommunicationAbstract（通信抽象类）、PubAbstract（抽象发布类）和ServiceDiscoveryManager（服务发现类）三个类共同
 服务于Publisher类的创建、修改、修改和发布消息功能。
 
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.81\textwidth]{5.3.png}
   \caption{发布者模块时序图}
@@ -194,7 +194,7 @@ NetworkManager（网络通信管理类）、IntraProcessManager（进程内通�
 ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现了基于服务的通信，不需要创建额外的通信管理类辅助通信。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{5.10.png}
+  \includegraphics[width=1\textwidth]{5.10.png}
   \caption{通信抽象模块类图}
   \label{communication_abstract_class}
 \end{figure}
@@ -367,12 +367,12 @@ IntraProcessManager类中message\_poll函数对消息轮询的实现如算法\re
   \label{shm_data_structure}
 \end{figure}
 
-在共享内存区的控制部分SHM Header中，由write lock、message slot size、attach count三个字段对共享内存区进行实际的控制。表
-5.1对SHM Header中三个字段的定义和作用作出了说明。
+在共享内存区的控制部分SHM Header中，由write lock、message slot size、attach count三个字段对共享内存区进行实际的控制。
+表\ref{shm_control_part}对SHM Header中三个字段的定义和作用作出了说明。
 \begin{table}[htb]
   \centering\small
   \caption{控制部分参数说明}
-  \label{tab:exampletable}
+  \label{shm_control_part}
   \begin{tabular}{ccc}
     \toprule
     字段名称 & 字段类型 & 字段作用\\
@@ -384,12 +384,12 @@ IntraProcessManager类中message\_poll函数对消息轮询的实现如算法\re
   \end{tabular}
 \end{table}
 
-共享内存区数据部分由多个message slot组成，message slot内部由数据地址data addr和引用计数read count组成。表5.2
-对message slot中字段的定义和作用作出了说明。
+共享内存区数据部分由多个message slot组成，message slot内部由数据地址data addr和引用计数read count组成。
+表\ref{shm_data_part}对message slot中字段的定义和作用作出了说明。
 \begin{table}[htb]
   \centering\small
   \caption{数据部分参数说明}
-  \label{tab:exampletable}
+  \label{shm_data_part}
   \begin{tabular}{ccc}
     \toprule
     字段名称 & 字段类型 & 字段作用\\
@@ -542,8 +542,8 @@ pthread\_mutexattr\_setrobust函数将互斥锁write\_lock设置为PTHREAD\_MUTE
 
 当订阅者发生异常退出无法正常释放message slot中的readcount时，本模块并不会立即采取恢复readcount一致性的操作。
 根据算法\ref{shm_pub}发布者向共享内存中写入消息会查找第一个readcount等于零的message slot，当发布者无法找到满足
-条件的message slot时，会调用test\_readcount函数对每一个message slot中的readcount进行检查。检查算法如算法\ref{shm_test}
-所示。首先定义订阅者异常退出数量kdump\_count（第1行）；随后遍历共享内存区数据部分中所有MessageSlot类，使用原子操作CAS尝试将其中的readcount置0，
+条件的message slot时，会调用test\_readcount函数对每一个message slot中的readcount进行检查。检查算法如算法\ref{shm_test}所示。
+首先定义订阅者异常退出数量kdump\_count（第1行）；随后遍历共享内存区数据部分中所有MessageSlot类，使用原子操作CAS尝试将其中的readcount置0，
 若尝试次数超过10次则将该readcount与kdump\_count取较大值并赋值给kdump\_dump（第4-10行）；最后使用原子操作将共享
 内存区控制部分SHMHeader中的attach\_count减去异常退出的订阅者数量（第12行）。执行完test\_readcount函数后，SHMHeader
 中的attach\_count与实际连接至共享内存订阅者数量恢复一致。
@@ -819,11 +819,12 @@ create\_message\_task与create\_time\_task函数
   \multicolumn{2}{r}{续表\ref{master}}\\
   \toprule
   服务名称 & 服务功能 & 请求参数\\
-  \hline
-  %\midrule
+  % \hline
+  \midrule
   \endhead
   % 表格“尾页前”，表格最后显示内容
   %\bottomrule
+  \hline
   \endfoot
   % 表格“尾页”，表格最后显示内容
   \bottomrule
@@ -835,7 +836,7 @@ create\_message\_task与create\_time\_task函数
   create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
   create\_service\_server & 创建服务端 & IP地址，服务端信息\\
   delete\_publisher & 删除发布者 & IP地址，发布者信息\\
-  \hline
+  % \hline
   delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
   modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
   modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
@@ -845,32 +846,6 @@ create\_message\_task与create\_time\_task函数
   query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
   lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
   \end{longtable}  
-
-% \begin{table}[H]
-%   \centering\small
-%   \caption{中心节点服务}
-%   \label{master}
-%   \begin{tabular}{lll}
-%     \toprule
-%     服务名称 & 服务功能 & 请求参数\\
-%     \midrule
-%     start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
-%     stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
-%     create\_publisher & 创建发布者 & IP地址，发布者信息\\
-%     create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
-%     create\_service\_server & 创建服务端 & IP地址，服务端信息\\
-%     delete\_publisher & 删除发布者 & IP地址，发布者信息\\
-%     delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
-%     modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
-%     modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
-%     modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
-%     query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
-%     query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
-%     query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
-%     lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
 
 中心节点除了将表\ref{master}的服务绑定至自身的RPC服务器之外，自身还实现两个重要功能：保存网络拓扑信息至本地和从本地读取网络拓扑信息。
 中心节点每处理一个来自服务发现模块的RPC请求后，会将当前网络拓扑信息按照存储模型转换为json文件并保存在本地。中心节点在异常退出并被

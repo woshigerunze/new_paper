@@ -23,10 +23,10 @@
 
 同时注意到一个模块发送的信息可以被多个模块接收，这代表同一份数据需要被传输到不同的模块中，结合第二章
 论述的利用TCP/IP通信方式的特点，同一份数据需要被拷贝多次到不同的模块中，而单模块传输数据本身也需要
-多次拷贝，如图\ref{one_car_1_to_N_communication}所示。
+多次拷贝，如图\ref{one_car_1_to_N_communication}\cite{9488177}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.65\textwidth]{one_car_1_to_N_communication.png}
+  \includegraphics[width=0.7\textwidth]{one_car_1_to_N_communication.png}
   \caption{算法模块一对多通信拓扑图}
   \label{one_car_1_to_N_communication}
 \end{figure}
@@ -63,12 +63,12 @@
   \item 建立通信信道：通信系统向通信双方通知通信信道建立，双方开始通信。
 \end{enumerate}
 
-图3.4是对建立通信业务流程的描述说明。
+图\ref{bussiness_procedure}是对建立通信业务流程的描述说明。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{3.4.jpg}
+  \includegraphics[width=0.7\textwidth]{bussiness_procedure.png}
   \caption{建立通信业务流程图}
-  \label{fig:16}
+  \label{bussiness_procedure}
 \end{figure}
 
 \section{功能性需求}
@@ -103,8 +103,8 @@
 通信单元管理用例图如图\ref{communication_unit_yongli}所示。
 
 
-考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，如表\ref{regist_subscriber_yongli}
-和\ref{delete_subscriber_yongli}所示。
+考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，
+如表\ref{regist_subscriber_yongli}和\ref{delete_subscriber_yongli}所示。
 \begin{table}[H]
   \centering\small
   \renewcommand\arraystretch{1.2}
@@ -168,8 +168,7 @@
 进行查询，也可以进行全量查询，并且用户可根据需要确定在哪种通信域内进行查询。服务管理用例图如图\ref{service_yongli}所示。
 
 
-本节以创建服务端和查询服务信息用例为例进行说明，如表\ref{regist_service_server_yongli}
-和\ref{delete_service_server_yongli}所示。
+本节以创建服务端和查询服务信息用例为例进行说明，如表\ref{regist_service_server_yongli}和\ref{delete_service_server_yongli}所示。
 \begin{table}[H]
   \centering\small
   \renewcommand\arraystretch{1.2}
@@ -307,7 +306,7 @@
 
 \subsection{序列化中间语言生成}
 本文采用Google Protocol Buffer作为网络通信和进程间通信中序列化和反序列化方案。该方案需要用户使用接口描述语言
-(interface descriptor language,IDL)创建.proto文件并生成某个自定义数据类型的序列化与反序列化代码。当用户数量增多并且数据类型
+(interface descriptor language, IDL)创建.proto文件并生成某个自定义数据类型的序列化与反序列化代码。当用户数量增多并且数据类型
 变多时.proto文件的管理将变得复杂，同时将Protocol Buffer自动生成的代码集成到业务代码的工作量也将显著提升。考虑到
 Protocol Buffer生成代码的使用方法和数据赋值方法与C++有较大差别，本系统设计一套中间语言作为Protocol Buffer和原生
 C++的中间层，方便用户使用。

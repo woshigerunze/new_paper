@@ -118,7 +118,7 @@ ZMQ\_XPUB作为发布者，ZMQ\_PUB套接字只能发布消息，ZMQ\_XPUB套接
 根据每个订阅者的过滤条件选择性地发布消息，而是发布所有消息。
 
 \subsection{ZeroMQ传输协议}
-ZeroMQ提供了三种单播传输协议(tcp,ipc,inproc)和两种广播传输协议(epgm,pgm)。本系统没有使用广播传输协议，故本节只对
+ZeroMQ提供了三种单播传输协议(tcp, ipc, inproc)和两种广播传输协议(epgm, pgm)。本系统没有使用广播传输协议，故本节只对
 三种单播传输协议进行介绍。
 
 ZeroMQ中的tcp传输协议基于计算机网络中传输层中的TCP进行二次封装，在TCP报文中的数据部分加入了ZeroMQ消息的
@@ -180,10 +180,10 @@ ZeroMQ作为网络通信的工具。
 了如何根据C++结构体编写IDL。
 \begin{figure}[H]
   \centering
-  \subfigure[C++结构体]{
+  \subfigure[结构体]{
     \label{Fig.sub.1}
     \includegraphics[width=0.4\textwidth]{2.8-0.png}}
-  \subfigure[对应IDL]{
+  \subfigure[IDL]{
     \label{Fig.sub.2}
     \includegraphics[width=0.38\textwidth]{2.8-1.png}}
   \caption{根据C++结构体编写对应IDL}
@@ -238,7 +238,7 @@ Protocol Buffer在性能方面也较XML和JSON有明显的优势。表\ref{seria
 通过对比Protocol Buffer、XML以及JSON描述数据类型格式的可阅读性，以及列出实际数据对比了
 三种序列化技术的性能参数，最终本文选用Protocol Buffer作为序列化工具。
 \section{远程服务调用}
-远程服务调用(Remote Proceduce Calls,RPC)是由Nelson于1982年提出的一种跨进程消息同步的一种通信机制\cite{Andrew}。
+远程服务调用(Remote Proceduce Calls, RPC)是由Nelson于1982年提出的一种跨进程消息同步的一种通信机制\cite{Andrew}。
 RPC屏蔽了底层的通信细节和传输错误并为分布式系统提供了灵活便捷的通信功能。
 RPC的具体实现包括RPC-JSON和RPC-XML\cite{2011TOWARD,2013Web}，此外还有许多不同类型的实现，但RPC的通信方法是类似的，不同的实现方法
 仅在传输的数据格式本身有差异。
@@ -278,7 +278,7 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
   \centering
   \subfigure[共享内存]{
     \label{Fig.sub.1}
-    \includegraphics[width=0.6\textwidth]{shared_memory_introduction.pdf}}
+    \includegraphics[width=0.65\textwidth]{shared_memory_introduction.pdf}}
   \subfigure[TCP socket]{
     \label{Fig.sub.2}
     \includegraphics[width=0.6\textwidth]{tcp_socket_introduction.pdf}}
@@ -288,8 +288,9 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
 从图\ref{IPC_compare}(a)和图\ref{IPC_compare}(b)可以看出，使用共享内存读写数据过程中只会发生两次数据拷贝，一次是将数据写入共享内存中
 一次是从共享内存中读取数据；而使用TCP socket在读写数据过程中会发生四次数据拷贝。使用进程间通信传输本身就
 比较小的数据时，拷贝次数对于系统性能及延迟的影响可以忽略不计，但传输大数据时会明显造成系统通信延迟的上升以及性能
-的下降。不仅如此，在本系统内会发生一个发布者向多个订阅者发送消息，这会造成同一份数据被拷贝数十次。表\ref{data_copy_compare}
-总结了常见的自动驾驶通信系统使用进程间通信传输一次数据期间发生的拷贝次数。表\ref{IPC_output_compare}是常用几种进程间通信方式吞吐量性能对比。
+的下降。不仅如此，在本系统内会发生一个发布者向多个订阅者发送消息，这会造成同一份数据被拷贝数十次。
+表\ref{data_copy_compare}总结了常见的自动驾驶通信系统使用进程间通信传输一次数据期间发生的拷贝次数。
+表\ref{IPC_output_compare}是常用几种进程间通信方式吞吐量性能对比。
 \begin{table}[H]
   \centering\small
   \caption{自动驾驶通信系统数据拷贝次数总结\cite{8968462}}

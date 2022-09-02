@@ -36,6 +36,6 @@ class rpc_client{
     + call(ServiceName,Args)
 }
 
-ServiceDiscovery --> rpc_client
+ServiceDiscovery -left-> rpc_client
 ServiceDiscovery --> rpc_server
 @enduml

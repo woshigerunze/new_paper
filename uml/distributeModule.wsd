@@ -1,4 +1,5 @@
 @startuml
+
 package CPPUserInterface
 package FunctionModule{
 component TaskLayer{
@@ -34,7 +35,6 @@ component TaskLayer{
             }
             component MessageEngine{
                 [MessageManager]
-                [E2E]
                 [Serialize]
                 [Deserialize]
             }
@@ -82,7 +82,6 @@ component TaskLayer{
 [IntraProcessSubscriber] ..down-> [MessageManager] : use
 [InterProcesPublisher] ..down-> [MessageManager] : use
 [InterProcessSubscriber] ..down-> [MessageManager] : use
-[MessageManager] ..> [E2E] : use
 [MessageManager] ..> [Deserialize] : use
 [MessageManager] ..> [Serialize] : use
 }

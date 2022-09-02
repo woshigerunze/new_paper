@@ -2,52 +2,73 @@
 
 \ustcsetup{
   keywords = {
-    自动驾驶, 通信系统, 自适应通信方式
+    自动驾驶, 通信系统, 自适应通信方式, 共享内存
   },
   keywords* = {
-    Autonomous-driving, Communication system, Adaptive communication
+    Autonomous-driving, Communication system, Adaptive communication, Shared memory
   },
 }
 
 \begin{abstract}
   随着近几年自动驾驶行业的迅速发展，国内外越来越多的厂商开始从事自动驾驶行业并进行商业应用探索。目前各大传统车企、
   互联网企业以及新兴自动驾驶企业在自动驾驶量产领域以相互合作、相互竞争，自动驾驶量产项目取得了显著的成果。虽然
-  自动驾驶行业发展迅速，但行业内已经普遍认识ROS（Robot Operating System，机器人操作系统）作为自动驾驶系统通信中间件
-  的弊端。在自动驾驶系统日益复杂的情况下，ROS通信手段单一、通信延迟高、扩展性弱的缺点开始逐渐暴露。
+  自动驾驶行业发展迅速，但在量产环节中车厂对自动驾驶通信系统提出了质疑与挑战。自动驾驶公司普遍采用
+  ROS（Robot Operating System，机器人操作系统）作为验证阶段的通信手段，但其并不是为自动驾驶场景定制的通信系统。
+  在自动驾驶系统日益复杂的情况下，ROS通信手段单一、通信延迟高、扩展性弱的缺点开始逐渐暴露，各大自动驾驶公司先后开启
+  自研自动驾驶通信系统的计划。基于自动驾驶特定场景定制的通信系统已经是自动驾驶行业的趋势。
 
-  本文对自动驾驶系统算法模块通信与自动驾驶传感器数据进行分析，根据两者特点设计并实现了一种专注于自动驾驶系统内部算法模块
-  间通信的自动驾驶运行时通信系统。本系统支持基于话题的发布－订阅通信模式和基于服务的请求－应答通信模式。本系统
-  在发布－订阅通信模式下实现了通信方式自适应选择功能，支持以进程间通信、进程内通信和网络通信的通信方式。本系统在实现
-  最基本的通信功能外，还实现了服务发现、任务调度以及简单易用的应用程序接口给用户使用。本系统采用C++语言开发，
-  在系统内部使用ZeroMQ作为网络通信基础库，使用rest\_rpc作为RPC框架实现服务发现以及服务调用功能，使用Google Protobuf作为
-  序列化工具。
+  本文设计并实现了一种自动驾驶运行时通信系统来解决上述问题。本文首先对自动驾驶通信系统国内外现状进行分析并对比各个
+  技术方案的优势与劣势，然后对自动驾驶系统内部算法模块通信特点和各类传感器数据进行分析，最后对本文提出的自动驾驶运行时
+  系统进行设计与实现。本系统支持基于话题的发布－订阅和基于服务的请求－应答两种通信模式，分别提供异步和同步的通信方式。
+  基于话题的发布－订阅通信模式支持自适应通信方式，系统根据通信双方信息自动选择进程内通信、进程间通信或网络通信。
+  本文对共享内存读写模型和鲁棒性以及中心节点的鲁棒性作出了改进，提高了自动驾驶通信系统的可靠性。
+  系统使用RPC框架rest\_rpc实现服务发现和基于服务的请求－应答通信功能，使用Google Protobuf
+  作为序列化工具，使用ZeroMQ实现网络通信功能。
+  本系统使用C++作为开发语言，开发过程中遵循模块化的低耦合编程思想以便后期维护。
+
+  % 本文对自动驾驶系统算法模块通信与自动驾驶传感器数据进行分析，根据两者特点设计并实现了一种专注于自动驾驶系统内部算法模块
+  % 间通信的自动驾驶运行时通信系统。本系统支持基于话题的发布－订阅通信模式和基于服务的请求－应答通信模式。本系统
+  % 在发布－订阅通信模式下实现了通信方式自适应选择功能，支持以进程间通信、进程内通信和网络通信的通信方式。本系统在实现
+  % 最基本的通信功能外，还实现了服务发现、任务调度以及简单易用的应用程序接口给用户使用。本系统采用C++语言开发，
+  % 在系统内部使用ZeroMQ作为网络通信基础库，使用rest\_rpc作为RPC框架实现服务发现以及服务调用功能，使用Google Protobuf作为
+  % 序列化工具。
 
   在自动驾驶运行时通信系统开发完成后，本文根据自动驾驶系统通信特点设计了测试方案，对本系统的功能性需求和非功能性需求
-  进行详细测试。测试结果表明了本系统在端到端通信延迟以及系统鲁棒性方面与同类产品的性能保持在同一水平线上。总的来说，
+  进行详细测试。测试结果表明了本系统在功能上满足了项目需求，在端到端通信延迟以及系统鲁棒性方面与同类产品的性能保持在同一水平线上。总的来说，
   本系统具有一定的可行性，对自动驾驶行业中算法模块间通信方面的研究有一定的参考价值。
-
-
 \end{abstract}
 
 \begin{abstract*}
-  In recent years, with the rapid development of the autonomous driving industry, 
-  more and more domestic and foreign manufacturers have begun to set foot in the autonomous driving industry and explore commercial applications. 
-  At present, major traditional car companies, Internet companies and emerging autonomous driving companies are cooperating and competing in the field of autonomous driving mass production,
-  and the autonomous driving mass production project has achieved remarkable results.
-  Although the autonomous driving industry is developing rapidly,
-  the industry generally recognizes the drawbacks of ROS(Robot Operating System) as a communication middleware for autonomous driving systems. 
-  With the increasing complexity of autonomous driving systems, 
-  the shortcomings of ROS such as single communication method, 
-  large communication delay, and weak scalability are gradually exposed.
+  With the rapid development of the autonomous driving industry in recent years, 
+  more and more manufacturers at home and abroad have begun to engage in the autonomous driving industry and explore commercial applications. 
+  At present, major traditional car companies, 
+  Internet companies and emerging autonomous driving companies cooperate and compete with each other in the field of autonomous driving mass production, 
+  and the autonomous driving mass production project has achieved remarkable results. 
+  Although the autonomous driving industry is developing rapidly, 
+  car manufacturers have raised questions and challenges to the autonomous driving communication system in the mass production process. 
+  Autonomous driving companies generally use ROS (Robot Operating System) as a means of communication in the verification phase, 
+  but it is not a communication system customized for autonomous driving scenarios. 
+  With the increasingly complex automatic driving system, 
+  the shortcomings of ROS' single communication method, 
+  high communication delay, and weak scalability are gradually exposed. 
+  Major autonomous driving companies have successively launched plans to develop self-developed autonomous driving communication systems. 
+  Communication systems customized based on specific scenarios of autonomous driving are already a trend in the autonomous driving industry.
 
-  This paper analyzes the communication between the algorithm modules of the automatic driving system and the sensor data of the automatic driving, 
-  and designs and implements an automatic driving runtime communication system that focuses on the communication between the internal algorithm modules of the automatic driving system according to the characteristics of the two. 
-  The system supports topic-based publish-subscribe communication mode and service-based request-reply communication mode. The system realizes the function of self-adaptive selection of communication modes in the publish-subscribe communication mode, 
-  and supports the communication modes of inter-process communication,intra-process communication and network communication.
-  In addition to the most basic communication functions, the system also implements service discovery, 
-  task scheduling and easy-to-use application program interfaces for users to use. This system is developed in C++ language,
-  uses ZeroMQ as the basic library for network communication, rest\_rpc as the RPC framework to realize service discovery and service invocation functions,
-  and uses Google Protobuf as the serialization tool.
+  In this paper, an autonomous driving runtime communication system is designed and implemented to solve the above problems. 
+  This paper first analyzes the current status of the autonomous driving communication system at home and abroad and compares the advantages and disadvantages of each technical solution, 
+  then analyzes the communication characteristics of the internal algorithm modules of the autonomous driving system and various sensor data, 
+  and finally analyzes the autonomous driving runtime system proposed in this paper is designed and implemented. 
+  The system supports topic-based publish-subscribe and service-based request-response two communication modes, 
+  providing asynchronous and synchronous communication modes respectively.
+  Topic-based publish-subscribe communication mode supports adaptive communication mode, 
+  the system automatically selects intra-process communication, 
+  inter-process communication or network communication according to the information of both parties. 
+  This paper improves the shared memory read-write model and robustness as well as the robustness of the central node, 
+  which improves the reliability of the autonomous driving communication system. 
+  The system uses the RPC framework rest\_rpc to implement service discovery and service-based request-response communication functions, 
+  uses Google Protobuf as a serialization tool, and uses ZeroMQ to implement network communication functions. 
+  This system uses C++ as the development language, 
+  and follows the modular low-coupling programming idea in the development process for later maintenance.
 
   After the development of the automatic driving runtime communication system is completed, 
   this paper designs a test scheme according to the communication characteristics of the automatic driving system, 
