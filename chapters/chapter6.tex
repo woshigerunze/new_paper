@@ -144,14 +144,15 @@
 
 \subsection{中间语言生成测试}
 对于自动生成序列化中间语言的测试，本节创建一个自定义.proto文件，通过运行自动化中间语言生成脚本测试是否能够
-生成对应的C++文件。自定义.proto文件如图\ref{test_proto}所示。
+生成对应的C++文件。自定义.proto文件如图\ref{test_proto}所示。运行脚本后，得到中间语言中的.h头文件、.cpp实现文件和中间语言对应的静态库.a文件，
+如图\ref{test_lib_symbol}和图\ref{test_middle_languange}所示。
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{test_proto.png}
+  \includegraphics[width=0.8\textwidth]{test_proto.png}
   \caption{.proto文件数据字段}
   \label{test_proto}
 \end{figure}
-运行脚本后，得到中间语言中的.h头文件、.cpp实现文件和中间语言对应的静态库.a文件，如图\ref{test_lib_symbol}和图\ref{test_middle_languange}所示。
 \begin{figure}[H]
   \centering
   \includegraphics[width=1\textwidth]{test_lib_symbol.png}
