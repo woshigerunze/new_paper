@@ -55,10 +55,10 @@ ROS2引入了DDS(Data Distributed Service, 数据分发服务)作为其通信中
 提供了类似于ROS中的订阅者(Subscriber)、发布者(Publisher)和服务(Service)的通信角色。
 CyberRT在设计中采用了分层次开发方法，涵盖了从最上层提供给用户的相关接口到最下层的通信方法，用户
 只需要关注最上层API的应用而无需关注框架的内部实现。同时，分层次的设计方法使得整个框架
-的功能耦合度很低，其架构如图\ref{cyberrt_structure}所示\cite{cyberrt}：
+的功能耦合度很低，其架构如图\ref{cyberrt_structure}所示\cite{cyberrt}。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.75\textwidth]{1-1.png}
+  \includegraphics[width=0.65\textwidth]{cyberrt_structure.png}
   \caption{CyberRT架构图}
   \label{cyberrt_structure}
 \end{figure}
@@ -120,7 +120,7 @@ iceoryx和CyberRT非常类似，都采用了发布－订阅的通信模型和服
 如图\ref{ringbuffer}\cite{9235068}所示，
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.7\textwidth]{1-2.png}
+  \includegraphics[width=0.65\textwidth]{1-2.png}
   \caption{环形缓冲区多进程不安全性}
   \label{ringbuffer}
 \end{figure}

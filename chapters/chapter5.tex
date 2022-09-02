@@ -8,7 +8,7 @@
 本系统的组件图如图\ref{software_component}所示。
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{software_component.png}
+    \includegraphics[width=1.1\textwidth]{software_component.png}
     \caption{自动驾驶运行时通信系统组件图}
     \label{software_component}
   \end{figure}
@@ -34,7 +34,7 @@ InternalPublisherImpl类中保存发布者配置文件PublisherConfig和抽象�
 CommunicationAbstract（通信抽象类）、PubAbstract（抽象发布类）和ServiceDiscoveryManager（服务发现类）三个类共同
 服务于Publisher类的创建、修改、修改和发布消息功能。
 
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.81\textwidth]{5.3.png}
   \caption{发布者模块时序图}
@@ -194,7 +194,7 @@ NetworkManager（网络通信管理类）、IntraProcessManager（进程内通�
 ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现了基于服务的通信，不需要创建额外的通信管理类辅助通信。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{5.10.png}
+  \includegraphics[width=1\textwidth]{5.10.png}
   \caption{通信抽象模块类图}
   \label{communication_abstract_class}
 \end{figure}
@@ -845,32 +845,6 @@ create\_message\_task与create\_time\_task函数
   query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
   lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
   \end{longtable}  
-
-% \begin{table}[H]
-%   \centering\small
-%   \caption{中心节点服务}
-%   \label{master}
-%   \begin{tabular}{lll}
-%     \toprule
-%     服务名称 & 服务功能 & 请求参数\\
-%     \midrule
-%     start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
-%     stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
-%     create\_publisher & 创建发布者 & IP地址，发布者信息\\
-%     create\_subscriber & 创建订阅者 & IP地址，订阅者信息\\
-%     create\_service\_server & 创建服务端 & IP地址，服务端信息\\
-%     delete\_publisher & 删除发布者 & IP地址，发布者信息\\
-%     delete\_subscriber & 删除订阅者 & IP地址，发布者信息\\
-%     modify\_publisher\_domain & 修改发布者通信域 & IP地址，发布者信息\\
-%     modify\_subscriber\_domain & 修改订阅者通信域 & IP地址，订阅者信息\\
-%     modify\_service\_server\_domain & 修改服务端通信域 & IP地址，服务端信息\\
-%     query\_publishers\_info & 查询网络内发布者信息 & 查询类型，通信域，话题名称\\
-%     query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
-%     query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
-%     lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
 
 中心节点除了将表\ref{master}的服务绑定至自身的RPC服务器之外，自身还实现两个重要功能：保存网络拓扑信息至本地和从本地读取网络拓扑信息。
 中心节点每处理一个来自服务发现模块的RPC请求后，会将当前网络拓扑信息按照存储模型转换为json文件并保存在本地。中心节点在异常退出并被

@@ -88,8 +88,8 @@ group publish
 Publisher -> CommunicationAbstract : publish
 activate CommunicationAbstract
 CommunicationAbstract -> PubAbstract : publish
-deactivate CommunicationAbstract
 activate PubAbstract
+deactivate CommunicationAbstract
 deactivate PubAbstract
 end
 @enduml

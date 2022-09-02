@@ -7,6 +7,7 @@
 的CPU上运行。本文测试选用个人笔记本对系统进行测试，具体配置如表\ref{test_env}所示。
 \begin{table}[htb]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{测试环境配置}
   \label{test_env}
   \begin{tabular}{cc}
@@ -92,6 +93,7 @@
 修改调度频率，记录调度模块对同一个任务调度的时间间隔。
 \begin{table}[H]
   \centering\small
+  \renewcommand\arraystretch{1.2}
   \caption{调度模块测试结果}
   \label{scheduler_test_result}
   \begin{tabular}{cccc}
@@ -99,13 +101,76 @@
     调度频率 & 平均时间间隔 & 最小时间间隔 & 最大时间间隔\\
     \midrule
     10Hz & 99.9ms & 99.7ms & 100.3ms \\
-    20Hz & 49.8ms & 49.7ms & 50.2ms\\
-    50Hz & 19.9ms& 19.7ms & 20.2ms\\
-    100Hz & 9.94ms& 9.75ms & 10.21ms\\
+    20Hz & 49.8ms & 49.7ms & 50.2ms \\
+    50Hz & 19.9ms& 19.7ms & 20.2ms \\
+    100Hz & 9.94ms& 9.75ms & 10.21ms \\
     \bottomrule
   \end{tabular}
 \end{table}
-测试结果如表\ref{scheduler_test_result}所示，基于时间触发的调度策略能够按用户设置的频率周期性调度任务。
+测试结果如表\ref{scheduler_test_result}所示，基于时间触发的调度策略能够按用户设置的频率周期性调度任务，调度误差
+在正常范围内。
+
+\subsection{通信方式自适应选择测试}
+对于通信方式自适应选择功能的测试，，本节通过手动编写处于不同网络位置的发布者与订阅者观察通信系统是否能够按照需求
+自适应选择预期的通信方式，测试结果如表\ref{adaptive_communication_test}所示。
+
+\begin{longtable}{ccc}
+  \caption{通信方式自适应选择测试}\label{adaptive_communication_test}\\
+  % 表格“首页”显示内容
+  \toprule
+  测试用例名称 & 测试步骤 & 测试结果 \\
+  \midrule
+  \endfirsthead
+  % “后续页面”表头显示内容
+  \multicolumn{2}{r}{续表\ref{adaptive_communication_test}}\\
+  \toprule
+  测试用例名称 & 测试步骤 & 测试结果 \\
+  % \hline
+  \midrule
+  \endhead
+  % 表格“尾页前”，表格最后显示内容
+  %\bottomrule
+  \hline
+  \endfoot
+  % 表格“尾页”，表格最后显示内容
+  \bottomrule
+  \endlastfoot
+
+  进程内通信选择测试 & \makecell[l]{1.在同一个任务中创建发布者与\\订阅者，以话题/test通信；\\2.观察通信系统输出的调试信息；} & \makecell[l]{1.通信系统输出调试日志\\IntraProcess，符合预期；}\\
+  进程间通信选择测试 & \makecell[l]{1.在同一台物理机上创建两个任务，\\两个任务分别创建发布者与订阅者,\\以话题/test通信；\\2.观察通信系统输出的调试信息；} & \makecell[l]{1.通信系统输出调试日志\\InterProcess，符合预期；} \\
+  \hline
+  网络通信选择测试 & \makecell[l]{1.在两台物理机上创建两个任务，\\两个任务分别创建发布者与订阅者,\\以话题/test通信；\\2.观察通信系统输出的调试信息；} & \makecell[l]{1.通信系统输出调试日志\\NetWorkProcess，符合预期；} \\
+  \end{longtable}  
+
+\subsection{中间语言生成测试}
+对于自动生成序列化中间语言的测试，本节创建一个自定义.proto文件，通过运行自动化中间语言生成脚本测试是否能够
+生成对应的C++文件。自定义.proto文件如图\ref{test_proto}所示。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{test_proto.png}
+  \caption{.proto文件数据字段}
+  \label{test_proto}
+\end{figure}
+运行脚本后，得到中间语言中的.h头文件、.cpp实现文件和中间语言对应的静态库.a文件，如图\ref{test_lib_symbol}和图\ref{test_middle_languange}所示。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{test_lib_symbol.png}
+  \caption{静态库符号表}
+  \label{test_lib_symbol}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \subfigure[.h头文件]{
+    \label{Fig.sub.1}
+    \includegraphics[width=0.9\textwidth]{test_cpp_header.png}}
+  \subfigure[.cpp实现文件]{
+    \label{Fig.sub.2}
+    \includegraphics[width=0.7\textwidth]{test_cpp.png}}
+  \caption{自动生成的C++代码}
+  \label{test_middle_languange}
+\end{figure}
+
 
 \section{非功能性测试}
 本系统的非功能性需求同功能性需求一样重要，本节对系统展开非功能性测试，着重于实时性测试。
@@ -283,7 +348,7 @@ SHM和CSHM通信延迟上升不明显，测试结果表明在1－N的通信模�
 工控机平台上，工控机平台的通信延迟表现明显优于个人笔记本，硬件配置水平对通信延迟有较大影响。同时注意到，
 MDC610平台在使用进程间通信传输数据量大的传感器数据时，通信延迟较工控机平台高出约为26\%。一方面是因为MDC610平台
 分出了4个CPU核心用于运行车辆功能安全相关服务；另一方面是因为MDC610平台本身算力在200TOPS数量级，与MDC810平台400TOPS算力
-存在较大差距。
+存在较大差距。基于上述两点原因，MDC610平台通信延迟较工控机平台高。
 
 \subsection{鲁棒性测试}
 本文对共享内存发布订阅端崩溃情况和中心节点崩溃情况进行鲁棒性测试，检测系统在发生异常时能否保持通信和恢复通信。
