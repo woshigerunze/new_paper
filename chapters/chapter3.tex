@@ -12,7 +12,7 @@
 消息传递的拓扑网络。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.65\textwidth]{one_car_communication_model}
+  \includegraphics[width=0.65\textwidth]{one_car_communication_model.pdf}
   \caption{自动驾驶单车内算法模块通信拓扑图}
   \label{one_car_communication_model}
 \end{figure}
@@ -79,6 +79,7 @@
 注册通信单元功能是通信系统基本功能，自动驾驶系统的大部分通信功能都依托于数据发布者(publisher)发布数据
 和数据订阅者(subscriber)订阅数据对通信单元实现准确、完备的管理不仅可以实现用户对管理通信单元多样的
 需求，也是整个通信系统的基础。通信单元管理包括注册通信单元、删除通信单元、修改通信单元通信域和查询通信单元信息。
+通信单元管理用例图如图\ref{communication_unit_yongli}所示。
 
 \begin{figure}[H]
   \centering
@@ -99,9 +100,6 @@
 
 查询通信单元信息，分为查询发布者信息与查询订阅者信息，查询信息可以根据某一话题名称查询，也可以
 查询所有存在的信息。同样地，用户可以根据实际需要查询本机内和全域内的通信单元信息。
-
-通信单元管理用例图如图\ref{communication_unit_yongli}所示。
-
 
 考虑到篇幅原因，本节仅以注册订阅者单元用例和删除订阅者单元用例为例说明，
 如表\ref{regist_subscriber_yongli}和\ref{delete_subscriber_yongli}所示。
@@ -149,6 +147,7 @@
 车端请求数据的动作的时间是不确定的，需要数据平台提供请求数据的服务，等待车端发起数据请求。
 
 根据自动驾驶系统通信特点及用户的实际需要，服务管理包括创建服务、删除服务、修改服务通信域和查询服务信息。
+服务管理用例图如图\ref{service_yongli}所示。
 
 \begin{figure}[H]
   \centering
@@ -165,7 +164,7 @@
 改变提供服务和请求服务的通信范围。
 
 查询服务信息仅提供查询服务端相关信息，用户最关心的是系统中存在哪些服务端及其信息。查询可以通过服务端名称
-进行查询，也可以进行全量查询，并且用户可根据需要确定在哪种通信域内进行查询。服务管理用例图如图\ref{service_yongli}所示。
+进行查询，也可以进行全量查询，并且用户可根据需要确定在哪种通信域内进行查询。
 
 
 本节以创建服务端和查询服务信息用例为例进行说明，如表\ref{regist_service_server_yongli}和\ref{delete_service_server_yongli}所示。
