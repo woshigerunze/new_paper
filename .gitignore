@@ -1,7 +1,8 @@
 main.pdf
 ustcthesis-doc.pdf
 *.hd
-
+.DS_Store
+*.docx
 ## test files:
 build/
 test/**/*.pdf

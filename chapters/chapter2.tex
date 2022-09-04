@@ -19,7 +19,7 @@ ZeroMQ套接字与TCP套接字并不是同一个概念，二者在传输方面�
     \item TCP协议只能进行点对点的连接，ZeroMQ套接字可以支持和多个套接字的连接。在套接字类型符合
     要求是，ZeroMQ套接字可以支持一对多、多对一、多对多和一对一的连接，因此ZeroMQ可以支持一个端点
     发送消息到多个端点或一个端点接收多个端点的信息，即扇出模型和扇入模型。图\ref{fan-in-fan-out}直观地展示了这两个模型的具体
-    结构：
+    结构。
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.65\textwidth]{fan-in-fan-out.pdf}
@@ -181,15 +181,15 @@ ZeroMQ作为网络通信的工具。
 \begin{figure}[H]
   \centering
   \subfigure[结构体]{
-    \label{Fig.sub.1}
+    \label{IDL_compare_1}
     \includegraphics[width=0.4\textwidth]{2.8-0.png}}
   \subfigure[IDL]{
-    \label{Fig.sub.2}
+    \label{IDL_compare_2}
     \includegraphics[width=0.38\textwidth]{2.8-1.png}}
   \caption{根据C++结构体编写对应IDL}
   \label{IDL_compare}
 \end{figure}
-通过比较图2.8(a)与图2.8(b)可以看出，IDL的编写基本和C++等主流语言保持了一致规则，学习IDL编写的
+通过比较图\ref{IDL_compare_1}与图\ref{IDL_compare_2}可以看出，IDL的编写基本和C++等主流语言保持了一致规则，学习IDL编写的
 成本并不大。IDL提供了一系列的关键字供使用者实现更为复杂的序列化规则，不止包括定义一个数据类型，
 还可以定义服务的接口等高级功能，本文就不再赘述了。Protocol Buffer中的IDL是向后兼容的，当根据业务需求修改
 IDL时并不会发生大规模重构反序列化代码以及IDL的md5值不一致的情况。而ROS中的IDL（.msg和.srv文件）没有
@@ -244,7 +244,7 @@ RPC的具体实现包括RPC-JSON和RPC-XML\cite{2011TOWARD,2013Web}，此外还�
 仅在传输的数据格式本身有差异。
 
 RPC解决的问题是实现分布式系统中各个通信单元调用不同服务的过程
-像本地调用一样方便。RPC为了保证调用远程的服务的透明性，也引入了代理的概念\cite{5694349}。图\ref{rpc_flowchart}是一次RPC调用的流程图：
+像本地调用一样方便。RPC为了保证调用远程的服务的透明性，也引入了代理的概念\cite{5694349}。图\ref{rpc_flowchart}是一次RPC调用的流程图。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{rpc_flowchart.pdf}
@@ -277,15 +277,15 @@ RPC解决的问题契合了本文提出系统的关键问题，即如何保证�
 \begin{figure}[H]
   \centering
   \subfigure[共享内存]{
-    \label{Fig.sub.1}
+    \label{IPC_compare_1}
     \includegraphics[width=0.65\textwidth]{shared_memory_introduction.pdf}}
   \subfigure[TCP socket]{
-    \label{Fig.sub.2}
+    \label{IPC_compare_2}
     \includegraphics[width=0.6\textwidth]{tcp_socket_introduction.pdf}}
   \caption{共享内存与TCP socket读写过程对比}
   \label{IPC_compare}
 \end{figure}
-从图\ref{IPC_compare}(a)和图\ref{IPC_compare}(b)可以看出，使用共享内存读写数据过程中只会发生两次数据拷贝，一次是将数据写入共享内存中
+从图\ref{IPC_compare_1}和图\ref{IPC_compare_2}可以看出，使用共享内存读写数据过程中只会发生两次数据拷贝，一次是将数据写入共享内存中
 一次是从共享内存中读取数据；而使用TCP socket在读写数据过程中会发生四次数据拷贝。使用进程间通信传输本身就
 比较小的数据时，拷贝次数对于系统性能及延迟的影响可以忽略不计，但传输大数据时会明显造成系统通信延迟的上升以及性能
 的下降。不仅如此，在本系统内会发生一个发布者向多个订阅者发送消息，这会造成同一份数据被拷贝数十次。
