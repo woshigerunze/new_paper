@@ -442,7 +442,7 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
 这些内存地址无法访问的。C++ Boost库（标准库的扩展）则提供了专为共享内存设计的容器，重新设计了容器的空间分配器，容器
 可以被跨进程访问。但Boost库的语法比较复杂且源码体积高达1G以上，程序编译时间会明显增加，本系统不采用Boost作为共享内存通信
 的实现手段。本系统采用C++中placement new的方式为共享内存数据结构分配内存，placement new的作用是在某个指定的内存地址上创建
-相关变量。如图\ref{shm_addr_design}所示，共享内存数据结构各字段从mmap返回的首地址开始紧密排放，并且message\_slot中的消息起始内存地址addr
+相关变量，不会在随机的内存地址上申请空间。如图\ref{shm_addr_design}所示，共享内存数据结构各字段从mmap返回的首地址开始紧密排放，并且message\_slot中的消息起始内存地址addr
 也全部为共享内存中的地址。不同进程只需要在shm\_attach函数中通过mmap返回的共享内存首地址addr即可访问SHM Header和message slot
 中各变量。
 \begin{figure}[H]
@@ -470,7 +470,7 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
   \caption{创建共享内存区过程}
   \label{shm_create}
 \end{algorithm}
-使用shm\_open以及mmap函数创建共享内存文件（第1-3行）；随后使用上文提到的C++ plancement new
+使用shm\_open以及mmap函数创建共享内存文件（第1-3行）；随后使用上文提到的C++ placement new
 依次将SHMHeader、MessageSlot和data\_addr创建（第4-9行）。对于SHMHeader类中类型为pthread\_mutex\_t的互斥锁write\_lock，
 创建过程中SHMWriter使用pthread\_mutexattr\_setpshared函数将互斥锁write\_lock的进程共享属性设置为PTHREAD\_PROCESS\_SHARED，
 使用pthread\_mutexattr\_setrobust函数将互斥锁write\_lock的健壮属性设置为PTHREAD\_MUTEX\_ROBUST。设置后，互斥锁write\_lock
