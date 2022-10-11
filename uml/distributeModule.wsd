@@ -8,8 +8,28 @@ skinparam component{
     HeaderFontSize 25
     LabelFontSize 25
     DomainFontSize 25
-    PackageFontSize 35
+    PackageFontSize 25
     ComponentFontSize 25
+    SequenceTitleFontSize 25
+    LabelFontSize 25
+    FolderFontSize 25
+    DomainFontSize 25
+}
+skinparam package{
+    FontSize 25
+    TitleFontSize 25
+    ArrowFontSize 25
+    InterfaceFontSize 25
+    CaptionFontSize 25
+    HeaderFontSize 25
+    LabelFontSize 25
+    DomainFontSize 25
+    PackageFontSize 25
+    ComponentFontSize 25
+    SequenceTitleFontSize 25
+    LabelFontSize 25
+    FolderFontSize 25
+    DomainFontSize 25
 }
 package CPPUserInterface
 package FunctionModule{
