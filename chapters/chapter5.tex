@@ -8,7 +8,7 @@
 本系统的组件图如图\ref{software_component}所示。
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.1\textwidth]{software_component.png}
+    \includegraphics[width=1\textwidth]{software_component.png}
     \caption{自动驾驶运行时通信系统组件图}
     \label{software_component}
   \end{figure}
@@ -268,7 +268,7 @@ ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现�
   \caption{连接算法}
   \label{connect}
 \end{algorithm}
-在算法5.1和算法5.2中，抽象发布类和抽象订阅类通过三个通信管理类创建对应通信方式的发布者和订阅者，随后由通信传输模块
+在算法\ref{create}和算法\ref{connect}中，抽象发布类和抽象订阅类通过三个通信管理类创建对应通信方式的发布者和订阅者，随后由通信传输模块
 进行实际的消息传输，详细传输设计及算法将在下一节展开阐述，这里不做赘述。
 
 \subsection{抽象服务类详细设计与实现}
@@ -442,7 +442,7 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
 这些内存地址无法访问的。C++ Boost库（标准库的扩展）则提供了专为共享内存设计的容器，重新设计了容器的空间分配器，容器
 可以被跨进程访问。但Boost库的语法比较复杂且源码体积高达1G以上，程序编译时间会明显增加，本系统不采用Boost作为共享内存通信
 的实现手段。本系统采用C++中placement new的方式为共享内存数据结构分配内存，placement new的作用是在某个指定的内存地址上创建
-相关变量。如图\ref{shm_addr_design}所示，共享内存数据结构各字段从mmap返回的首地址开始紧密排放，并且message\_slot中的消息起始内存地址addr
+相关变量，不会在随机的内存地址上申请空间。如图\ref{shm_addr_design}所示，共享内存数据结构各字段从mmap返回的首地址开始紧密排放，并且message\_slot中的消息起始内存地址addr
 也全部为共享内存中的地址。不同进程只需要在shm\_attach函数中通过mmap返回的共享内存首地址addr即可访问SHM Header和message slot
 中各变量。
 \begin{figure}[H]
@@ -470,7 +470,7 @@ C++ STL（标准模板库）中的容器是无法存放至共享内存中的，�
   \caption{创建共享内存区过程}
   \label{shm_create}
 \end{algorithm}
-使用shm\_open以及mmap函数创建共享内存文件（第1-3行）；随后使用上文提到的C++ plancement new
+使用shm\_open以及mmap函数创建共享内存文件（第1-3行）；随后使用上文提到的C++ placement new
 依次将SHMHeader、MessageSlot和data\_addr创建（第4-9行）。对于SHMHeader类中类型为pthread\_mutex\_t的互斥锁write\_lock，
 创建过程中SHMWriter使用pthread\_mutexattr\_setpshared函数将互斥锁write\_lock的进程共享属性设置为PTHREAD\_PROCESS\_SHARED，
 使用pthread\_mutexattr\_setrobust函数将互斥锁write\_lock的健壮属性设置为PTHREAD\_MUTEX\_ROBUST。设置后，互斥锁write\_lock
@@ -807,29 +807,22 @@ create\_message\_task与create\_time\_task函数
 本系统将中心节点从整个自动驾驶运行时通信系统独立出来单独实现，作为一个独立的模块开发。
 中心节点提供的服务名称及其功能如表\ref{master}所示，中心节点提供的所有RPC服务全部由服务发现模块进行请求。
 
-
 \begin{longtable}{lll}
-  \caption{中心节点服务}\label{master}\\
-  % 表格“首页”显示内容
-  \toprule
-  服务名称 & 服务功能 & 请求参数\\
-  \midrule
+  \caption{中心节点服务} \label{master} \\
+  
+  \toprule \multicolumn{1}{l}{服务名称} & \multicolumn{1}{l}{服务功能} & \multicolumn{1}{l}{请求参数} \\ \midrule 
   \endfirsthead
-  % “后续页面”表头显示内容
-  \multicolumn{2}{r}{续表\ref{master}}\\
-  \toprule
-  服务名称 & 服务功能 & 请求参数\\
-  % \hline
-  \midrule
+  
+  \multicolumn{3}{c}%
+  {{\bfseries \textbf{\tablename\ \thetable{}~~~中心节点服务}}} \\
+  \toprule \multicolumn{1}{l}{服务名称} & \multicolumn{1}{l}{服务功能} & \multicolumn{1}{l}{请求参数} \\ \midrule
   \endhead
-  % 表格“尾页前”，表格最后显示内容
-  %\bottomrule
-  \hline
+  
+  \bottomrule \multicolumn{3}{l}{{接下页}} \\ 
   \endfoot
-  % 表格“尾页”，表格最后显示内容
+  
   \bottomrule
   \endlastfoot
-
   start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
   stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
   create\_publisher & 创建发布者 & IP地址，发布者信息\\
@@ -845,8 +838,7 @@ create\_message\_task与create\_time\_task函数
   query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
   query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
   lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
-  \end{longtable}  
-
+\end{longtable}
 中心节点除了将表\ref{master}的服务绑定至自身的RPC服务器之外，自身还实现两个重要功能：保存网络拓扑信息至本地和从本地读取网络拓扑信息。
 中心节点每处理一个来自服务发现模块的RPC请求后，会将当前网络拓扑信息按照存储模型转换为json文件并保存在本地。中心节点在异常退出并被
 重新运行后首先读取本地的json文件将此前的网络拓扑信息恢复。

@@ -20,8 +20,8 @@
     \item 应用层：应用层的功能是根据需求分析导出的通信单元管理、服务管理、调度策略管理和通信模式管理功能需求，
     直接提供API供用户使用，如创建发布者、删除发布者等。
     \item 任务层：任务层将用户在应用层创建的所有通信单元和服务封装成一个整体作为任务供调度层调度。
-    \item 调度层：调度层将对任务层的每一个任务按照其设置的调度策略进行调度。当调度策略被设置为基于数据驱动时，
-    只有当任务中的某一个通信单元或收到数据时任务才会运行；基于时间驱动时，任务将按照设置的频率被周期性调度运行。
+    \item 调度层：调度层将对任务层的每一个任务按照其设置的调度策略进行调度。当调度策略被设置为基于消息触发时，
+    只有当任务中的某一个通信单元或收到数据时任务才会运行；基于时间触发时，任务将按照设置的频率被周期性调度运行。
     \item 数据通信层：数据通信层中会保存所有由用户通过API创建的通信单元和服务，即发布者、订阅者、服务的服务端和
     服务的客户端的实体，但通信链路并没有实际产生。该层的功能是将数据传输的操作抽象化，调用通信抽象层功能完成
     实际的数据传输操作。
@@ -58,8 +58,7 @@
 \subsection{系统功能模块设计}
 根据需求分析结果及系统架构，本文将系统分为如下七个模块：通信单元模块、服务模块、
 任务模块、调度模块、通信传输模块、通信抽象模块及服务发现模块。本文根据业务与软件设计两个维度将系统模块层级分为一级模块与二级子模块，
-其中通信单元模块、任务模块、通信传输模块与通信抽象模块被分为多个二级子模块，系统功能模块设计如图
-\ref{communication_system_function_module}所示。
+其中通信单元模块、任务模块、通信传输模块与通信抽象模块被分为多个二级子模块，系统功能模块设计如图\ref{communication_system_function_module}所示。
 根据功能模块图所示，本文设计的自动驾驶运行时通信系统各模块实现功能如下：
 \begin{enumerate}
   \item 通信单元模块：包含发布者模块与订阅者模块两个二级子模块，该模块实现基于发布－订阅通信模式功能，同时
@@ -77,7 +76,7 @@
   根据用户对通信单元模块与服务模块的管理动态创建抽象订阅类、抽象发布类和抽象服务类，并生成服务发现请求参数
   至服务发现模块；抽象订阅类控制每个订阅者的通信链路，并通过通信传输模块监听通信链路中的消息；抽象发布类控制每个发布者的通信链路，
   并将待发布消息通过通信传输模块发送消息；抽象服务类控制所有服务端与客户端的注册服务和请求服务操作。
-  \item 通信传输模块：包含进程间通信模块、进程内通信模块、网络通信模块与消息模块四个字模块，该模块是通信系统
+  \item 通信传输模块：包含进程间通信模块、进程内通信模块、网络通信模块与消息模块四个子模块，该模块是通信系统
   发布－订阅通信模式的实际传输模块，发布者发布消息与订阅者订阅消息全部由该模块负责序列化与传输。进程间通信模块
   通过共享内存方式传输消息；进程内通信模块通过指针方式传输信息；网络通信模块通过ZeroMQ传输消息；消息模块负责
   将进程间通信模块与网络通信模块待传输消息进行序列化处理。
@@ -415,54 +414,41 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 通信抽象模块是整个自动驾驶运行时通信系统中最为重要的模块之一，
 该模块将通信单元和服务的所有操作如创建、删除、修改、发布消息等在通信抽象类中进行统一管理，
 并负责创建抽象发布类、抽象订阅类与抽象服务类完成消息的发布－订阅功能与服务的请求－应答功能。
-此外，该模块将发布者、订阅者、服务服务端与服务客户端的信息同步至服务发现模块其完成服务发现功能。
+此外，该模块将发布者、订阅者、服务服务端与服务客户端的信息同步至服务发现模块完成服务发现功能。
 
 
 \subsection{通信抽象类概要设计}
 通信抽象类负责处理通信单元模块和服务模块的所有请求，控制抽象发布类、抽象订阅类与抽象服务类的创建与删除，协助
 服务发现模块完成服务发现功能，该类唯一存在，其接口设计如表\ref{communication_abstract_interface}所示。
  
-\begin{longtable}{cc}
-  \caption{通信抽象模块接口设计}\label{communication_abstract_interface}\renewcommand\arraystretch{1.11}\\
-  % 表格“首页”显示内容
-  \toprule
-  接口签名 & 接口解释 \\
-  \midrule
-  \endfirsthead
-  
-  % “后续页面”表头显示内容
-  \multicolumn{2}{r}{续表\ref{communication_abstract_interface}}\\
-  \toprule
-  接口签名 & 接口解释 \\
-  \hline
-  %\midrule
-  \endhead
-  
-  % 表格“尾页前”，表格最后显示内容
-  %\bottomrule
-  \endfoot
-  
-  % 表格“尾页”，表格最后显示内容
-  \bottomrule
-  \endlastfoot
-  create\_publisher & 处理创建发布者请求\\
-  delete\_publisher & 处理删除发布者请求\\
-  modify\_publisher\_domain & 处理发布者更改通信域请求\\
-  publish & 处理发布者发布消息请求 \\
-  create\_subscriber & 处理创建订阅者请求\\
-  delete\_subscriber & 处理删除订阅者请求\\
-  modify\_subscriber\_domain & 处理订阅者更改通信域请求\\ 
-  change\_communication\_mode & 更改订阅者进程间通信方式 \\
-  create\_service\_server & 处理创建服务服务端请求\\
-  delete\_service\_server & 处理删除服务服务端请求\\
-  modify\_service\_server\_domain & 处理修改服务服务端通信域请求\\
-  create\_service\_client & 处理创建服务客户端请求\\
-  delete\_service\_client & 处理删除服务客户端请求\\
-  modify\_service\_client\_domain & 处理修改服务客户度啊内通信域请求\\
-  query\_subscribers\_info & 查询系统内订阅者信息\\
-  query\_publishers\_info & 查询系统内发布者信息\\
-  query\_service\_server\_info & 查询系统内服务端信息\\
-  \end{longtable}  
+\begin{table}[htb]
+  \centering\small
+  \caption{通信抽象模块接口}
+  \renewcommand\arraystretch{1.2}
+  \label{communication_abstract_interface}
+  \begin{tabular}{cc}
+    \toprule
+    接口签名 & 接口解释 \\
+    \midrule
+    create\_publisher & 处理创建发布者请求\\
+    delete\_publisher & 处理删除发布者请求\\
+    modify\_publisher\_domain & 处理发布者更改通信域请求\\
+    publish & 处理发布者发布消息请求 \\
+    create\_subscriber & 处理创建订阅者请求\\
+    delete\_subscriber & 处理删除订阅者请求\\
+    modify\_subscriber\_domain & 处理订阅者更改通信域请求\\ 
+    create\_service\_server & 处理创建服务服务端请求\\
+    delete\_service\_server & 处理删除服务服务端请求\\
+    modify\_service\_server\_domain & 处理修改服务服务端通信域请求\\
+    create\_service\_client & 处理创建服务客户端请求\\
+    delete\_service\_client & 处理删除服务客户端请求\\
+    modify\_service\_client\_domain & 处理修改服务客户端通信域请求\\
+    query\_subscribers\_info & 查询系统内订阅者信息\\
+    query\_publishers\_info & 查询系统内发布者信息\\
+    query\_service\_server\_info & 查询系统内服务端信息\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 通信抽象类在处理发布者或订阅者的创建请求时，会生成与其对应的抽象发布类或抽象订阅类，并在类中为其绑定更新
 通信链路的回调函数供服务发现模块收到网络拓扑变化时调用，并在配置文件的基础上加入本机IP地址以及本进程的进程号生成
@@ -471,38 +457,25 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 在抽象服务类中绑定更新通信链路的回调函数。通信抽象类在服务端的配置文件基础上加入本机IP地址，而对客户端的配置文件
 不加入任何信息，随后生成对应服务发现请求参数。服务发现请求参数如表\ref{service_discovery_parameter}所示。
 
-
-\begin{longtable}{ccc}
-  \caption{服务发现请求参数}\label{service_discovery_parameter}\\
-  % 表格“首页”显示内容
-  \toprule
-  请求参数 & 字段 & 字段解释 \\
-  \midrule
-  \endfirsthead
-  
-  % “后续页面”表头显示内容
-  \multicolumn{3}{r}{续表\ref{service_discovery_parameter}}\\
-  \toprule
-  请求参数 & 字段 & 字段解释 \\
-  \hline
-  %\midrule
-  \endhead
-  
-  % 表格“尾页前”，表格最后显示内容
-  %\bottomrule
-  \endfoot
-  
-  % 表格“尾页”，表格最后显示内容
-  \bottomrule
-  \endlastfoot
-  \multirow{4}{*}{PublisherInfo} & Topic & 发布者发布消息的话题名称 \\ & Domain & 发布者所在的通信域 \\ & Address & 发布者的IP地址和进程号 \\ & Callback & \makecell[c]{根据订阅者信息更新通信链路的回调函数}\\
-  \cline{2-3}
-  \multirow{4}{*}{SubscriberInfo} & Topic & 订阅者订阅消息的话题名称 \\ & Domain & 订阅者所在的通信域 \\ & Address & 订阅者的IP地址和进程号 \\ & Callback & \makecell[c]{根据发布者信息更新通信链路的回调函数}\\
-  \cline{2-3}
-  \multirow{4}{*}{ServiceServerInfo} & ServiceName & 服务端提供服务的名称 \\ & Domain & 服务端提供服务的通信域 \\ & IP & 服务端的IP地址 \\ & port & 服务端的端口\\
-  \cline{2-3}
-  \multirow{2}{*}{ServiceClientInfo} & ServiceName & 客户端请求服务的名称 \\ & Domain & 客户端请求服务的通信域 \\
-\end{longtable}  
+\begin{table}[htb]
+  \centering\small
+  \caption{服务发现请求参数}
+  \renewcommand\arraystretch{1.12}
+  \label{service_discovery_parameter}
+  \begin{tabular}{ccc}
+    \toprule
+    参数名称 & 字段 & 字段解释\\
+    \midrule
+    \multirow{4}{*}{PublisherInfo} & Topic & 发布者发布消息的话题名称 \\ & Domain & 发布者所在的通信域 \\ & Address & 发布者的IP地址和进程号 \\ & Callback & \makecell[c]{根据订阅者信息更新通信链路的回调函数}\\
+    \cline{2-3}
+    \multirow{4}{*}{SubscriberInfo} & Topic & 订阅者订阅消息的话题名称 \\ & Domain & 订阅者所在的通信域 \\ & Address & 订阅者的IP地址和进程号 \\ & Callback & \makecell[c]{根据发布者信息更新通信链路的回调函数}\\
+    \cline{2-3}
+    \multirow{4}{*}{ServiceServerInfo} & ServiceName & 服务端提供服务的名称 \\ & Domain & 服务端提供服务的通信域 \\ & IP & 服务端的IP地址 \\ & port & 服务端的端口\\
+    \cline{2-3}
+    \multirow{2}{*}{ServiceClientInfo} & ServiceName & 客户端请求服务的名称 \\ & Domain & 客户端请求服务的通信域 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsection{抽象发布类概要设计}
 抽象发布类内部创建通信传输模块实现建立与订阅者通信链路的建立以及消息的发布，本系统通信方式自适应选择功能
@@ -558,7 +531,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 使用同一个话题通信的发布者与订阅者共用一个消息队列，发布者将消息的指针存入消息队列，而订阅者将消息的指针从
 消息队列中取出，进程内通信模块消息传输设计如图\ref{intraprocess_gaiyao}所示。从图\ref{intraprocess_gaiyao}可以看出，进程内通信模块根据话题创建不同的消息
 队列，使用同一个话题通信的发布者与订阅者通过向消息队列压入或弹出消息的方式进行通信。同时，本模块为了保证消息
-队列在发布者之行压入消息和订阅者之行弹出消息操作时的原子性，使用了互斥锁机制对临界资源即消息队列进行保护。
+队列在发布者执行压入消息和订阅者执行弹出消息操作时的原子性，使用了互斥锁机制对临界资源即消息队列进行保护。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{intraprocess_gaiyao.pdf}
