@@ -807,29 +807,22 @@ create\_message\_task与create\_time\_task函数
 本系统将中心节点从整个自动驾驶运行时通信系统独立出来单独实现，作为一个独立的模块开发。
 中心节点提供的服务名称及其功能如表\ref{master}所示，中心节点提供的所有RPC服务全部由服务发现模块进行请求。
 
-
 \begin{longtable}{lll}
-  \caption{中心节点服务}\label{master}\\
-  % 表格“首页”显示内容
-  \toprule
-  服务名称 & 服务功能 & 请求参数\\
-  \midrule
+  \caption{中心节点服务} \label{master} \\
+  
+  \toprule \multicolumn{1}{l}{服务名称} & \multicolumn{1}{l}{服务功能} & \multicolumn{1}{l}{请求参数} \\ \midrule 
   \endfirsthead
-  % “后续页面”表头显示内容
-  \multicolumn{2}{r}{续表\ref{master}}\\
-  \toprule
-  服务名称 & 服务功能 & 请求参数\\
-  % \hline
-  \midrule
+  
+  \multicolumn{3}{c}%
+  {{\bfseries \tablename\ \textbf{\thetable{}~~~中心节点服务}}} \\
+  \toprule \multicolumn{1}{l}{服务名称} & \multicolumn{1}{l}{服务功能} & \multicolumn{1}{l}{请求参数} \\ \midrule
   \endhead
-  % 表格“尾页前”，表格最后显示内容
-  %\bottomrule
-  \hline
+  
+  \bottomrule \multicolumn{3}{l}{{接下页}} \\ 
   \endfoot
-  % 表格“尾页”，表格最后显示内容
+  
   \bottomrule
   \endlastfoot
-
   start\_notify & 服务发现模块向中心节点注册信息 & IP地址，端口号\\
   stop\_notify & 服务发现模块向中心节点删除信息 & IP地址，端口号\\
   create\_publisher & 创建发布者 & IP地址，发布者信息\\
@@ -845,8 +838,7 @@ create\_message\_task与create\_time\_task函数
   query\_subscribers\_info & 查询网络内订阅者信息 & 查询类型，通信域，话题名称\\
   query\_service\_info & 查询网络内服务端信息 & 查询类型，通信域，服务名称\\
   lookup\_for\_service & 查询目标服务端信息 & 通信域，服务名称\\
-  \end{longtable}  
-
+\end{longtable}
 中心节点除了将表\ref{master}的服务绑定至自身的RPC服务器之外，自身还实现两个重要功能：保存网络拓扑信息至本地和从本地读取网络拓扑信息。
 中心节点每处理一个来自服务发现模块的RPC请求后，会将当前网络拓扑信息按照存储模型转换为json文件并保存在本地。中心节点在异常退出并被
 重新运行后首先读取本地的json文件将此前的网络拓扑信息恢复。
