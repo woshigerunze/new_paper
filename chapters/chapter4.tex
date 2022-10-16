@@ -256,10 +256,18 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \end{tabular}
 \end{table}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{publisher_gaiyao_timesequence.png}
+  \caption{创建发布者时序图}
+  \label{publisher_gaiyao_timesequence}
+\end{figure}
+
 发布者模块中的管理接口和发布消息接口由用户直接调用，接口设计如表\ref{publisher_interface}所示。同订阅者模块的管理接口类似，create\_publisher
 需要配置文件作为参数并根据配置文件中的话题名称与通信域供服务发现模块寻找匹配的订阅者进行点对点连接；delete\_publisher
 接口同样不需要任何参数，由接口内部向服务发现模块发出删除请求；modify\_publisher\_domain接口需要由用户指定修改后的
 通信域作为参数；publish接口是发布者发布消息的唯一接口；query\_publishers\_info与query\_subscribers\_info接口功能与订阅者模块中的接口功能相同。
+
 \begin{table}[htb]
   \centering\small
   \renewcommand\arraystretch{1.2}
@@ -283,12 +291,12 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 发布者模块保存该类并通过该类中保存的发布管理类进行发布消息；创建发布者过程中不需要向调度模块注册调度任务。
 发布者创建及发布消息时序设计如图\ref{publisher_gaiyao_timesequence}所示。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{publisher_gaiyao_timesequence.png}
-  \caption{创建发布者时序图}
-  \label{publisher_gaiyao_timesequence}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.8\textwidth]{publisher_gaiyao_timesequence.png}
+%   \caption{创建发布者时序图}
+%   \label{publisher_gaiyao_timesequence}
+% \end{figure}
 
 \section{服务模块概要设计}
 自动驾驶运行时通信系统基于RPC的同步数据通信功能由服务模块实现，服务模块功能由服务服务端与服务客户端两个子模块共同完成。
@@ -337,22 +345,29 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
   \end{tabular}
 \end{table}
 
+
 服务客户端的创建、删除与修改通信域与通信单元模块中的订阅者模块流程有较大区别，服务客户端的信息并不需服务发现模块
 更新至通信网络拓扑中，只需要服务模块帮助查询对应服务的服务端IP地址即可由RPC完成通信。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{client_gaiyao_timesequence.png}
+  \caption{服务客户端时序图}
+  \label{client_gaiyao_timesequence}
+\end{figure}
 
 用户调用创建服务客户端接口后，服务客户端保存配置文件并将配置文件并将配置文件作为参数传至通信抽象模块；
 通信抽象模块根据配置文件字段创建抽象服务类作为实际发起RPC调用的辅助类，创建完成后将配置文件传至服务发现模块；
 服务发现模块将配置文件保存即结束创建工作，服务客户端保存抽象服务类实例后向用户返回创建成功信息。
-
 用户调用发起服务请求接口后，服务客户端通过调用保存的抽象服务类发起实际的RPC调用，调用完成后向用户返回结果。
 服务客户端的时序设计如图\ref{client_gaiyao_timesequence}所示。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{client_gaiyao_timesequence.png}
-  \caption{服务客户端时序图}
-  \label{client_gaiyao_timesequence}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.85\textwidth]{client_gaiyao_timesequence.png}
+%   \caption{服务客户端时序图}
+%   \label{client_gaiyao_timesequence}
+% \end{figure}
 
 \subsection{服务服务端设计}
 服务服务端用于实现基于RPC同步数据通信中服务端即服务提供方的基础功能，提供管理服务端接口及创建服务的功能接口。
@@ -394,7 +409,11 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
   \end{tabular}
 \end{table}
 
-不同于服务客户端，服务端的创建、删除、修改需要服务发现模块参与更新网络拓扑。
+不同于服务客户端，服务端的创建、删除、修改需要服务发现模块参与更新网络拓扑。服务服务端时序设计如图\ref{server_gaiyao_timesequence}所示。用户调用创建创建服务端接口后，服务端保存配置文件并将配置文件作为参数传至通信抽象模块；通信抽象模块
+将配置文件作为参数传至抽象服务类，抽象服务类根据配置文件绑定服务至本地RPC服务器中；通信抽象模块
+在配置文件基础上添加IP地址和端口号并作为服务发现请求参数传至服务发现模块；服务发现模块根据请求参数更新网络拓扑，
+随后向用户返回创建成功信息；服务端创建成功后，由服务抽象类负责监听服务请求并根据用户提供的回调函数对
+请求体进行处理。
 
 \begin{figure}[H]
   \centering
@@ -402,12 +421,6 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
   \caption{服务服务端时序图}
   \label{server_gaiyao_timesequence}
 \end{figure}
-
-服务服务端时序设计如图\ref{server_gaiyao_timesequence}所示。用户调用创建创建服务端接口后，服务端保存配置文件并将配置文件作为参数传至通信抽象模块；通信抽象模块
-将配置文件作为参数传至抽象服务类，抽象服务类根据配置文件绑定服务至本地RPC服务器中；通信抽象模块
-在配置文件基础上添加IP地址和端口号并作为服务发现请求参数传至服务发现模块；服务发现模块根据请求参数更新网络拓扑，
-随后向用户返回创建成功信息；服务端创建成功后，由服务抽象类负责监听服务请求并根据用户提供的回调函数对
-请求体进行处理.
 
 
 \section{通信抽象模块概要设计}
@@ -460,7 +473,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 \begin{table}[htb]
   \centering\small
   \caption{服务发现请求参数}
-  \renewcommand\arraystretch{1.12}
+  \renewcommand\arraystretch{1.2}
   \label{service_discovery_parameter}
   \begin{tabular}{ccc}
     \toprule
@@ -481,7 +494,8 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 抽象发布类内部创建通信传输模块实现建立与订阅者通信链路的建立以及消息的发布，本系统通信方式自适应选择功能
 也在该类中实现，每个发布者都唯一对应了一个抽象发布类。当有匹配的订阅者时，服务发现模块将订阅者的IP地址与进程号作为参数传入抽象发布类的回调函数中，回调函数中
 抽象发布类通过对自身的IP地址和进程号与参数做判断完成通信方式的自适应选择，并返回连接地址。通信方式自适应选择
-流程如图\ref{adaptive_communication_select_flowchart}所示。
+流程如图\ref{adaptive_communication_select_flowchart}所示，当发布者与匹配的订阅者IP地址和进程号一致时采用
+进程内通信方式；当IP地址不一致时采用网络通信方式，否则采用进程间通信方式。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.65\textwidth]{adaptive_communication_select_flowchart.pdf}
@@ -492,7 +506,8 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 \subsection{抽象订阅类概要设计}
 抽象订阅类内部创建通信传输模块实现建立与发布者通信链路的建立以及消息的订阅，每个订阅者都唯一对应了一个抽象发布类
 当有匹配的发布者时，服务发现模块将抽象发布类返回的连接地址作为参数传入订阅抽象类的回调函数中，回调函数中
-通过对地址前缀的判断并连接至对应的通信链路，建立与发布者点对点的通信链路。通信方式自适应连接流程图如图\ref{adaptive_communication_connect_flowchart}所示。
+通过对地址前缀的判断并连接至对应的通信链路，建立与发布者点对点的通信链路。通信方式自适应连接流程图如图\ref{adaptive_communication_connect_flowchart}所示，
+当连接地址前缀为网络通信时采用进程内通信方式；当连接地址前缀为进程间通信时采用进程间通信方式，否则采用进程内通信方式。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.65\textwidth]{adaptive_communication_connect_flowchart.pdf}
@@ -502,16 +517,18 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 
 \subsection{抽象服务类概要设计}
 抽象服务类使用开源RPC框架rest\_rpc实现服务模块中服务端注册服务与客户端请求服务的功能，该类由通信抽象类
-创建并唯一存在，即多个服务端和客户端共用一个抽象服务类。抽象服务类内部创建两个线程，一个线程用于接收客户端请求，
-另一个线程用于发起服务请求和接收用户对客户端和服务的管理，两个线程处于异步运行状态。同一个进程中，抽象服务类
-和服务发现模块的RPC服务共用一个端口。
-抽象服务类时序设计如图\ref{abstract_service_gaiyao_shixu}所示。
-\begin{figure}[H]
+\begin{figure}[htb]
   \centering
   \includegraphics[width=0.45\textwidth]{abstract_service_gaiyao_shixu.png}
   \caption{抽象服务类时序设计}
   \label{abstract_service_gaiyao_shixu}
 \end{figure}
+创建并唯一存在，即多个服务端和客户端共用一个抽象服务类。
+
+抽象服务类时序设计如图\ref{abstract_service_gaiyao_shixu}所示。
+抽象服务类内部创建两个线程，一个线程用于接收客户端请求，另一个线程用于发起服务请求和接收用户对客户端和服务的管理，两个线程处于异步运行状态。
+同一个进程中，抽象服务类和服务发现模块的RPC服务共用一个端口。
+
 
 \section{通信传输模块概要设计}
 通信传输模块实现了本系统基于发布－订阅模式的通信功能，所有发布者与通信者的通信全部由本模块完成。
@@ -543,17 +560,18 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 进程间通信模块的功能是使用共享内存实现同一台物理机不同进程中的发布者与订阅者的通信。进程间通信模块的创建与删除
 由抽象发布类和抽象订阅类管理，二者共用一个网络通信模块实例。
 
-进程间通信模块包含一个进程间通信管理类、一个进程间通信发布者类和一个进程间通信订阅者类。进程间通信管理类负责创建、
-删除进程间通信下的发布者类与订阅者类，并开辟线程轮询是否有新的消息到来；进程间通信发布者类负责将待发布消息
-进行序列化处理，然后将序列化后的消息写入对应共享内存文件，通过ZeroMQ PUB套接字通知对应订阅者接收消息；进程间通信订阅者类
-通过ZeroMQ SUB套接字接收发布者的通知并从共享内存文件中取出对应的消息并进行反序列化操作，最后调用用户传入的回调函数
-将消息压入订阅者模块中的消息队列中供用户使用。进程间通信模块传输设计如图\ref{interprocess_gaiyao}所示。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{interprocess_gaiyao.pdf}
   \caption{进程间通信消息传输}
   \label{interprocess_gaiyao}
 \end{figure}
+
+进程间通信模块传输设计如图\ref{interprocess_gaiyao}所示。进程间通信模块包含一个进程间通信管理类、一个进程间通信发布者类和一个进程间通信订阅者类。进程间通信管理类负责创建、
+删除进程间通信下的发布者类与订阅者类，并开辟线程轮询是否有新的消息到来；进程间通信发布者类负责将待发布消息
+进行序列化处理，然后将序列化后的消息写入对应共享内存文件，通过ZeroMQ PUB套接字通知对应订阅者接收消息；进程间通信订阅者类
+通过ZeroMQ SUB套接字接收发布者的通知并从共享内存文件中取出对应的消息并进行反序列化操作，最后调用用户传入的回调函数
+将消息压入订阅者模块中的消息队列中供用户使用。
 
 \subsection{网络通信模块概要设计}
 网络通信模块的功能是使用ZeroMQ实现不同物理机建间的发布者与订阅者的通信。网络通信模块的创建与删除由抽象发布类和抽象订阅类
@@ -714,17 +732,19 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
   \label{message_tick_gaiyao_sequence}
 \end{figure}
 
-基于时间触发的调度策略相较于基于消息触发调度策略不再是侵入式的，需要用户显式指定任务的调度频率。基于时间触发的调度策略
-并不根据是否有新消息到来判断是否激活调度任务，而是从创建调度线程时就以固定的频率调用任务用户任务中的运行接口。该调度策略下，
-调度模块记录首先计算任务在调度频率下的执行时间间隔，每当任务调度完成后继续计算当前时间与执行时间间隔计算调度剩余时间，
-若调度剩余时间大于零，则在线程内睡眠剩余时间后再进行下一次调度，若调度剩余时间小于零，则立即进行下一次调度。基于时间触发的调度策略
-时序设计如图\ref{time_tick_gaiyao_sequence}所示。
-\begin{figure}[H]
+基于时间触发的调度策略相较于基于消息触发调度策略不再是侵入式的，
+\begin{figure}[htb]
   \centering
   \includegraphics[width=0.4\textwidth]{time_tick_gaiyao_sequence.png}
   \caption{基于时间触发的调度策略时序图}
   \label{time_tick_gaiyao_sequence}
 \end{figure}
+需要用户显式指定任务的调度频率。基于时间触发的调度策略
+并不根据是否有新消息到来判断是否激活调度任务，而是从创建调度线程时就以固定的频率调用任务用户任务中的运行接口。该调度策略下，
+调度模块记录首先计算任务在调度频率下的执行时间间隔，每当任务调度完成后继续计算当前时间与执行时间间隔计算调度剩余时间，
+若调度剩余时间大于零，则在线程内睡眠剩余时间后再进行下一次调度，若调度剩余时间小于零，则立即进行下一次调度。基于时间触发的调度策略
+时序设计如图\ref{time_tick_gaiyao_sequence}所示。
+
 
 \section{中心节点概要设计}
 中心节点是本系统实现服务发现功能的核心模块，中心节点接受所有服务发现模块的RPC调用保存整个通信系统的网络拓扑信息并协助
@@ -739,7 +759,7 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
 
 中心节点根据IP地址以及端口号将服务发现模块进行区分，并且将每个服务发现模块中的网络拓扑信息进行单独存储，存储模型示意图如图\ref{storage_model}所示。
 从图中可以看出，中心节点将IP地址与端口号两个信息中任意一个不相同的服务发现模块都进行区分。中心节点存储信息包括发布者信息、订阅者信息以及
-服务端信息，三种信息都来自各服务发现模块进行主动发现时使用的请求参数。请求参数如\ref{service_discovery_parameter}中的PublisherInfo、SubscriberInfo和
+服务端信息，三种信息都来自各服务发现模块进行主动发现时使用的请求参数。请求参数如表\ref{service_discovery_parameter}中的PublisherInfo、SubscriberInfo和
 ServiceServerInfo。
 
 为了防止中心节点异常退出导致网络拓扑信息丢失，中心节点会定期将自身保存的通信系统网络拓扑信息转换为json文件并保存至本地。

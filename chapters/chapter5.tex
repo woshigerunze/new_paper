@@ -36,7 +36,7 @@ CommunicationAbstract（通信抽象类）、PubAbstract（抽象发布类）和
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.81\textwidth]{5.3.png}
+  \includegraphics[width=0.85\textwidth]{5.3.png}
   \caption{发布者模块时序图}
   \label{publisher_timesequence}
 \end{figure}
@@ -81,14 +81,14 @@ Dequeue类内部存放了互斥锁保证用户从队列中取出消息和底层�
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.85\textwidth]{5.4.png}
+  \includegraphics[width=0.9\textwidth]{5.4.png}
   \caption{订阅者模块类图}
   \label{subscriber_class}
 \end{figure}
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.85\textwidth]{5.5.png}
+  \includegraphics[width=0.9\textwidth]{5.5.png}
   \caption{订阅者模块时序图}
   \label{subscriber_timesequence}
 \end{figure}
@@ -119,7 +119,7 @@ SubAbstract类在完成通信链路的建立后开辟轮询新消息的新线程
 根据概要设计中的接口设计方案，服务端相关类设计如图\ref{server_class}所示。
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.85\textwidth]{5.6.png}
+  \includegraphics[width=0.9\textwidth]{5.6.png}
   \caption{服务端类图}
   \label{server_class}
 \end{figure}
@@ -143,7 +143,7 @@ delete\_service\_server函数，CommunicationAbstract类首先调用ServiceDisco
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.85\textwidth]{5.7.png}
+  \includegraphics[width=0.9\textwidth]{5.7.png}
   \caption{服务端时序图}
   \label{server_timesequence}
 \end{figure}
@@ -157,7 +157,7 @@ ServiceAbstract采用单例设计模式，同一个进程中只存在唯一的Se
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.85\textwidth]{5.8.png}
+  \includegraphics[width=0.9\textwidth]{5.8.png}
   \caption{客户端类图}
   \label{client_class}
 \end{figure}
@@ -206,11 +206,12 @@ ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现�
 根据4.4节对本模块的概要设计，通信方式自适应选择分为两部分：一部分是发布者根据自身和订阅者网络信息选择通信方式并返回连接地址，下文简称为创建算法；
 另一部分是订阅者根据返回的连接地址选择通信方式并连接，下文简称为连接算法。
 
-如算法\ref{create}所示，当发布者自身IP地址与订阅者IP不一致时返回网络通信连接地址；若IP一致但进程号不一致返回进程间
-通信连接地址；若进程号一致则返回进程内通信连接地址。在返回网络地址前，使用对应的通信管理类创建发布者并将其绑定到
-连接地址上。对于进程内通信和进程间通信方式，connectURL由地址前缀intraprocess或ipc加上发布者自身的话题名称组成。
-对于网络通信方式，zeroMQ使用tcp为前缀的地址进行跨物理机的通信，地址中需要指定IP地址和端口号。本系统将发布者所在物理机IP
-作为zeroMQ中的IP地址，端口号则设置为通配符*由zeroMQ自动寻找可用端口号。
+如算法\ref{create}所示，若IP一致但进程号不一致返回进程间通信连接地址（第2-5行）；
+若进程号一致则返回进程内通信连接地址（第7-9行）；若发布者自身IP地址与订阅者IP不一致时返回网络通信连接地址（第12-14行）。
+在返回网络地址前，使用对应的通信管理类创建发布者并将其绑定到连接地址上。
+对于进程内通信和进程间通信方式，connectURL由地址前缀intraprocess或ipc加上发布者自身的话题名称组成。
+对于网络通信方式，zeroMQ使用tcp为前缀的地址进行跨物理机的通信，地址中需要指定IP地址和端口号。
+本系统将发布者所在物理机IP作为zeroMQ中的IP地址，端口号则设置为通配符*由zeroMQ自动寻找可用端口号。
 \begin{algorithm}
   \small
   \SetAlgoLined
@@ -244,6 +245,7 @@ ServiceAbstract类与PubAbstract类和SubAbstract类不同，内部完全实现�
   \small
   \SetAlgoLined
   \KwData{连接地址connectURL}
+  \KwResult{选择通信方式并与发布者连接}
   prefix = getPrefix(connectURL)\;
   \uIf{prefix == tcp://}{
     subscriber = NetWorkProcessManager.create\_subscriber(connectURL)\;
@@ -814,11 +816,11 @@ create\_message\_task与create\_time\_task函数
   \endfirsthead
   
   \multicolumn{3}{c}%
-  {{\bfseries \textbf{\tablename\ \thetable{}~~~中心节点服务}}} \\
+  {{\bfseries \textbf{续\tablename\ \thetable{}~~~~中心节点服务}}} \\
   \toprule \multicolumn{1}{l}{服务名称} & \multicolumn{1}{l}{服务功能} & \multicolumn{1}{l}{请求参数} \\ \midrule
   \endhead
   
-  \bottomrule \multicolumn{3}{l}{{接下页}} \\ 
+  \bottomrule  \multicolumn{3}{l}{{\textbf{表格接下页}}} \\ 
   \endfoot
   
   \bottomrule

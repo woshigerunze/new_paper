@@ -17,25 +17,17 @@
   在自动驾驶系统日益复杂的情况下，ROS通信手段单一、通信延迟高、扩展性弱的缺点开始逐渐暴露，各大自动驾驶公司先后开启
   自研自动驾驶通信系统的计划。基于自动驾驶特定场景定制的通信系统已经是自动驾驶行业的趋势。
 
-  本文设计并实现了一种自动驾驶运行时通信系统来解决上述问题。本文首先对自动驾驶通信系统国内外现状进行分析并对比各个
-  技术方案的优势与劣势，然后对自动驾驶系统内部算法模块通信特点和各类传感器数据进行分析，最后对本文提出的自动驾驶运行时
+  本文设计并实现了一种自动驾驶运行时通信系统来解决上述问题。本文首先从通信性能、鲁棒性的角度对自动驾驶通信系统国内外现状进行分析并对比各个
+  技术方案的优势与劣势，然后从数据大小、数据频率和通信拓扑关系的角度对自动驾驶系统内部算法模块通信特点和各类传感器数据进行分析，最后对本文提出的自动驾驶运行时
   系统进行设计与实现。本系统支持基于话题的发布－订阅和基于服务的请求－应答两种通信模式，分别提供异步和同步的通信方式。
   基于话题的发布－订阅通信模式支持自适应通信方式，系统根据通信双方信息自动选择进程内通信、进程间通信或网络通信。
-  本文对共享内存读写模型和鲁棒性以及中心节点的鲁棒性作出了改进，提高了自动驾驶通信系统的可靠性。
-  系统使用RPC框架rest\_rpc实现服务发现和基于服务的请求－应答通信功能，使用Google Protobuf
+  本文对共享内存读写模型和中心节点的鲁棒性作出了改进，提高了通信系统发生异常时的鲁棒性和可恢复性。
+  本系统使用RPC(Remote Proceduce Calls,远程服务调用)框架rest\_rpc实现服务发现和基于服务的请求－应答通信功能，使用Google Protobuf
   作为序列化工具，使用ZeroMQ实现网络通信功能。
-  本系统使用C++作为开发语言，开发过程中遵循模块化的低耦合编程思想以便后期维护。
-
-  % 本文对自动驾驶系统算法模块通信与自动驾驶传感器数据进行分析，根据两者特点设计并实现了一种专注于自动驾驶系统内部算法模块
-  % 间通信的自动驾驶运行时通信系统。本系统支持基于话题的发布－订阅通信模式和基于服务的请求－应答通信模式。本系统
-  % 在发布－订阅通信模式下实现了通信方式自适应选择功能，支持以进程间通信、进程内通信和网络通信的通信方式。本系统在实现
-  % 最基本的通信功能外，还实现了服务发现、任务调度以及简单易用的应用程序接口给用户使用。本系统采用C++语言开发，
-  % 在系统内部使用ZeroMQ作为网络通信基础库，使用rest\_rpc作为RPC框架实现服务发现以及服务调用功能，使用Google Protobuf作为
-  % 序列化工具。
 
   在自动驾驶运行时通信系统开发完成后，本文根据自动驾驶系统通信特点设计了测试方案，对本系统的功能性需求和非功能性需求
-  进行详细测试。测试结果表明了本系统在功能上满足了项目需求，在端到端通信延迟以及系统鲁棒性方面与同类产品的性能保持在同一水平线上。总的来说，
-  本系统具有一定的可行性，对自动驾驶行业中算法模块间通信方面的研究有一定的参考价值。
+  进行详细测试。测试结果表明了本系统满足支持发布－订阅和请求－应答两种通信模式的功能性需求；在端到端通信延迟、系统鲁棒性和可靠性方面与同类产品的性能保持在同一水平线上，
+  满足了非功能性需求。总的来说，本系统具有一定的可行性，对自动驾驶行业中算法模块间通信方面的研究有一定的参考价值。
 \end{abstract}
 
 \begin{abstract*}
@@ -54,25 +46,22 @@
   Major autonomous driving companies have successively launched plans to develop self-developed autonomous driving communication systems. 
   Communication systems customized based on specific scenarios of autonomous driving are already a trend in the autonomous driving industry.
 
-  In this dissertation, an autonomous driving runtime communication system is designed and implemented to solve the above problems. 
-  This dissertation first analyzes the current status of the autonomous driving communication system at home and abroad and compares the advantages and disadvantages of each technical solution, 
-  then analyzes the communication characteristics of the internal algorithm modules of the autonomous driving system and various sensor data, 
-  and finally the autonomous driving runtime system proposed in this dissertation is designed and implemented. 
-  The system supports topic-based publish-subscribe and service-based request-response two communication modes, 
-  providing asynchronous and synchronous communication modes respectively.
-  Topic-based publish-subscribe communication mode supports adaptive communication mode, 
-  the system automatically selects intra-process communication, 
-  inter-process communication or network communication according to the information of both parties. 
-  This dissertation improves the shared memory read-write model and robustness as well as the robustness of the central node, 
-  which improves the reliability of the autonomous driving communication system. 
-  The system uses the RPC framework rest\_rpc to implement service discovery and service-based request-response communication functions, 
-  uses Google Protobuf as a serialization tool, and uses ZeroMQ to implement network communication functions. 
-  This system uses C++ as the development language, 
-  and follows the modular low-coupling programming idea in the development process for later maintenance.
+  In this dissertation, an autonomous driving runtime communication system is designed and implemented to solve the above problems.
+  This dissertation first analyzes the current situation of autonomous driving communication systems at home and abroad from the perspective of communication performance and robustness, 
+  and compares the advantages and disadvantages of each technical solution.
+  The characteristics of module communication and various sensor data are analyzed, and finally the autonomous driving runtime system proposed in this dissertation is designed and implemented.
+  This system supports topic-based publish-subscribe and service-based request-response two communication modes, providing asynchronous and synchronous communication modes respectively.
+  Topic-based publish-subscribe communication mode supports adaptive communication mode, the system automatically selects intra-process communication, 
+  inter-process communication or network communication according to the information of both parties.
+  This dissertation improves the shared memory read-write model and the robustness of the central node, 
+  which improves the robustness and recoverability of the communication system when an abnormality occurs.
+  This system uses the RPC (Remote Proceduce Calls) framework rest\_rpc to realize service discovery and service-based request-response communication functions, 
+  uses Google Protobuf as a serialization tool, and uses ZeroMQ to realize network communication functions.
 
-  After the development of the automatic driving runtime communication system is completed, 
-  this dissertation designs a test scheme according to the communication characteristics of the automatic driving system, 
-  and tests the functional and non-functional requirements of the system in detail. 
-  The test results show that the system maintains the same level of performance as similar products in terms of end-to-end communication delay and system robustness. 
+  After the development of the communication system during autonomous driving is completed, 
+  this paper designs a test scheme according to the communication characteristics of the autonomous driving system, 
+  and tests the functional and non-functional requirements of this system in detail. 
+  The test results show that this system meets the functional requirements of supporting publish-subscribe and request-response communication modes; it maintains the same level of performance as similar products in terms of end-to-end communication delay, 
+  system robustness and reliability, non-functional requirements are met. 
   In general, this system has certain feasibility and has certain reference value for the research on communication between algorithm modules in the autonomous driving industry.
 \end{abstract*}
