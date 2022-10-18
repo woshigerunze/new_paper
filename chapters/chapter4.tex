@@ -155,7 +155,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \label{subscriber_interface}
   \begin{tabular}{cc}
     \toprule
-    接口签名 & 接口解释 \\
+    接口签名 & 接口功能 \\
     \midrule
     create\_subscriber & 创建订阅者\\
     delete\_subscriber & 删除订阅者\\
@@ -171,33 +171,17 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
 保存的消息。消息队列在基于C++标准库提供的队列之上加入了互斥锁与条件变量以保证消息同步性。同样地，消息队列
 也向用户提供了操作接口，接口设计如表\ref{message_queue_interface}所示。
 
-% \begin{table}[H]
-%   \centering\small
-%   \caption{消息队列相关接口}
-%   \label{tab:exampletable}
-%   \begin{tabular}{cc}
-%     \toprule
-%     接口签名 & 接口解释 \\
-%     \midrule
-%     size & 查询队列中消息的数量\\
-%     empty & 查询队列是否为空\\
-%     pop & 从队列的队头取出一条消息\\
-%     pop\_newest & 从队列取出最新消息，即从队列的队尾取出一条消息\\
-%     pop\_newest\_and\_clear & 从队列取出最新消息并清空队列中所有消息\\
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
 \begin{longtable}{cc}
   \caption{消息队列相关接口}\label{message_queue_interface}\\
   % 表格“首页”显示内容
   \toprule
-  接口签名 & 接口解释 \\
+  接口签名 & 接口功能 \\
   \midrule
   \endfirsthead
   % “后续页面”表头显示内容
   \multicolumn{2}{r}{续表4.3}\\
   \toprule
-  接口签名 & 接口解释 \\
+  接口签名 & 接口功能 \\
   \hline
   %\midrule
   \endhead
@@ -275,7 +259,7 @@ DataCallback为订阅者模块收到消息后执行的回调函数，系统默�
   \label{publisher_interface}
   \begin{tabular}{cc}
     \toprule
-    接口签名 & 接口解释 \\
+    接口签名 & 接口功能 \\
     \midrule
     create\_publisher & 创建发布者\\
     delete\_publisher & 删除发布者\\
@@ -333,7 +317,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
   \label{service_client_interface}
   \begin{tabular}{cc}
     \toprule
-    接口签名 & 接口解释 \\
+    接口签名 & 接口功能 \\
     \midrule
     create\_service\_client & 创建服务客户端\\
     delete\_service\_client & 删除服务客户端\\
@@ -399,7 +383,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
   \label{service_server_interface}
   \begin{tabular}{cc}
     \toprule
-    接口签名 & 接口解释 \\
+    接口签名 & 接口功能 \\
     \midrule
     create\_service\_server & 创建服务端 \\
     delete\_service\_server & 删除服务端\\
@@ -441,7 +425,7 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
   \label{communication_abstract_interface}
   \begin{tabular}{cc}
     \toprule
-    接口签名 & 接口解释 \\
+    接口签名 & 接口功能 \\
     \midrule
     create\_publisher & 处理创建发布者请求\\
     delete\_publisher & 处理删除发布者请求\\
@@ -493,13 +477,13 @@ query\_service\_list接口根据查询范围与查询条件查询系统内现有
 \subsection{抽象发布类概要设计}
 抽象发布类内部创建通信传输模块实现建立与订阅者通信链路的建立以及消息的发布，本系统通信方式自适应选择功能
 也在该类中实现，每个发布者都唯一对应了一个抽象发布类。当有匹配的订阅者时，服务发现模块将订阅者的IP地址与进程号作为参数传入抽象发布类的回调函数中，回调函数中
-抽象发布类通过对自身的IP地址和进程号与参数做判断完成通信方式的自适应选择，并返回连接地址。通信方式自适应选择
+抽象发布类通过对自身的IP地址和进程号与参数做判断完成通信方式的自适应选择，并返回连接地址。通信方式自适应创建
 流程如图\ref{adaptive_communication_select_flowchart}所示，当发布者与匹配的订阅者IP地址和进程号一致时采用
 进程内通信方式；当IP地址不一致时采用网络通信方式，否则采用进程间通信方式。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.65\textwidth]{adaptive_communication_select_flowchart.pdf}
-  \caption{通信方式自适应选择流程图}
+  \caption{通信方式自适应创建流程图}
   \label{adaptive_communication_select_flowchart}
 \end{figure}
 
@@ -661,7 +645,7 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
   \label{task_jiekou}
   \begin{tabular}{cc}
     \toprule
-    接口签名 & 接口解释 \\
+    接口签名 & 接口功能 \\
     \midrule
     init & 任务初始化 \\
     pause & 任务暂停\\
@@ -712,7 +696,7 @@ protobuf提供的序列化接口将转换后的结构序列化后发布消息；
   \label{schedule_interface}
   \begin{tabular}{cc}
     \toprule
-    接口签名 & 接口解释 \\
+    接口签名 & 接口功能 \\
     \midrule
     create\_message\_task & 创建基于消息触发的调度任务 \\
     create\_time\_task & 创建基于时间触发的调度任务 \\

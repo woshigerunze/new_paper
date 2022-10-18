@@ -2,7 +2,7 @@
 robust "消息调度\n线程1" as M1
 robust "消息调度\n线程2" as M2
 robust "消息调度\n线程3" as M3
-robust "时间调度\n线程3" as M4
+robust "时间调度\n线程4" as M4
 scale 25 as 50 pixels
 
 @0

@@ -676,7 +676,7 @@ python脚本首先读取目录下所有用户编写完成的.proto文件并扫�
 向用户提供查询网络拓扑信息功能。
 
 \subsection{服务发现模块类设计}
-服务发现模块相关类如图\ref{service_discovery_class}所示，本模块类构成相对简单，包含ServiceDiscoveryManager、rpc\_client、rpc\_server
+服务发现模块相关类如图\ref{service_discovery_class}所示。本模块类构成相对简单，包含ServiceDiscoveryManager、rpc\_client、rpc\_server
 三个类。rpc\_client类和rpc\_server类由C++ RPC框架rest\_rpc实现，提供最基本的服务绑定与请求功能。
 ServiceDiscoveryManager类采用单例设计模式，
 使用rest\_rpc框架完成与中心节点的网络拓扑信息交互并控制通信链路，所有函数均由CommunicationAbstract通信抽象类

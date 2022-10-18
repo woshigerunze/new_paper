@@ -1,37 +1,36 @@
 @startuml
-skinparam component{
-    FontSize 25
-    TitleFontSize 25
-    ArrowFontSize 25
-    InterfaceFontSize 25
-    CaptionFontSize 25
-    HeaderFontSize 25
-    LabelFontSize 25
-    DomainFontSize 25
-    PackageFontSize 25
-    ComponentFontSize 25
-    SequenceTitleFontSize 25
-    LabelFontSize 25
-    FolderFontSize 25
-    DomainFontSize 25
-}
-skinparam package{
-    FontSize 25
-    TitleFontSize 25
-    ArrowFontSize 25
-    InterfaceFontSize 25
-    CaptionFontSize 25
-    HeaderFontSize 25
-    LabelFontSize 25
-    DomainFontSize 25
-    PackageFontSize 25
-    ComponentFontSize 25
-    SequenceTitleFontSize 25
-    LabelFontSize 25
-    FolderFontSize 25
-    DomainFontSize 25
-}
-package CPPUserInterface
+' skinparam component{
+'     FontSize 25
+'     TitleFontSize 25
+'     ArrowFontSize 25
+'     InterfaceFontSize 25
+'     CaptionFontSize 25
+'     HeaderFontSize 25
+'     LabelFontSize 25
+'     DomainFontSize 25
+'     PackageFontSize 25
+'     ComponentFontSize 25
+'     SequenceTitleFontSize 25
+'     LabelFontSize 25
+'     FolderFontSize 25
+'     DomainFontSize 25
+' }
+' skinparam package{
+'     FontSize 25
+'     TitleFontSize 25
+'     ArrowFontSize 25
+'     InterfaceFontSize 25
+'     CaptionFontSize 25
+'     HeaderFontSize 25
+'     LabelFontSize 25
+'     DomainFontSize 25
+'     PackageFontSize 25
+'     ComponentFontSize 25
+'     SequenceTitleFontSize 25
+'     LabelFontSize 25
+'     FolderFontSize 25
+'     DomainFontSize 25
+' }
 package FunctionModule{
 component TaskLayer{
     [TaskWrapper]
@@ -116,6 +115,6 @@ component TaskLayer{
 [MessageManager] ..> [Deserialize] : use
 [MessageManager] ..> [Serialize] : use
 }
-FunctionModule -up-  () "CPP API"
-CPPUserInterface ..> () "CPP API" : use
+' FunctionModule -up-  () "CPP API"
+' CPPUserInterface ..> () "CPP API" : use
 @enduml
