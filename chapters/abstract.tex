@@ -14,20 +14,21 @@
   互联网企业以及新兴自动驾驶企业在自动驾驶量产领域相互合作、相互竞争，自动驾驶量产项目取得了显著的成果。虽然
   自动驾驶行业发展迅速，但在量产环节中车厂对自动驾驶通信系统提出了质疑与挑战。自动驾驶公司普遍采用
   ROS（Robot Operating System，机器人操作系统）作为验证阶段的通信手段，但其并不是为自动驾驶场景定制的通信系统。
-  在自动驾驶系统日益复杂的情况下，ROS通信手段单一、通信延迟高、扩展性弱的缺点开始逐渐暴露，各大自动驾驶公司先后开启
-  自研自动驾驶通信系统的计划。基于自动驾驶特定场景定制的通信系统已经是自动驾驶行业的趋势。
+  在自动驾驶系统日益复杂的情况下，ROS通信手段单一、通信延迟高、扩展性弱的缺点开始逐渐暴露。
 
   本文设计并实现了一种自动驾驶运行时通信系统来解决上述问题。本文首先从通信性能、鲁棒性的角度对自动驾驶通信系统国内外现状进行分析并对比各个
   技术方案的优势与劣势，然后从数据大小、数据频率和通信拓扑关系的角度对自动驾驶系统内部算法模块通信特点和各类传感器数据进行分析，最后对本文提出的自动驾驶运行时
   系统进行设计与实现。本系统支持基于话题的发布－订阅和基于服务的请求－应答两种通信模式，分别提供异步和同步的通信方式。
-  基于话题的发布－订阅通信模式支持自适应通信方式，系统根据通信双方信息自动选择进程内通信、进程间通信或网络通信。
+  基于话题的发布－订阅通信模式支持自适应通信方式，系统根据通信双方信息自动选择进程内通信、基于共享内存的进程间通信或网络通信。
   本文对共享内存读写模型和中心节点的鲁棒性作出了改进，提高了通信系统发生异常时的鲁棒性和可恢复性。
   本系统使用RPC(Remote Proceduce Calls,远程服务调用)框架rest\_rpc实现服务发现和基于服务的请求－应答通信功能，使用Google Protobuf
   作为序列化工具，使用ZeroMQ实现网络通信功能。
 
   在自动驾驶运行时通信系统开发完成后，本文根据自动驾驶系统通信特点设计了测试方案，对本系统的功能性需求和非功能性需求
-  进行详细测试。测试结果表明了本系统满足支持发布－订阅和请求－应答两种通信模式的功能性需求；在端到端通信延迟、系统鲁棒性和可靠性方面与同类产品的性能保持在同一水平线上，
-  满足了非功能性需求。总的来说，本系统具有一定的可行性，对自动驾驶行业中算法模块间通信方面的研究有一定的参考价值。
+  进行详细测试。在功能性测试中使用实际使用场景对通信系统各功能进行测试，测试结果表明本系统满足了两种通信模式、调度策略等功能性需求；
+  在实时性测试中以数据大小、数据发布频率、数据订阅方数量和算力平台为变量对通信延迟进行测试统计，测试结果表明本系统保证通信延迟在5ms内；
+  在鲁棒性测试中使用多种崩溃场景对进程间通信和中心节点进行测试，测试结果表明本系统能够在发生异常崩溃时保证正常通信。
+  总的来说，本系统具有一定的可行性，对自动驾驶行业中算法模块间通信方面的研究有一定的参考价值。
 \end{abstract}
 
 \begin{abstract*}
@@ -43,25 +44,22 @@
   With the increasingly complex automatic driving system, 
   the shortcomings of ROS' single communication method, 
   high communication delay, and weak scalability are gradually exposed. 
-  Major autonomous driving companies have successively launched plans to develop self-developed autonomous driving communication systems. 
-  Communication systems customized based on specific scenarios of autonomous driving are already a trend in the autonomous driving industry.
 
   In this dissertation, an autonomous driving runtime communication system is designed and implemented to solve the above problems.
-  This dissertation first analyzes the current situation of autonomous driving communication systems at home and abroad from the perspective of communication performance and robustness, 
-  and compares the advantages and disadvantages of each technical solution.
+  This dissertation first analyzes the current situation of autonomous driving communication systems at home and abroad from the perspective of communication performance and robustness, and compares the advantages and disadvantages of each technical solution.
   The characteristics of module communication and various sensor data are analyzed, and finally the autonomous driving runtime system proposed in this dissertation is designed and implemented.
-  This system supports topic-based publish-subscribe and service-based request-response two communication modes, providing asynchronous and synchronous communication modes respectively.
-  Topic-based publish-subscribe communication mode supports adaptive communication mode, the system automatically selects intra-process communication, 
-  inter-process communication or network communication according to the information of both parties.
-  This dissertation improves the shared memory read-write model and the robustness of the central node, 
-  which improves the robustness and recoverability of the communication system when an abnormality occurs.
-  This system uses the RPC (Remote Proceduce Calls) framework rest\_rpc to realize service discovery and service-based request-response communication functions, 
-  uses Google Protobuf as a serialization tool, and uses ZeroMQ to realize network communication functions.
+  The system supports topic-based publish-subscribe and service-based request-response two communication modes, providing asynchronous and synchronous communication modes respectively.
+  Topic-based publish-subscribe communication mode supports adaptive communication mode.
+  The system automatically selects intra-process communication, shared memory-based inter-process communication or network communication according to the information of both parties.
+  This dissertation improves the shared memory read-write model and the robustness of the central node, which improves the robustness and recoverability of the communication system when an abnormality occurs.
+  This system uses the RPC (Remote Proceduce Calls) framework rest\_rpc to realize service discovery and service-based request-response communication functions, uses Google Protobuf as a serialization tool, and uses ZeroMQ to realize network communication functions.
 
   After the development of the communication system during autonomous driving is completed, 
-  this paper designs a test scheme according to the communication characteristics of the autonomous driving system, 
-  and tests the functional and non-functional requirements of this system in detail. 
-  The test results show that this system meets the functional requirements of supporting publish-subscribe and request-response communication modes; it maintains the same level of performance as similar products in terms of end-to-end communication delay, 
-  system robustness and reliability, non-functional requirements are met. 
-  In general, this system has certain feasibility and has certain reference value for the research on communication between algorithm modules in the autonomous driving industry.
+  this dissertation designs a test scheme according to the communication characteristics of the autonomous driving system, 
+  and tests the functional and non-functional requirements of the system in detail. 
+  In the functional test, the actual usage scenarios are used to test the functions of the communication system. 
+  The test results show that the system meets the functional requirements of the two communication modes and scheduling strategies. 
+  In the real-time test, the data size, data release frequency, data The number of subscribers and the computing power platform are used as variables to test the communication delay. 
+  The test results show that the system guarantees that the communication delay is within 5ms; in the robustness test, various crash scenarios are used to test the inter-process communication and the central node. 
+  The results show that the system can guarantee normal communication when abnormal crash occurs. In general, this system has certain feasibility and has certain reference value for the research on communication between algorithm modules in the autonomous driving industry.
 \end{abstract*}

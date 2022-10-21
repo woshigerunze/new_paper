@@ -55,7 +55,7 @@ ROS2引入了DDS(Data Distributed Service, 数据分发服务)作为其通信中
 一套以ROS为参考并且致力于优化ROS缺陷，做到高并发、低延迟和高吞吐的通信系统，
 提供了类似于ROS中的订阅者(Subscriber)、发布者(Publisher)和服务(Service)的通信角色。
 CyberRT在设计中采用了分层次开发方法，涵盖了从最上层提供给用户的相关接口到最下层的通信方法，用户
-只需要关注最上层API的应用而无需关注框架的内部实现。同时，分层次的设计方法使得整个框架
+只需要关注最上层API(Application Programming Interface,应用程序接口)的应用而无需关注框架的内部实现。同时，分层次的设计方法使得整个框架
 的功能耦合度很低，其架构如图\ref{cyberrt_structure}所示\cite{cyberrt}。
 \begin{figure}[H]
   \centering
@@ -131,9 +131,11 @@ iceoryx和CyberRT非常类似，都采用了发布－订阅的通信模型和服
 
 另一个不容忽视的问题是服务发现机制对系统性能影响。对于自动驾驶系统使用场景来说，通信节点存在动态增减的情况，所以需要
 服务发现保证通信节点间及时发现新增节点或被删除的节点。ROS1提供了中心化的服务发现机制以同步网络内的节点和话题并且
-控制节点的生命周期，称Master节点。该设计在Master节点异常终止情况下无法保证正常工作；ROS2选用了去中心化的服务发现
+控制节点的生命周期，称Master节点。该设计在Master节点异常终止情况下无法保证正常工作；ROS2选用了去中心化的基于分布式的服务发现
 机制，每个通信节点保存所有的节点和话题信息。该设计下，通信节点的运行状态由心跳包判定，当节点数量达到数百个时
-会消耗大量处理器资源\cite{9355690}。
+会消耗大量处理器资源\cite{9355690}。Fast DDS(快速DDS)在最新的服务发现标准文档中引入了基于中心化的发现服务器(Discovery Server)，与最初基于分布式的简单服务发现(Simple Discovery)
+是完全相反的服务发现机制\cite{DDSservicediscovery}。综上，两种发现机制都存在优点与缺点，基于分布式的发现机制并不能完全取代基于中心化的
+服务发现机制。
 
 
 \section{论文主要工作与特色}
@@ -175,7 +177,7 @@ iceoryx和CyberRT非常类似，都采用了发布－订阅的通信模型和服
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.85\textwidth]{thesis_structure.png}
+  \includegraphics[width=0.9\textwidth]{thesis_structure.png}
   \caption{论文章节结构图}
   \label{thesis_structure}
 \end{figure}
