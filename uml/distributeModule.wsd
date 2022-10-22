@@ -47,6 +47,7 @@ component TaskLayer{
             [PubAbstract]
             [SubAbstract]
             [ServiceAbstract]
+            [ServiceDiscoveryManager]
         component CommunicationTransportLayer{
             component NetworkCommunication{
                 [NetworkManager]
@@ -68,9 +69,9 @@ component TaskLayer{
                 [Serialize]
                 [Deserialize]
             }
-            component ServiceDiscovery{
-                [ServiceDiscoveryManager]
-            }
+            ' component ServiceDiscovery{
+            '     [ServiceDiscoveryManager]
+            ' }
         }
         }
     }
