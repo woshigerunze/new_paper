@@ -53,7 +53,6 @@
 
 综合本节阐述的自动驾驶单车内通信及单车与云端平台通信特点，可以得出自动驾驶系统对通信系统的要求是多样的。
 
-
 \subsection{业务流程描述}
 虽然自动驾驶运行时通信系统业务流程复杂，但从更抽象的角度来看，业务流程可大致分为如下四步：
 \begin{enumerate}
@@ -66,7 +65,7 @@
 图\ref{bussiness_procedure}是对建立通信业务流程的描述说明。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{bussiness_procedure.png}
+  \includegraphics[width=0.85\textwidth]{bussiness_procedure.png}
   \caption{建立通信业务流程图}
   \label{bussiness_procedure}
 \end{figure}
@@ -214,6 +213,31 @@
 并协助通信双方按照通信方式建立通信链路。
 
 通信方式自适应选择功能由通信系统内部的通信抽象层实现，通信方式自适应选择用例图如图\ref{adaptive_communication_yongli}所示。
+用例说明如表\ref{adaptive_communication_shuoming}所示。
+\begin{longtable}{ll}
+  \caption{通信方式自适应选择用例说明} \label{adaptive_communication_shuoming} \\
+  \toprule \multicolumn{1}{l}{测试用例名称} & \multicolumn{1}{l}{测试步骤}  \\ \midrule 
+  \endfirsthead
+  
+  \multicolumn{2}{c}%
+  {{\bfseries \textbf{续\tablename\ \thetable{}~~~~通信方式自适应选择用例说明}}}\\
+  \toprule \multicolumn{1}{l}{测试用例名称} & \multicolumn{1}{l}{测试步骤}  \\ \midrule
+  \endhead
+  
+  \bottomrule  \multicolumn{2}{l}{{\textbf{表格接下页}}}\\ 
+  \endfoot
+  
+  \bottomrule
+  \endlastfoot
+  行为角色 & 通信抽象层\\
+  用例说明 & 根据发布者与订阅者网络信息选择通信方式；\\
+  前置条件 & 发布者与订阅者网络信息存在且合法；\\
+  后置条件 & 自适应选择通信方式成功，发布者与订阅者建立通信链路开始通信；\\
+  基本流   & \makecell[l]{1.获取发布者网络信息；\\2.获取订阅者网络信息；\\3.比较发布者与订阅者所处网络的IP地址和进程号；}\\
+  分支流   & \makecell[l]{3a.若发布者与订阅者IP地址不一致，使用网络通信；\\3b.若发布者与订阅者进程号一致使用进程内通信；\\3c.若发布者与订阅者进程号不一致，使用进程间通信；} \\
+  异常流   & \makecell[l]{1a.发布者网络信息不存在或不合法，通信方式选择失败；\\2a.订阅者者网络信息不存在或不合法，通信方式选择失败；\\3a.根据发布者与订阅者网络信息无法选择对应通信方式，通信方式选择失败；}\\
+
+\end{longtable}
 
 \begin{figure}[H]
   \centering
@@ -263,18 +287,19 @@
 \end{table}
 
 \subsection{序列化中间语言生成}
-本文采用Google Protocol Buffer作为网络通信和进程间通信中序列化和反序列化方案。该方案需要用户使用接口描述语言
-(interface descriptor language, IDL)创建.proto文件并生成某个自定义数据类型的序列化与反序列化代码。当用户数量增多并且数据类型
-变多时.proto文件的管理将变得复杂，同时将Protocol Buffer自动生成的代码集成到业务代码的工作量也将显著提升。考虑到
-Protocol Buffer生成代码的使用方法和数据赋值方法与C++有较大差别，本系统设计一套中间语言作为Protocol Buffer和原生
-C++的中间层，方便用户使用。
-
-\begin{figure}[H]
+本文采用Google Protocol Buffer作为网络通信和进程间通信中序列化和反序列化方案。
+\begin{figure}[htb]
   \centering
   \includegraphics[width=0.75\textwidth]{middle_language_uml.png}
   \caption{序列化中间语言生成用例图}
   \label{middle_language_uml}
 \end{figure}
+该方案需要用户使用接口描述语言
+(interface descriptor language, IDL)创建.proto文件并生成某个自定义数据类型的序列化与反序列化代码。当用户数量增多并且数据类型
+变多时.proto文件的管理将变得复杂，同时将Protocol Buffer自动生成的代码集成到业务代码的工作量也将显著提升。考虑到
+Protocol Buffer生成代码的使用方法和数据赋值方法与C++有较大差别，本系统设计一套中间语言作为Protocol Buffer和原生
+C++的中间层，方便用户使用。
+
 
 序列化中间语言生成用例图如图\ref{middle_language_uml}所示。用户只需要编写自己需要的数据类型的.proto文件，
 中间代码生成器将解析用户编写的.proto文件并自动生成一套中间语言代码，生成之后打包为静态库。用户只需要链接静态库即可，
