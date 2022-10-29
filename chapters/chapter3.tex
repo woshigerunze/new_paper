@@ -1,6 +1,42 @@
 \chapter{自动驾驶运行时通信系统需求分析}
 本章将结合自动驾驶系统内部与外部数据通信的模式与特点对本文的自动驾驶运行时通信系统进行需求分析，并在需求分析
 的基础上提出本系统的功能需求与非功能性需求。
+
+\section{自动驾驶操作系统与通信系统}
+本节通过自动驾驶中操作系统与通信系统的现有方案、技术路线和功能角色进行简要介绍并为本文提出的自动驾驶运行时
+通信系统引出相关需求。
+\subsection{自动驾驶操作系统}
+自动驾驶系统是典型的多域混合关键系统，对算力、存储容量、操作系统等的要求较高，操作系统对于自动驾驶来说是
+最重要的一环\cite{fuyong}。
+\begin{figure}[htb]
+  \centering
+  \subfigure[基于Linux定制方案]{
+    \label{Fig.sub.1}
+    \includegraphics[width=0.6\textwidth]{ADOS_linux.png}}
+  \subfigure[嵌入式操作系统方案]{
+    \label{Fig.sub.2}
+    \includegraphics[width=0.6\textwidth]{ADOS_RTOS.png}}
+  \caption{两种操作系统方案软件架构对比}
+  \label{ad_os_compare}
+\end{figure}
+目前自动驾驶行业存在两种主流的操作系统方案，一种是基于Linux内核的方案，另一种是基于RTOS等嵌入式操作系统的方案。两种方案下
+的软件架构如图\ref{ad_os_compare}所示。使用基于Linux内核的方案代表厂商有Waymo、Tesla、NVIDIA、百度等，该方案的优点是Linux具备开放、
+应用生态良好和工具链齐全的特点，满足自动驾驶系统快速迭代的需求，但难以满足自动驾驶系统对安全性和实时性的需求。使用基于RTOS等嵌入式
+操作系统的代表厂商有大众、戴姆勒、雷诺等，该方案的优点是QNX等嵌入式实时内核安全性和实时性较好，但其应用生态差、对AI软件栈
+支持一般。
+
+\subsection{自动驾驶通信系统}
+自动驾驶通信系统是基于不同操作系统之上，提供给部署在单个SoC(System on Chip,系统级芯片)上和部署在不同SoC的各个算法及功能模块的通信框架，
+所有模块统一使用同一个通信系统提供的通信功能进行相互通信。
+
+通信系统框架常以第三方库的形式出现，自动驾驶中最常见的通信系统有ROS1、ROS2等。
+在自动驾驶领域中，通信系统会提供一系列工具链（如录制数据、调试工具、工具库等）供开发者使用。
+当通信系统提供的工具链足够丰富时则可以称为通信中间件，如AUTOSAR(AUTomotive Open System ARchitecture,汽车开放系统架构)，
+其不仅包含了大量的工具链同时也包含了车载硬件开发相关工具包。ROS1、ROS2等主要集中在通信功能上，工具链相对AUTOSAR而言较少。
+
+自动驾驶需要通信系统提供如进程内通信、进程间通信、网络通信等不同通信方式以及基于发布－订阅和请求应答等多种通信模式，并需要
+通信系统能够提供给开发者统一的工具链。本文提出的通信系统注重实现通信功能本身，并不设涉及相关工具链的工作。
+
 \section{业务需求分析}
 本节阐述自动驾驶系统在单车内的数据通信以及与云端平台通信的模式与特点，作为自动驾驶运行时通信系统的业务需求分析
 的出发点。
@@ -12,7 +48,7 @@
 消息传递的拓扑网络。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.65\textwidth]{one_car_communication_model.pdf}
+  \includegraphics[width=0.73\textwidth]{one_car_communication_model.pdf}
   \caption{自动驾驶单车内算法模块通信拓扑图}
   \label{one_car_communication_model}
 \end{figure}
@@ -26,7 +62,7 @@
 多次拷贝，如图\ref{one_car_1_to_N_communication}\cite{9488177}所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{one_car_1_to_N_communication.png}
+  \includegraphics[width=0.72\textwidth]{one_car_1_to_N_communication.png}
   \caption{算法模块一对多通信拓扑图}
   \label{one_car_1_to_N_communication}
 \end{figure}
@@ -52,6 +88,7 @@
 性能表现，同时未来也可以更快速地接入智能路网等应用。
 
 综合本节阐述的自动驾驶单车内通信及单车与云端平台通信特点，可以得出自动驾驶系统对通信系统的要求是多样的。
+通信系统需要根据自动驾驶单车内通信和单车与云端平台通信不同的业务需求进行设计与实现。
 
 \subsection{业务流程描述}
 虽然自动驾驶运行时通信系统业务流程复杂，但从更抽象的角度来看，业务流程可大致分为如下四步：
@@ -72,7 +109,8 @@
 
 \section{功能性需求}
 根据上一节对自动驾驶系统通信的模式与特点的概述与分析，本文实现的自动驾驶运行时通信系统的功能需求
-变得清晰，本节将导出本系统的功能性需求，并通过用例图对各个需求进行详细分析。
+变得清晰，本节将导出本系统的功能性需求，并通过用例图对各个需求之间的关系进行详细说明，通过用例说明表
+对具体用例的行为角色、用例说明、前置条件、后置条件、基本流、分支流和异常流进行详细说明。
 
 \subsection{通信单元管理}
 注册通信单元功能是通信系统基本功能，自动驾驶系统的大部分通信功能都依托于数据发布者(publisher)发布数据
@@ -142,18 +180,11 @@
 \subsection{服务管理}
 在自动驾驶系统中，不仅仅需要给予发布－订阅模式的异步通信功能，还需要具备同步通信功能。当用户
 注册了发布者和订阅者后，仅获得了最基本的异步消息收发能力，而服务的概念可以为用户提供更为高级的同步消息请求
-能力，更契合自动驾驶系统SOA架构风格。在3.1节提到自动驾驶系统需要向云端数据平台请求高精度地图等数据，在这种情况下，
+能力，更契合自动驾驶系统SOA架构风格。在3.2节提到自动驾驶系统需要向云端数据平台请求高精度地图等数据，在这种情况下，
 车端请求数据的动作的时间是不确定的，需要数据平台提供请求数据的服务，等待车端发起数据请求。
 
 根据自动驾驶系统通信特点及用户的实际需要，服务管理包括创建服务、删除服务、修改服务通信域和查询服务信息。
 服务管理用例图如图\ref{service_yongli}所示。
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{service_yongli.png}
-  \caption{服务管理用例图}
-  \label{service_yongli}
-\end{figure}
 
 创建服务，分为创建服务端与创建客户端，同通信单元的发布者和订阅者一样，服务端与客户端可以自由选择通信域。
 
@@ -164,6 +195,13 @@
 
 查询服务信息仅提供查询服务端相关信息，用户最关心的是系统中存在哪些服务端及其信息。查询可以通过服务端名称
 进行查询，也可以进行全量查询，并且用户可根据需要确定在哪种通信域内进行查询。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{service_yongli.png}
+  \caption{服务管理用例图}
+  \label{service_yongli}
+\end{figure}
 
 
 本节以创建服务端和查询服务信息用例为例进行说明，如表\ref{regist_service_server_yongli}和\ref{delete_service_server_yongli}所示。
@@ -212,6 +250,13 @@
 本系统在支持多通信方式的同时，需要根据通信双方是否处于同一台物理机和是否处于同一个进程自动选择网络通信、进程间通信或进程内通信方式
 并协助通信双方按照通信方式建立通信链路。
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{adaptive_communication_yongli.png}
+  \caption{通信方式自适应选择用例图}
+  \label{adaptive_communication_yongli}
+\end{figure}
+
 通信方式自适应选择功能由通信系统内部的通信抽象层实现，通信方式自适应选择用例图如图\ref{adaptive_communication_yongli}所示。
 用例说明如表\ref{adaptive_communication_shuoming}所示。
 \begin{longtable}{ll}
@@ -239,13 +284,6 @@
 
 \end{longtable}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.45\textwidth]{adaptive_communication_yongli.png}
-  \caption{通信方式自适应选择用例图}
-  \label{adaptive_communication_yongli}
-\end{figure}
-
 \subsection{调度策略管理}
 自动驾驶对通信系统需求不仅是对通信功能的需求，还包含对任务调度方式的需求。同通信性能本身对整个通信
 系统性能表现的影响程度，调度策略的选择一样重要。
@@ -267,24 +305,28 @@
 
 用户选用基于时间触发的调度策略时，需要手动设定调度任务和调度频率，本节以设置基于时间触发调度策略用例为例进行说明，如表\ref{set_scheduler_yongli}所示。
 
-\begin{table}[H]
-  \centering\small
-  \renewcommand\arraystretch{1.2}
-  \caption{设置基于时间的调度策略用例说明}
-  \label{set_scheduler_yongli}
-  \begin{tabular}{ll}
-    \toprule
-    \multicolumn{1}{l}{用例名称} & \multicolumn{1}{l}{设置基于时间的调度策略}  \\
-    \midrule
-    行为角色 & 发布者或订阅者\\
-    用例说明 & 该用例实现对任务调度策略的设置；\\
-    前置条件 & 已经注册通信单元；\\
-    后置条件 & 设置调度策略成功，系统返回成功状态码；\\
-    基本流   & \makecell[l]{1.设置调度策略为基于时间；\\2.设置调度频率；\\3.设置成功，调度策略生效；}\\
-    异常流   & \makecell[l]{1a.未设置调度策略，设置失败；\\2a.未设置调度频率或调度频率为非法频率，设置失败；}\\
-    \bottomrule
-  \end{tabular}
-\end{table}
+\begin{longtable}{ll}
+  \caption{设置基于时间的调度策略用例说明} \label{set_scheduler_yongli} \\
+  \toprule \multicolumn{1}{l}{测试用例名称} & \multicolumn{1}{l}{测试步骤}  \\ \midrule 
+  \endfirsthead
+  
+  \multicolumn{2}{c}%
+  {{\bfseries \textbf{续\tablename\ \thetable{}~~~~设置基于时间的调度策略用例说明}}}\\
+  \toprule \multicolumn{1}{l}{测试用例名称} & \multicolumn{1}{l}{测试步骤}  \\ \midrule
+  \endhead
+  
+  \bottomrule  \multicolumn{2}{l}{{\textbf{表格接下页}}}\\ 
+  \endfoot
+  
+  \bottomrule
+  \endlastfoot
+  行为角色 & 发布者或订阅者\\
+  用例说明 & 该用例实现对任务调度策略的设置；\\
+  前置条件 & 已经注册通信单元；\\
+  后置条件 & 设置调度策略成功，系统返回成功状态码；\\
+  基本流   & \makecell[l]{1.设置调度策略为基于时间；\\2.设置调度频率；\\3.设置成功，调度策略生效；}\\
+  异常流   & \makecell[l]{1a.未设置调度策略，设置失败；\\2a.未设置调度频率或调度频率为非法频率，设置失败；}\\
+\end{longtable}
 
 \subsection{序列化中间语言生成}
 本文采用Google Protocol Buffer作为网络通信和进程间通信中序列化和反序列化方案。
